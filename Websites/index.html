@@ -546,12 +546,18 @@ const PATHS=['../Data/picklist_2026ksla.json','../Data/picklist.json','../Data/d
 async function boot(){
   runSp();
   for(const p of PATHS){
-    try{const r=await fetch('./data/picklist.json')
-  .then(response => response.json())
-  .then(data => console.log(data));
-  (p);if(!r.ok)continue;const d=await r.json();setSp(100);await sleep(260);init(d);hideSp();return;}catch(_){}
+    try{
+      const r = await fetch(p);
+      if(!r.ok) continue;
+      const d = await r.json();
+      setSp(100);
+      await sleep(260);
+      init(d);
+      hideSp();
+      return;
+    } catch(_) {}
   }
-  document.getElementById('splash').innerHTML='<div style="text-align:center;padding:40px;max-width:400px"><div style="font-size:40px;margin-bottom:14px">⚠️</div><div style="font-size:18px;font-weight:700;color:#F5F5F7;margin-bottom:8px">Data not found</div><div style="font-size:13px;color:#52525B;line-height:1.8">Deploy <code style="color:#FFD60A;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px">picklist_2026ksla.json</code> alongside <code style="color:#FFD60A;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px">index.html</code></div></div>';
+  // error screen...
 }
 let _spiv;
 function runSp(){let p=0;const b=document.getElementById('spb');_spiv=setInterval(()=>{p=Math.min(p+Math.random()*14,84);b.style.width=p+'%';if(p>=84)clearInterval(_spiv)},120)}
