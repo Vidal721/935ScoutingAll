@@ -542,7 +542,9 @@ const HOLD_MS=500;
 // ════════════════════════════════════════
 // BOOT
 // ════════════════════════════════════════
-const PATHS=['../Data/picklist.json','../Data/data.json'];
+const PATHS = [
+  '../Data/picklist.json'
+];
 async function boot(){
   runSp();
   for(const p of PATHS){
@@ -557,7 +559,7 @@ async function boot(){
       return;
     } catch(_) {}
   }
-  // error screen...
+  // fallback error screen...
 }
 let _spiv;
 function runSp(){let p=0;const b=document.getElementById('spb');_spiv=setInterval(()=>{p=Math.min(p+Math.random()*14,84);b.style.width=p+'%';if(p>=84)clearInterval(_spiv)},120)}
