@@ -546,7 +546,10 @@ const PATHS=['../Data/picklist_2026ksla.json','../Data/picklist.json','../Data/d
 async function boot(){
   runSp();
   for(const p of PATHS){
-    try{const r=await fetch(p);if(!r.ok)continue;const d=await r.json();setSp(100);await sleep(260);init(d);hideSp();return;}catch(_){}
+    try{const r=await fetch('./data/storage.json')
+  .then(response => response.json())
+  .then(data => console.log(data));
+  (p);if(!r.ok)continue;const d=await r.json();setSp(100);await sleep(260);init(d);hideSp();return;}catch(_){}
   }
   document.getElementById('splash').innerHTML='<div style="text-align:center;padding:40px;max-width:400px"><div style="font-size:40px;margin-bottom:14px">⚠️</div><div style="font-size:18px;font-weight:700;color:#F5F5F7;margin-bottom:8px">Data not found</div><div style="font-size:13px;color:#52525B;line-height:1.8">Deploy <code style="color:#FFD60A;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px">picklist_2026ksla.json</code> alongside <code style="color:#FFD60A;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px">index.html</code></div></div>';
 }
@@ -1172,6 +1175,7 @@ function cntUp(id,target){const el=document.getElementById(id),dur=700,t0=perfor
 let _tt;function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('on'),2400);}
 window.addEventListener('resize',()=>{if(document.getElementById('view-analytics').classList.contains('on')){drawScatter1();drawScatter2();}});
 boot();
+
 </script>
 </body>
 </html>
