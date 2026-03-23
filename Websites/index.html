@@ -547,6 +547,10 @@ const PATHS = [
 ];
 async function boot(){
   runSp();
+  const PATHS = [
+    '../Data/picklist_2026ksla.json',
+    '../Data/picklist.json',
+  ];
   for(const p of PATHS){
     try{
       const r = await fetch(p);
@@ -557,9 +561,19 @@ async function boot(){
       init(d);
       hideSp();
       return;
-    } catch(_) {}
+    } catch(e){
+      console.warn('Failed to load', p, e);
+    }
   }
-  // fallback error screen...
+  document.getElementById('splash').innerHTML=`
+    <div style="text-align:center;padding:40px;max-width:400px">
+      <div style="font-size:40px;margin-bottom:14px">⚠️</div>
+      <div style="font-size:18px;font-weight:700;color:#F5F5F7;margin-bottom:8px">Data not found</div>
+      <div style="font-size:13px;color:#52525B;line-height:1.8">
+        Make sure <code style="color:#FFD60A;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px">picklist.json</code>
+        is in the <code style="color:#FFD60A;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px">data/</code> folder
+      </div>
+    </div>`;
 }
 let _spiv;
 function runSp(){let p=0;const b=document.getElementById('spb');_spiv=setInterval(()=>{p=Math.min(p+Math.random()*14,84);b.style.width=p+'%';if(p>=84)clearInterval(_spiv)},120)}
