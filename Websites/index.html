@@ -546,7 +546,7 @@ const PATHS=['../Data/picklist_2026ksla.json','../Data/picklist.json','../Data/d
 async function boot(){
   runSp();
   for(const p of PATHS){
-    try{const r=await fetch('./data/storage.json')
+    try{const r=await fetch('./data/picklist.json')
   .then(response => response.json())
   .then(data => console.log(data));
   (p);if(!r.ok)continue;const d=await r.json();setSp(100);await sleep(260);init(d);hideSp();return;}catch(_){}
