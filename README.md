@@ -9,5 +9,5 @@
 - 6 scouting tablets
 - 1 scouting laptop
 - 1 leadscout tablet (optional)
-- Webhosting Platform (We use ([netlify])https://netlify.com)
+- Webhosting Platform (We use [netlify](https://netlify.com))
 
