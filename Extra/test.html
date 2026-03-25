@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Map Editor</title>
+    <style>
+        :root { --bg: #1a1a1a; --panel: #252525; --accent: #007bff; }
+        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* The Fix: Container wraps the image perfectly */
+        .map-wrapper { 
+            position: relative; 
+            display: inline-block; /* Wraps image content */
+            border: 2px solid #444; 
+            background: #000;
+            line-height: 0; 
+        }
+        #bg-image { max-width: 100%; height: auto; display: block; }
+
+        .field-button { 
+            position: absolute; 
+            background: #ffcc00; 
+            border: 2px solid #000; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transform: translate(-50%, -50%); 
+            z-index: 100; 
+            color: black; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 40px; height: 40px;
+        }
+        .field-button.selected { outline: 4px solid white; box-shadow: 0 0 15px var(--accent); }
+        #editor-cursor { background: rgba(255, 204, 0, 0.5); pointer-events: none; display: none; }
+
+        .controls { 
+            background: var(--panel); padding: 15px; border-radius: 8px; 
+            width: 100%; max-width: 800px; margin-top: 15px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
+        }
+        .full-row { grid-column: span 2; }
+        input, button { padding: 12px; border-radius: 4px; border: 1px solid #444; background: #333; color: white; width: 100%; box-sizing: border-box; }
+        .on { background: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="map-wrapper" id="map-container">
+        <img id="bg-image" src="Images/2026_Field.png" onerror="this.src='https://via.placeholder.com/800x400?text=Field+Image+Not+Found'">
+        <div id="editor-cursor" class="field-button">A</div>
+    </div>
+
+    <div class="controls">
+        <button id="mode-btn" class="full-row" onclick="toggleMode()">MODE: SELECTION (Click to toggle Placement)</button>
+        <input type="text" id="inp-id" placeholder="ID (e.g. node_1)">
+        <input type="text" id="inp-text" value="A" placeholder="Button Text">
+        <input type="text" id="inp-label" class="full-row" placeholder="Full Label/Description">
+        <button style="background:#6f42c1;" class="full-row" onclick="exportJSON()">💾 EXPORT JSON CONFIG</button>
+        <button style="background:#dc3545;" onclick="deleteSelected()">DELETE</button>
+        <button onclick="location.reload()">CLEAR ALL</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('map-container');
+        const cursor = document.getElementById('editor-cursor');
+        const modeBtn = document.getElementById('mode-btn');
+        const bgImg = document.getElementById('bg-image');
+        let isPlacementMode = false, selectedButtons = [];
+
+        function toggleMode() {
+            isPlacementMode = !isPlacementMode;
+            modeBtn.innerText = isPlacementMode ? "MODE: PLACEMENT (Click map to add)" : "MODE: SELECTION";
+            modeBtn.className = isPlacementMode ? "full-row on" : "full-row";
+            cursor.style.display = isPlacementMode ? "flex" : "none";
+        }
+
+        container.onmousemove = (e) => {
+            if (!isPlacementMode) return;
+            const rect = container.getBoundingClientRect();
+            // Calculate percentage based on the actual displayed image size
+            cursor.style.left = ((e.clientX - rect.left) / rect.width * 100) + "%";
+            cursor.style.top = ((e.clientY - rect.top) / rect.height * 100) + "%";
+        };
+
+        container.onclick = (e) => {
+            if (isPlacementMode) {
+                const rect = container.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width * 100) + "%";
+                const y = ((e.clientY - rect.top) / rect.height * 100) + "%";
+                createNewButton(x, y);
+            }
+        };
+
+        function createNewButton(x, y) {
+            const btn = document.createElement('div');
+            btn.className = 'field-button';
+            btn.style.left = x; btn.style.top = y;
+            btn.innerText = document.getElementById('inp-text').value;
+            btn.dataset.id = document.getElementById('inp-id').value || `btn_${Date.now()}`;
+            btn.dataset.label = document.getElementById('inp-label').value;
+            btn.onclick = (e) => { e.stopPropagation(); selectBtn(btn); };
+            container.appendChild(btn);
+        }
+
+        function selectBtn(btn) {
+            document.querySelectorAll('.field-button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedButtons = [btn];
+            document.getElementById('inp-id').value = btn.dataset.id;
+            document.getElementById('inp-text').value = btn.innerText;
+            document.getElementById('inp-label').value = btn.dataset.label;
+        }
+
+        async function exportJSON() {
+            const package = {
+                image: bgImg.src, // Exports the path or base64
+                buttons: Array.from(document.querySelectorAll('.field-button:not(#editor-cursor)')).map(b => ({
+                    id: b.dataset.id, x: b.style.left, y: b.style.top, text: b.innerText, label: b.dataset.label
+                }))
+            };
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(package, null, 2)], {type:"application/json"}));
+            a.download = "field_config.json"; a.click();
+        }
+
+        function deleteSelected() { selectedButtons.forEach(b => b.remove()); }
+    </script>
+</body>
+</html>

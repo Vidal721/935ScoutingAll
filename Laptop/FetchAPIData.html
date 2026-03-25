@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TBA Match Schedule - City of Fountains 2026</title>
+</head>
+<body>
+  <button onclick="window.location.href="C:\Users\apric\Desktop\935ScoutingAll\Tablets\index.html"">Home</button>
+  <h2>FRC City of Fountains Regional (2026KSLA)</h2>
+
+  <hr>
+  <h3>The Blue Alliance API (thebluealliance.com)</h3>
+  <button onclick="fetchTBA()">Fetch Match Schedule</button>
+
+  <h4>Match Schedule</h4>
+  <textarea id="tba-matches" rows="15" cols="100" placeholder="TBA matches JSON will appear here..."></textarea>
+
+  <hr>
+  <h3>Scouting Schedule Generator</h3>
+
+  <label>Scouters (one per line):<br>
+    <textarea id="scouters-input" rows="6" cols="30" placeholder="Sam&#10;David&#10;Austin&#10;Charlotte&#10;Dante&#10;Aspyn"></textarea>
+  </label>
+  <br><br>
+
+  <label>Priority teams (comma-separated — every scouter will scout these at least once):<br>
+    <input type="text" id="priority-teams" style="width:300px" placeholder="935, 757">
+  </label>
+  <br><br>
+
+  <button onclick="generateSchedule()">Generate Scouting Schedule</button>
+
+  <h4>Scouting Schedule</h4>
+  <textarea id="scouting-output" rows="30" cols="100" placeholder="Scouting schedule will appear here..."></textarea>
+
+  <h4>JSON Output</h4>
+  <textarea id="json-output" rows="30" cols="100" placeholder="JSON will appear here..."></textarea>
+
+  <hr>
+  <div id="status"></div>
+
+  <script>
+    const TBA_EVENT_KEY = "2026ksla";
+    let fetchedMatches = [];
+
+    function log(msg) {
+      document.getElementById("status").innerText = msg;
+    }
+
+    async function fetchTBA() {
+      const key = "HCzm8Ri3tcpSxBkhoZLLwhDMCDNfwwP0cNof8xOnJCk1ZnHOGu7upC84W8AanACu";
+      const headers = { "X-TBA-Auth-Key": key };
+      const base = "https://www.thebluealliance.com/api/v3";
+      log("Fetching from The Blue Alliance...");
+      try {
+        const matchRes = await fetch(`${base}/event/${TBA_EVENT_KEY}/matches`, { headers });
+        const matchData = await matchRes.json();
+        document.getElementById("tba-matches").value = JSON.stringify(matchData, null, 2);
+        fetchedMatches = matchData;
+        log("TBA fetch complete.");
+      } catch (err) {
+        log("TBA error: " + err.message);
+      }
+    }
+
+    function parseMatches() {
+      if (fetchedMatches.length > 0) return fetchedMatches;
+      try {
+        return JSON.parse(document.getElementById("tba-matches").value);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function generateSchedule() {
+      const scouters = document.getElementById("scouters-input").value
+        .split("\n").map(s => s.trim()).filter(s => s.length > 0);
+
+      if (scouters.length === 0) { log("Error: No scouters entered."); return; }
+      if (scouters.length !== 6) { log("Error: Need exactly 6 scouters (one per robot per match)."); return; }
+
+      const priorityInput = document.getElementById("priority-teams").value;
+      const priorityTeams = priorityInput.split(",").map(t => t.trim()).filter(t => t.length > 0);
+
+      const allMatches = parseMatches();
+      if (allMatches.length === 0) { log("Error: No match data. Fetch TBA data first or paste JSON into the textarea."); return; }
+
+      const matches = allMatches
+        .filter(m => m.comp_level === "qm")
+        .sort((a, b) => a.match_number - b.match_number);
+
+      if (matches.length === 0) { log("Error: No qualification matches found in the data."); return; }
+
+      const schedule = [];
+
+      matches.forEach((m, matchIdx) => {
+        const red = (m.alliances?.red?.team_keys || []).map(t => t.replace("frc", ""));
+        const blue = (m.alliances?.blue?.team_keys || []).map(t => t.replace("frc", ""));
+        const slots = [
+          { alliance: "red",  position: 1, team: red[0] || "?" },
+          { alliance: "red",  position: 2, team: red[1] || "?" },
+          { alliance: "red",  position: 3, team: red[2] || "?" },
+          { alliance: "blue", position: 1, team: blue[0] || "?" },
+          { alliance: "blue", position: 2, team: blue[1] || "?" },
+          { alliance: "blue", position: 3, team: blue[2] || "?" },
+        ];
+
+        const offset = matchIdx % scouters.length;
+        slots.forEach((slot, slotIdx) => {
+          const scouterIdx = (slotIdx + offset) % scouters.length;
+          schedule.push({
+            matchNum: m.match_number,
+            scouter: scouters[scouterIdx],
+            team: slot.team,
+            alliance: slot.alliance,
+            position: slot.position
+          });
+        });
+      });
+
+      priorityTeams.forEach(pt => {
+        const ptEntries = schedule.filter(e => e.team === pt);
+        if (ptEntries.length === 0) return;
+
+        scouters.forEach(scouter => {
+          const alreadyHas = ptEntries.some(e => e.scouter === scouter);
+          if (alreadyHas) return;
+
+          for (const ptEntry of ptEntries) {
+            const matchEntries = schedule.filter(e => e.matchNum === ptEntry.matchNum);
+            const scouterInMatch = matchEntries.find(e => e.scouter === scouter);
+            if (!scouterInMatch) continue;
+            const tempScouter = ptEntry.scouter;
+            ptEntry.scouter = scouter;
+            scouterInMatch.scouter = tempScouter;
+            break;
+          }
+        });
+      });
+
+      // Readable schedule output
+      let output = "=== SCOUTING SCHEDULE ===\n\n";
+      const matchNums = [...new Set(schedule.map(e => e.matchNum))].sort((a, b) => a - b);
+
+      matchNums.forEach(mn => {
+        output += `=== Match ${mn} ===\n`;
+        const matchEntries = schedule.filter(e => e.matchNum === mn);
+        matchEntries.sort((a, b) => {
+          if (a.alliance !== b.alliance) return a.alliance === "red" ? -1 : 1;
+          return a.position - b.position;
+        });
+        matchEntries.forEach(e => {
+          const label = e.alliance.charAt(0).toUpperCase() + e.alliance.slice(1);
+          output += `  ${label} ${e.position}  |  Team ${e.team}  |  ${e.scouter}\n`;
+        });
+        output += "\n";
+      });
+
+      if (priorityTeams.length > 0) {
+        output += "=== PRIORITY TEAM COVERAGE ===\n";
+        priorityTeams.forEach(pt => {
+          output += `Team ${pt}:\n`;
+          scouters.forEach(s => {
+            const entry = schedule.find(e => e.scouter === s && e.team === pt);
+            if (entry) {
+              output += `  ${s}: Match ${entry.matchNum} (${entry.alliance} ${entry.position})\n`;
+            } else {
+              output += `  ${s}: NOT COVERED (team may not appear enough times)\n`;
+            }
+          });
+        });
+      }
+
+      document.getElementById("scouting-output").value = output;
+
+      // JSON output: { "matchNum": { "ScouterName": "teamNumber", ... }, ... }
+      const jsonOutput = {};
+      matchNums.forEach(mn => {
+        jsonOutput[String(mn)] = {};
+        schedule.filter(e => e.matchNum === mn).forEach(e => {
+          jsonOutput[String(mn)][e.scouter] = e.team;
+        });
+      });
+
+      document.getElementById("json-output").value = JSON.stringify(jsonOutput, null, 2);
+
+      log("Scouting schedule generated.");
+    }
+  </script>
+</body>
+</html>

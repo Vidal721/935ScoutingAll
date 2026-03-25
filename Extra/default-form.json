@@ -1,0 +1,67 @@
+{
+    "name": "Match Scouting Form",
+    "version": "1.0",
+    "fields": [
+      {
+        "label": "Scouter Name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "label": "Team Number",
+        "type": "number",
+        "required": true
+      },
+      {
+        "label": "Match Number",
+        "type": "number",
+        "required": true
+      },
+      {
+        "label": "L1 - Scored",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L1 - Missed",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L2 - Scored",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L2 - Missed",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L3 - Scored",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L3 - Missed",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L4 - Scored",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "L4 - Missed",
+        "type": "counter",
+        "required": false
+      },
+      {
+        "label": "Climb",
+        "type": "select",
+        "required": false,
+        "options": "Park, Shalow, Deep, None"
+      }
+    ]
+  }
