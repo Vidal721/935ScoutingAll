@@ -766,7 +766,7 @@
     };
 
     var EMBEDDED_PIT_FORM = {
-  "name": "2026 Heartland Regional",
+  "name": "2026 City Of Fountains",
   "version": "1.0",
   "fields": [
     {
@@ -780,13 +780,13 @@
       "required": true
     },
     {
-      "label": "Robot Photo",
-      "type": "robot_image",
+      "label": "Robot Weight",
+      "type": "number",
       "required": false
     },
     {
-      "label": "Robot Weight",
-      "type": "number",
+      "label": "Robot Name (Optional)",
+      "type": "text",
       "required": false
     },
     {
@@ -800,6 +800,12 @@
       "type": "select",
       "required": false,
       "options": "Fixed Shooter, Turret"
+    },
+    {
+      "label": "Robot Capabilities",
+      "type": "select",
+      "required": false,
+      "options": "Trench, Bump, All, None"
     },
     {
       "label": "Scoring Locations",
@@ -821,6 +827,11 @@
     {
       "label": "Notes",
       "type": "text",
+      "required": false
+    },
+    {
+      "label": "Robot Photo",
+      "type": "robot_image",
       "required": false
     }
   ]
@@ -1158,11 +1169,15 @@
     }
 
     function saveData() {
-        var teamNumber = null, robotWeight = null, robotDrivetrain = null;
+        var teamNumber = null, robotWeight = null, robotDrivetrain = null, shooter = null, scoringLocations = null, canClimb = null, climbType = null;
         for (var i = 0; i < currentTemplate.fields.length; i++) {
             var field = currentTemplate.fields[i]; var key = 'field_' + i;
             if (field.label === "Team Number" || field.label.toLowerCase() === "team number") teamNumber = scoutingData[key];
             else if (field.label === "Robot Weight" || field.label.toLowerCase() === "robot weight") robotWeight = scoutingData[key];
+            else if (field.label === "Shooter Type" || field.label.toLowerCase() === "shooter type") shooter = scoutingData[key];
+            else if (field.label === "Scoring Locations" || field.label.toLowerCase() === "scoring locations") scoringLocations = scoutingData[key];
+            else if (field.label === "Can Climb" || field.label.toLowerCase() === "can climb") canClimb = scoutingData[key];
+            else if (field.label === "Climb Type" || field.label.toLowerCase() === "climb type") climbType = scoutingData[key];
             else if (field.label === "Drive Train Type") robotDrivetrain = scoutingData[key];
         }
         if (!teamNumber) {
@@ -1173,7 +1188,7 @@
         }
         if (!teamNumber || String(teamNumber).trim() === "") { showNotification("Please fill in the Team Number field before saving.", "error"); return; }
         teamNumber = String(teamNumber).trim();
-        var dataEntry = { id: Date.now() + Math.random(), teamNumber: teamNumber, weight: robotWeight, drive_train: robotDrivetrain, timestamp: new Date().toISOString(), date: new Date().toLocaleString(), data: scoutingData };
+        var dataEntry = { id: Date.now() + Math.random(), teamNumber: teamNumber, weight: robotWeight, drive_train: robotDrivetrain, shooter: shooter, scoring_locations: scoringLocations, can_climb: canClimb, climb_type: climbType, timestamp: new Date().toISOString(), date: new Date().toLocaleString(), data: scoutingData };
         var savedData = [];
         var existing = localStorage.getItem("savedScoutingData");
         if (existing) { try { savedData = JSON.parse(existing); } catch(e) { savedData = []; } }
