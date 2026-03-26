@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>REBUILT™ // TEAM 4169</title>
+<style>
+/* ═══════════════════════════════════════════
+   REBUILT™ — BLACK & YELLOW TACTICAL SYSTEM
+   Team 4169 | Offline-first | Android Tablet
+═══════════════════════════════════════════ */
+:root {
+  --y: #f5c800;        /* PRIMARY YELLOW */
+  --yd: #c49a00;       /* DARK YELLOW */
+  --yg: rgba(245,200,0,0.18);
+  --yl: rgba(245,200,0,0.07);
+  --black: #050709;
+  --bg: #080b0f;
+  --bg2: #0c1018;
+  --bg3: #11161f;
+  --bg4: #161d28;
+  --border: rgba(245,200,0,0.12);
+  --border2: rgba(245,200,0,0.25);
+  --text: #d4d0c4;
+  --muted: #5a6070;
+  --green: #00e87a;
+  --red: #e84040;
+  --blue: #4a9eff;
+  --orange: #ff7a20;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;touch-action:none;user-select:none}
+
+/* ── TOPBAR ── */
+#topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 14px;background:rgba(0,0,0,0.7);
+  border-bottom:1px solid var(--y);flex-shrink:0;gap:8px;z-index:20;
+  position:relative;
+}
+#topbar::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--y),transparent);opacity:0.4;
+}
+#logo{font-size:13px;letter-spacing:4px;color:var(--y);font-weight:bold;white-space:nowrap}
+#logo span{color:rgba(245,200,0,0.4);font-size:9px;display:block;letter-spacing:2px;margin-top:1px}
+#match-label{font-size:10px;color:var(--muted);letter-spacing:1px}
+.top-btns{display:flex;gap:6px;align-items:center}
+.tpill{
+  font-size:9px;padding:4px 10px;border-radius:2px;letter-spacing:1px;cursor:pointer;
+  border:0.5px solid var(--border2);background:transparent;color:var(--y);
+  font-family:'Courier New',monospace;transition:all .15s;white-space:nowrap;
+}
+.tpill:active,.tpill.active{background:var(--yg);border-color:var(--y)}
+.tpill.red-pill{border-color:rgba(232,64,64,0.4);color:var(--red)}
+.tpill.red-pill.active{background:rgba(232,64,64,0.12)}
+
+/* ── MAIN LAYOUT ── */
+#app{display:flex;flex-direction:column;height:100%}
+#body{display:flex;flex:1;overflow:hidden}
+
+/* ── CANVAS AREA ── */
+#canvas-wrap{flex:1;position:relative;overflow:hidden;background:#030507}
+#field-canvas{display:block;width:100%!important;height:100%!important;cursor:crosshair}
+
+/* ── HUDS ── */
+#phase-hud{
+  position:absolute;top:10px;left:10px;
+  background:rgba(5,7,9,0.92);border:1px solid var(--y);
+  border-radius:4px;padding:11px 14px;max-width:270px;
+  transition:opacity .4s,transform .4s;pointer-events:none;
+}
+#phase-hud.hidden{opacity:0;transform:translateY(-6px)}
+#hud-phase{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:3px}
+#hud-title{font-size:15px;color:var(--y);font-weight:bold;letter-spacing:1px;margin-bottom:6px}
+#hud-body{font-size:10px;color:var(--text);line-height:1.6}
+#hud-ai{font-size:9px;color:var(--y);margin-top:8px;padding-top:8px;
+  border-top:0.5px solid var(--border2);line-height:1.5;display:none;
+  opacity:0.85}
+#hud-coach{font-size:9px;color:var(--orange);margin-top:6px;line-height:1.5;display:none}
+
+#eff-hud{
+  position:absolute;top:10px;right:10px;
+  background:rgba(5,7,9,0.92);border:0.5px solid var(--border);
+  border-radius:4px;padding:8px 12px;text-align:right;pointer-events:none;min-width:90px;
+}
+#eff-lbl{font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:2px}
+#eff-val{font-size:22px;font-weight:bold;transition:color .4s}
+#eff-bar-bg{width:72px;height:2px;background:#1a2030;border-radius:1px;margin:3px 0 0 auto}
+#eff-bar{height:2px;border-radius:1px;transition:width .7s,background .5s}
+
+/* HEATMAP TOGGLE */
+#heatmap-hud{
+  position:absolute;bottom:50px;right:10px;
+  background:rgba(5,7,9,0.92);border:0.5px solid var(--border);
+  border-radius:4px;padding:8px 10px;font-size:9px;pointer-events:auto;
+  display:none;
+}
+#heatmap-hud.visible{display:block}
+.hm-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer}
+.hm-row:last-child{margin:0}
+.hm-swatch{width:10px;height:10px;border-radius:1px;flex-shrink:0}
+.hm-label{color:var(--text);letter-spacing:.5px}
+.hm-pct{color:var(--y);margin-left:auto}
+
+/* LEGEND */
+#legend{
+  position:absolute;bottom:10px;left:10px;
+  background:rgba(5,7,9,0.85);border:0.5px solid var(--border);
+  border-radius:4px;padding:7px 9px;pointer-events:none;font-size:8px;
+}
+.leg{display:flex;align-items:center;gap:5px;color:var(--muted);margin-bottom:3px}
+.leg:last-child{margin:0}
+.lgd{width:8px;height:8px;border-radius:1px;flex-shrink:0}
+
+/* EDITOR PANEL */
+#editor-panel{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  background:rgba(5,7,9,0.95);border:1px solid var(--y);
+  border-radius:5px;padding:12px 16px;pointer-events:auto;
+  display:none;z-index:30;min-width:320px;
+}
+#editor-panel.visible{display:block}
+#ed-title{font-size:10px;color:var(--y);letter-spacing:2px;margin-bottom:10px}
+.ed-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ed-lbl{font-size:8px;color:var(--muted);letter-spacing:1px;width:70px;flex-shrink:0}
+.ed-input{
+  flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:3px;
+  color:var(--y);font-family:'Courier New',monospace;font-size:10px;padding:5px 8px;outline:none;
+}
+.ed-input:focus{border-color:var(--y)}
+.zone-btn{
+  padding:5px 10px;border:0.5px solid var(--border);border-radius:3px;background:transparent;
+  color:var(--muted);font-family:'Courier New',monospace;font-size:8px;letter-spacing:1px;
+  cursor:pointer;transition:all .15s;
+}
+.zone-btn.active,.zone-btn:active{border-color:var(--y);color:var(--y);background:var(--yl)}
+.zone-palette{display:flex;flex-wrap:wrap;gap:4px}
+#ed-coords{font-size:8px;color:var(--muted);margin-top:6px;letter-spacing:1px}
+#ed-zones-list{max-height:100px;overflow-y:auto;margin-top:8px;scrollbar-width:thin}
+.ez-item{display:flex;align-items:center;justify-content:space-between;
+  padding:3px 6px;border-bottom:0.5px solid var(--border);font-size:9px}
+.ez-item:last-child{border:none}
+.ez-del{color:var(--red);cursor:pointer;padding:0 4px}
+
+/* ── RIGHT PANEL ── */
+#right{width:280px;display:flex;flex-direction:column;border-left:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+
+/* TABS */
+#tabs{display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:8px;font-size:8px;letter-spacing:1px;text-align:center;cursor:pointer;
+  color:var(--muted);border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:var(--y);border-bottom-color:var(--y)}
+
+/* STATS STRIP */
+#stats-strip{padding:8px 10px;border-bottom:0.5px solid var(--border);
+  display:grid;grid-template-columns:1fr 1fr;gap:5px;flex-shrink:0}
+.stat-cell{background:var(--bg3);border-radius:3px;padding:6px 8px;border:0.5px solid var(--border)}
+.stat-name{font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:1px}
+.stat-val{font-size:17px;font-weight:bold}
+.sv-y{color:var(--y)} .sv-g{color:var(--green)} .sv-r{color:var(--red)} .sv-b{color:var(--blue)}
+
+/* TIMELINE */
+#timeline{flex:1;overflow-y:auto;padding:8px;scrollbar-width:thin;scrollbar-color:#1a2030 transparent}
+#timeline::-webkit-scrollbar{width:2px}
+#timeline::-webkit-scrollbar-thumb{background:#1a2030}
+
+.step-card{
+  border:0.5px solid var(--border);border-radius:4px;
+  padding:8px 10px;margin-bottom:6px;cursor:pointer;
+  transition:border-color .2s,background .2s;position:relative;
+}
+.step-card.active{border-color:var(--y);background:var(--yl)}
+.step-card.corrected{border-color:var(--orange)}
+.step-card:active{opacity:.7}
+.sc-num{font-size:7px;color:var(--muted);letter-spacing:1px}
+.sc-title{font-size:11px;color:var(--y);font-weight:bold;margin:2px 0 3px;letter-spacing:.5px}
+.sc-body{font-size:9px;color:var(--text);line-height:1.5}
+.sc-badge{position:absolute;top:8px;right:8px;font-size:7px;padding:2px 5px;border-radius:2px;letter-spacing:.5px}
+.bg-g{background:rgba(0,232,122,0.12);color:var(--green)}
+.bg-y{background:rgba(245,200,0,0.12);color:var(--y)}
+.bg-r{background:rgba(232,64,64,0.12);color:var(--red)}
+.sc-corr{font-size:8px;color:var(--orange);margin-top:5px;padding-top:5px;
+  border-top:0.5px solid rgba(255,122,32,0.25);line-height:1.4}
+.sc-ai-upd{font-size:7px;color:var(--yd);margin-top:2px}
+
+/* TBA PANEL */
+#tba-panel{flex:1;overflow-y:auto;padding:8px;display:none}
+#tba-panel.visible{display:block}
+.tba-section{margin-bottom:12px}
+.tba-section-lbl{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;
+  padding-bottom:4px;border-bottom:0.5px solid var(--border)}
+.tba-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;
+  border-bottom:0.5px solid rgba(255,255,255,0.03)}
+.tba-k{color:var(--muted)} .tba-v{color:var(--y);font-weight:bold}
+.tba-input-row{display:flex;gap:6px;margin-bottom:8px}
+.tba-input{flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:3px;
+  color:var(--text);font-family:'Courier New',monospace;font-size:10px;padding:6px 8px;outline:none}
+.tba-input:focus{border-color:var(--y)}
+.tba-btn{padding:6px 12px;border:0.5px solid var(--y);border-radius:3px;background:transparent;
+  color:var(--y);font-family:'Courier New',monospace;font-size:9px;cursor:pointer;white-space:nowrap}
+.tba-btn:active{background:var(--yg)}
+#tba-status{font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:.5px}
+
+/* EPA PANEL */
+#epa-panel{flex:1;overflow-y:auto;padding:8px;display:none}
+#epa-panel.visible{display:block}
+.epa-zone{background:var(--bg3);border:0.5px solid var(--border);border-radius:4px;
+  padding:8px 10px;margin-bottom:6px}
+.epa-zone-name{font-size:9px;color:var(--y);font-weight:bold;margin-bottom:6px;letter-spacing:1px}
+.epa-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:8px}
+.epa-bar-lbl{width:60px;color:var(--muted);flex-shrink:0}
+.epa-bar-bg{flex:1;height:4px;background:#1a2030;border-radius:2px}
+.epa-bar-fill{height:4px;border-radius:2px}
+.epa-bar-val{width:28px;text-align:right;color:var(--text)}
+#epa-team-input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:3px;
+  color:var(--text);font-family:'Courier New',monospace;font-size:10px;padding:6px 8px;
+  outline:none;margin-bottom:8px}
+#epa-team-input:focus{border-color:var(--y)}
+
+/* COACH ZONE */
+#coach-zone{border-top:0.5px solid var(--border);padding:8px;flex-shrink:0}
+#coach-lbl{font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px}
+#coach-for{font-size:8px;color:var(--y);padding:3px 6px;background:var(--yl);
+  border-radius:3px;margin-bottom:4px;display:none}
+#coach-input{width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:3px;
+  color:var(--text);font-family:'Courier New',monospace;font-size:10px;
+  padding:6px 8px;resize:none;height:50px;outline:none;transition:border-color .2s}
+#coach-input:focus{border-color:var(--y)}
+#coach-btns{display:flex;gap:4px;margin-top:4px}
+.cbtn{flex:1;padding:6px;border:0.5px solid var(--border);border-radius:3px;
+  background:transparent;color:var(--muted);font-family:'Courier New',monospace;
+  font-size:8px;letter-spacing:1px;cursor:pointer;text-align:center;transition:all .15s}
+.cbtn.go{border-color:var(--y);color:var(--y)}
+.cbtn:active{opacity:.6}
+
+/* BOTTOM BAR */
+#bottombar{border-top:1px solid var(--border);background:rgba(0,0,0,0.6);
+  padding:6px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.bbtn{background:var(--bg3);border:0.5px solid var(--border);border-radius:3px;
+  color:var(--muted);font-family:'Courier New',monospace;font-size:9px;
+  padding:6px 11px;cursor:pointer;transition:all .15s;letter-spacing:1px;white-space:nowrap}
+.bbtn.accent{border-color:var(--y);color:var(--y)}
+.bbtn.mode-active{background:var(--yg);border-color:var(--y);color:var(--y)}
+.bbtn:active{background:var(--yl)}
+#prog-wrap{flex:1}
+#prog-lbl{font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:2px}
+#prog-bg{height:2px;background:var(--bg3);border-radius:1px}
+#prog-fill{height:2px;background:var(--y);border-radius:1px;transition:width .7s ease}
+
+/* MODAL */
+#modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);
+  display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+#modal-bg.open{display:flex}
+#modal{background:var(--bg2);border:1px solid var(--y);border-radius:6px;
+  padding:16px;width:100%;max-width:460px;max-height:85vh;overflow-y:auto}
+#modal h2{font-size:10px;color:var(--y);letter-spacing:3px;margin-bottom:12px}
+.mrow{margin-bottom:10px}
+.mrow label{font-size:7px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px}
+.mrow input,.mrow select,.mrow textarea{
+  width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:3px;
+  color:var(--text);font-family:'Courier New',monospace;font-size:10px;padding:6px 8px;outline:none}
+.mrow textarea{resize:vertical;min-height:100px}
+.mrow input:focus,.mrow textarea:focus{border-color:var(--y)}
+#modal-btns{display:flex;gap:6px;margin-top:12px}
+.file-drop{border:1px dashed var(--border2);border-radius:4px;padding:16px;text-align:center;
+  cursor:pointer;margin-bottom:10px;transition:border-color .2s}
+.file-drop:hover,.file-drop.drag{border-color:var(--y);background:var(--yl)}
+.file-drop-lbl{font-size:9px;color:var(--muted);letter-spacing:1px}
+.file-drop-sub{font-size:8px;color:var(--muted);opacity:.6;margin-top:3px}
+
+/* TOAST */
+#toast{position:fixed;bottom:55px;left:50%;transform:translateX(-50%);
+  background:var(--bg2);border:0.5px solid var(--y);border-radius:3px;
+  padding:6px 14px;font-size:9px;color:var(--y);letter-spacing:1px;
+  pointer-events:none;opacity:0;transition:opacity .3s;z-index:200;white-space:nowrap}
+
+/* SCAN ANIM */
+@keyframes scan{0%{background-position:0 -100%}100%{background-position:0 200%}}
+#scan-line{position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(transparent,var(--y),transparent);
+  pointer-events:none;opacity:0;animation:scan 3s linear infinite}
+#scan-line.active{opacity:0.15}
+
+/* Scrollbars */
+#epa-panel::-webkit-scrollbar,#tba-panel::-webkit-scrollbar{width:2px}
+#epa-panel::-webkit-scrollbar-thumb,#tba-panel::-webkit-scrollbar-thumb{background:#1a2030}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div id="logo">REBUILT™<span>TEAM 4169 // TACTICAL</span></div>
+  <div id="match-label">NO MATCH LOADED</div>
+  <div class="top-btns">
+    <button class="tpill" onclick="openModal()">+ MATCH</button>
+    <button class="tpill" id="hm-toggle-btn" onclick="toggleHeatmap()">HEATMAP</button>
+    <button class="tpill" id="edit-toggle-btn" onclick="toggleEditor()">EDIT FIELD</button>
+  </div>
+</div>
+
+<div id="body">
+
+  <!-- CANVAS -->
+  <div id="canvas-wrap">
+    <div id="scan-line"></div>
+    <canvas id="field-canvas"></canvas>
+
+    <!-- PHASE HUD -->
+    <div id="phase-hud" class="hidden">
+      <div id="hud-phase">PHASE 1/6</div>
+      <div id="hud-title">—</div>
+      <div id="hud-body"></div>
+      <div id="hud-ai"></div>
+      <div id="hud-coach"></div>
+    </div>
+
+    <!-- EFF HUD -->
+    <div id="eff-hud">
+      <div id="eff-lbl">EFFICIENCY</div>
+      <div id="eff-val" class="sv-y">--%</div>
+      <div id="eff-bar-bg"><div id="eff-bar" style="width:0%"></div></div>
+    </div>
+
+    <!-- HEATMAP LEGEND -->
+    <div id="heatmap-hud">
+      <div class="hm-row" onclick="toggleHmLayer('trench')">
+        <div class="hm-swatch" style="background:rgba(74,158,255,0.7)"></div>
+        <div class="hm-label">TRENCH USE</div>
+        <div class="hm-pct" id="hm-trench-pct">--%</div>
+      </div>
+      <div class="hm-row" onclick="toggleHmLayer('bump')">
+        <div class="hm-swatch" style="background:rgba(255,122,32,0.7)"></div>
+        <div class="hm-label">BUMP USE</div>
+        <div class="hm-pct" id="hm-bump-pct">--%</div>
+      </div>
+      <div class="hm-row" onclick="toggleHmLayer('score')">
+        <div class="hm-swatch" style="background:rgba(0,232,122,0.7)"></div>
+        <div class="hm-label">SCORING FREQ</div>
+        <div class="hm-pct" id="hm-score-pct">--%</div>
+      </div>
+      <div class="hm-row" onclick="toggleHmLayer('defense')">
+        <div class="hm-swatch" style="background:rgba(232,64,64,0.7)"></div>
+        <div class="hm-label">DEFENSE ZONE</div>
+        <div class="hm-pct" id="hm-def-pct">--%</div>
+      </div>
+    </div>
+
+    <!-- EDITOR PANEL -->
+    <div id="editor-panel">
+      <div id="ed-title">FIELD EDITOR MODE</div>
+      <div class="ed-row">
+        <div class="ed-lbl">ZONE TYPE</div>
+        <div class="zone-palette" id="zone-palette">
+          <button class="zone-btn active" data-zone="trench" onclick="selectZone(this,'trench')">TRENCH</button>
+          <button class="zone-btn" data-zone="bump" onclick="selectZone(this,'bump')">BUMP</button>
+          <button class="zone-btn" data-zone="scoring" onclick="selectZone(this,'scoring')">SCORING</button>
+          <button class="zone-btn" data-zone="reset" onclick="selectZone(this,'reset')">RESET PT</button>
+          <button class="zone-btn" data-zone="defense" onclick="selectZone(this,'defense')">DEFENSE</button>
+          <button class="zone-btn" data-zone="custom" onclick="selectZone(this,'custom')">CUSTOM</button>
+        </div>
+      </div>
+      <div class="ed-row" id="custom-name-row" style="display:none">
+        <div class="ed-lbl">NAME</div>
+        <input class="ed-input" id="custom-zone-name" placeholder="Zone name...">
+      </div>
+      <div id="ed-coords">TAP FIELD TO PLACE — DRAG FOR AREA</div>
+      <div id="ed-zones-list"></div>
+      <div style="display:flex;gap:5px;margin-top:8px">
+        <button class="cbtn" onclick="clearLastZone()">UNDO LAST</button>
+        <button class="cbtn" onclick="clearAllZones()">CLEAR ALL</button>
+        <button class="cbtn go" onclick="exportZones()">EXPORT JSON</button>
+      </div>
+    </div>
+
+    <!-- LEGEND -->
+    <div id="legend">
+      <div class="leg"><div class="lgd" style="background:var(--y)"></div>YOUR BOT</div>
+      <div class="leg"><div class="lgd" style="background:rgba(255,255,255,0.25);border:0.5px solid #445"></div>OPTIMAL PATH</div>
+      <div class="leg"><div class="lgd" style="background:var(--green)"></div>GOOD EVENT</div>
+      <div class="leg"><div class="lgd" style="background:var(--red)"></div>ERROR / ISSUE</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right">
+    <div id="tabs">
+      <div class="tab active" onclick="switchTab('walkthrough')">WALKTHROUGH</div>
+      <div class="tab" onclick="switchTab('tba')">TBA DATA</div>
+      <div class="tab" onclick="switchTab('epa')">EPA / %</div>
+    </div>
+
+    <!-- WALKTHROUGH TAB -->
+    <div id="wt-panel">
+      <div id="stats-strip">
+        <div class="stat-cell">
+          <div class="stat-name">EFFICIENCY</div>
+          <div class="stat-val sv-y" id="s-eff">--%</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-name">TIME LOST</div>
+          <div class="stat-val sv-r" id="s-time">--s</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-name">CYCLES</div>
+          <div class="stat-val sv-g" id="s-cyc">--</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-name">COACH NOTES</div>
+          <div class="stat-val sv-b" id="s-notes">0</div>
+        </div>
+      </div>
+      <div id="timeline"></div>
+    </div>
+
+    <!-- TBA TAB -->
+    <div id="tba-panel">
+      <div id="tba-status">ENTER TEAM + EVENT KEY TO FETCH DATA</div>
+      <div class="tba-input-row">
+        <input class="tba-input" id="tba-team" placeholder="Team # (e.g. 4169)">
+        <input class="tba-input" id="tba-event" placeholder="Event key (e.g. 2025txhou)">
+        <button class="tba-btn" onclick="fetchTBA()">FETCH</button>
+      </div>
+      <div class="tba-input-row">
+        <input class="tba-input" id="tba-key" placeholder="TBA API Key (optional for full data)" style="font-size:8px">
+      </div>
+      <div id="tba-results"></div>
+    </div>
+
+    <!-- EPA TAB -->
+    <div id="epa-panel">
+      <input id="epa-team-input" placeholder="Team # to analyze EPA...">
+      <div id="epa-results"></div>
+    </div>
+
+    <!-- COACH ZONE (always visible) -->
+    <div id="coach-zone">
+      <div id="coach-lbl">COACH CORRECTION</div>
+      <div id="coach-for"></div>
+      <textarea id="coach-input" placeholder="What should the bot have done? e.g. 'defense was at bump, should have taken trench'"></textarea>
+      <div id="coach-btns">
+        <button class="cbtn" onclick="clearCoach()">CLEAR</button>
+        <button class="cbtn go" onclick="submitCorrection()">APPLY ↵</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div id="bottombar">
+  <button class="bbtn" onclick="prevStep()">◀</button>
+  <button class="bbtn accent" id="play-btn" onclick="playPause()">▶ PLAY</button>
+  <button class="bbtn" onclick="nextStep()">▶</button>
+  <div id="prog-wrap">
+    <div id="prog-lbl">PHASE 0 / 0</div>
+    <div id="prog-bg"><div id="prog-fill"></div></div>
+  </div>
+  <button class="bbtn" onclick="resetView()">↺</button>
+  <button class="bbtn" id="cam-btn" onclick="toggleCam()" style="font-size:8px">CAM: CIN</button>
+</div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-bg" onclick="modalBgClick(event)">
+  <div id="modal">
+    <h2>LOAD MATCH / FIELD DATA</h2>
+
+    <div class="file-drop" id="field-drop" ondragover="fileDragOver(event)" ondragleave="fileDragLeave(event)" ondrop="fileDrop(event,'field')" onclick="document.getElementById('field-file-input').click()">
+      <input type="file" id="field-file-input" style="display:none" accept="image/*,.svg,.json,.step,.stp" onchange="fileSelected(event,'field')">
+      <div class="file-drop-lbl">📁 DROP FIELD FILE HERE</div>
+      <div class="file-drop-sub">PNG · JPG · SVG · JSON · STEP — drag or tap</div>
+      <div id="field-file-name" style="font-size:8px;color:var(--y);margin-top:4px"></div>
+    </div>
+
+    <div class="mrow">
+      <label>MATCH ID / TEAM</label>
+      <input type="text" id="m-id" placeholder="e.g. Qual 14 — Team 4169">
+    </div>
+    <div class="mrow">
+      <label>ALLIANCE</label>
+      <select id="m-alliance">
+        <option value="red">RED ALLIANCE</option>
+        <option value="blue">BLUE ALLIANCE</option>
+      </select>
+    </div>
+    <div class="mrow">
+      <label>FIELD REAL SIZE (meters)</label>
+      <div style="display:flex;gap:6px">
+        <input type="number" id="m-fw" placeholder="Width (16.46m)" value="16.46" style="flex:1">
+        <input type="number" id="m-fh" placeholder="Height (8.23m)" value="8.23" style="flex:1">
+      </div>
+    </div>
+    <div class="mrow">
+      <label>MATCH PHASES (TITLE | Description | eff% | AI note)</label>
+      <textarea id="m-phases" placeholder="AUTO INTAKE | Collected 2 pieces cleanly | 95 | Perfect heading, no reset needed&#10;TRENCH | Defense bot at bump, took trench | 74 | Right call, defense occupied bump&#10;SCORING | Steep entry, wall contact | 52 | Reset at midfield, approach 45deg&#10;HIGH GOAL | Bad angle, missed | 44 | Drive to corner for clear shot&#10;RETURN | Direct center path | 90 | Optimal, center clear&#10;CLIMB | Level 3, 12s early | 96 | Pre-aligned heading, excellent read"></textarea>
+    </div>
+    <div id="modal-btns">
+      <button class="cbtn" onclick="closeModal()">CANCEL</button>
+      <button class="cbtn go" onclick="loadMatch()">LOAD MATCH ↵</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════
+// REBUILT™ 3D ENGINE  |  Black & Yellow  |  Team 4169
+// Custom perspective renderer — zero external dependencies
+// ═══════════════════════════════════════════════════════════
+
+// ── Canvas & resize ──
+const canvas = document.getElementById('field-canvas');
+const ctx    = canvas.getContext('2d');
+const wrap   = document.getElementById('canvas-wrap');
+let W = 0, H = 0;
+function resize(){
+  const r = wrap.getBoundingClientRect();
+  W = canvas.width  = r.width;
+  H = canvas.height = r.height;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── Camera ──
+const cam = {
+  x:0, y:18, z:14,
+  tx:0, ty:0, tz:0,
+  fov:55, cinematic:true
+};
+const camTgt = {x:0,y:18,z:14,tx:0,ty:0,tz:0};
+let camKf = null;
+
+function animCam(to, dur, cb){
+  camKf = {
+    s:{x:camTgt.x,y:camTgt.y,z:camTgt.z,tx:camTgt.tx,ty:camTgt.ty,tz:camTgt.tz},
+    t:to, t0:performance.now(), dur, cb
+  };
+}
+
+// ── Projection ──
+function proj(x,y,z){
+  // Build look-at basis
+  const cdx=cam.x-cam.tx, cdy=cam.y-cam.ty, cdz=cam.z-cam.tz;
+  const fl=Math.sqrt(cdx*cdx+cdy*cdy+cdz*cdz)||1;
+  const fx=-cdx/fl, fy=-cdy/fl, fz=-cdz/fl;
+  let rx=fy*0-fz*1, ry=fz*0-fx*0, rz=fx*1-fy*0;
+  const rl=Math.sqrt(rx*rx+ry*ry+rz*rz)||1;
+  rx/=rl; ry/=rl; rz/=rl;
+  const ux=ry*fz-rz*fy, uy=rz*fx-rx*fz, uz=rx*fy-ry*fx;
+  const dx=x-cam.x, dy=y-cam.y, dz=z-cam.z;
+  const ex=rx*dx+ry*dy+rz*dz;
+  const ey=ux*dx+uy*dy+uz*dz;
+  const ez=fx*dx+fy*dy+fz*dz;
+  if(ez>=-0.1) return null;
+  const f=(H/2)/Math.tan(cam.fov*Math.PI/360);
+  return {x:W/2+(ex/-ez)*f, y:H/2-(ey/-ez)*f, d:-ez};
+}
+
+function lerp(a,b,t){return a+(b-a)*t}
+function eio(t){return t<.5?2*t*t:-1+(4-2*t)*t}
+
+// ── Robot anim ──
+const ra = {fx:0,fz:0,fgx:0,fgz:0,tx:0,tz:0,tgx:0,tgz:0,t:1,dur:900,t0:0,cx:-8,cz:0,cgx:-8,cgz:0};
+function animBot(tx,tz,tgx,tgz,dur){
+  ra.fx=ra.cx; ra.fz=ra.cz; ra.fgx=ra.cgx; ra.fgz=ra.cgz;
+  ra.tx=tx; ra.tz=tz; ra.tgx=tgx; ra.tgz=tgz;
+  ra.dur=dur||900; ra.t0=performance.now(); ra.t=0;
+}
+
+// ── State ──
+let steps = [];
+let currentStep = -1;
+let corrections = {};
+let playing = false;
+let playTimer = null;
+let trailPts = [], ghostPts = [], markers = [];
+let fieldImg = null;
+let fieldRealW = 16.46, fieldRealH = 8.23; // meters
+let fieldScale = 1; // pixels per meter in 3D world
+const FW = 20, FD = 10; // world units
+
+// Zone editor
+let editorActive = false;
+let activeZoneType = 'trench';
+let placedZones = [];
+let editDragStart = null;
+let editDragCurrent = null;
+
+// Heatmap
+let heatmapVisible = false;
+let hmLayers = {trench:true, bump:true, score:true, defense:true};
+let epaData = {}; // {trench:%, bump:%, scoring:%, defense:%}
+
+// ── Field image handling ──
+function setFieldImage(img){
+  fieldImg = img;
+  showToast('FIELD IMAGE LOADED');
+}
+
+// ── 3D Field drawing ──
+function drawFieldBase(){
+  const corners = [
+    [-FW/2,0,-FD/2],[FW/2,0,-FD/2],[FW/2,0,FD/2],[-FW/2,0,FD/2]
+  ];
+  const pts = corners.map(([x,y,z])=>proj(x,y,z));
+  if(pts.some(p=>!p)) return;
+
+  // If we have a field image, draw it projected onto the floor plane
+  if(fieldImg){
+    ctx.save();
+    // Simple 4-point texture mapping via canvas transform (top and bottom segments)
+    const [tl,tr,br,bl] = pts;
+    // We'll draw the image by finding the bounding rect and clipping
+    const minX = Math.min(tl.x,tr.x,br.x,bl.x);
+    const maxX = Math.max(tl.x,tr.x,br.x,bl.x);
+    const minY = Math.min(tl.y,tr.y,br.y,bl.y);
+    const maxY = Math.max(tl.y,tr.y,br.y,bl.y);
+
+    // Clip to field quad
+    ctx.beginPath();
+    ctx.moveTo(tl.x,tl.y); ctx.lineTo(tr.x,tr.y);
+    ctx.lineTo(br.x,br.y); ctx.lineTo(bl.x,bl.y);
+    ctx.closePath(); ctx.clip();
+    ctx.drawImage(fieldImg, minX, minY, maxX-minX, maxY-minY);
+    ctx.restore();
+
+    // Overlay tint
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(tl.x,tl.y); ctx.lineTo(tr.x,tr.y);
+    ctx.lineTo(br.x,br.y); ctx.lineTo(bl.x,bl.y);
+    ctx.closePath();
+    ctx.fillStyle='rgba(5,7,9,0.45)';
+    ctx.fill();
+    ctx.restore();
+  } else {
+    // Draw synthetic field
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x,pts[0].y);
+    pts.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));
+    ctx.closePath();
+    ctx.fillStyle='#060d14'; ctx.fill();
+    ctx.strokeStyle='rgba(245,200,0,0.2)'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=.5;
+  for(let i=-FW/2;i<=FW/2;i+=2){
+    const a=proj(i,0,-FD/2),b=proj(i,0,FD/2);
+    if(a&&b){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+  }
+  for(let j=-FD/2;j<=FD/2;j+=2){
+    const a=proj(-FW/2,0,j),b=proj(FW/2,0,j);
+    if(a&&b){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+  }
+
+  // Alliance zones
+  if(!fieldImg){
+    drawFloorRect(-FW/2,-FD/2,3.5,FD,'rgba(232,64,64,0.1)');
+    drawFloorRect(FW/2-3.5,-FD/2,3.5,FD,'rgba(74,158,255,0.1)');
+    drawFloorRect(-FW/2+0.4,-FD/2+0.8,3,FD-1.6,null,'rgba(232,64,64,0.3)');
+    drawFloorRect(FW/2-3.4,-FD/2+0.8,3,FD-1.6,null,'rgba(74,158,255,0.3)');
+    // Trench lines
+    drawFloorLine(-FW/2+3.5,0.01,-FD/2+2, FW/2-3.5,0.01,-FD/2+2,'rgba(255,255,255,0.1)',[4,4]);
+    drawFloorLine(-FW/2+3.5,0.01, FD/2-2,  FW/2-3.5,0.01, FD/2-2,'rgba(255,255,255,0.1)',[4,4]);
+    // Center circle
+    drawFloorCircle(0,0,2,'rgba(245,200,0,0.08)');
+    // Field text
+    drawFloorTxt(-FW/2+1.75,-FD/2+1,'RED');
+    drawFloorTxt(FW/2-1.75,-FD/2+1,'BLUE');
+    drawFloorTxt(0,-FD/2+1.8,'TRENCH');
+    drawFloorTxt(0,FD/2-1.8,'TRENCH');
+  }
+}
+
+function drawFloorRect(wx,wz,ww,wd,fill,stroke){
+  const tl=proj(wx,0.02,wz),tr=proj(wx+ww,0.02,wz);
+  const br=proj(wx+ww,0.02,wz+wd),bl=proj(wx,0.02,wz+wd);
+  if(!tl||!tr||!br||!bl) return;
+  ctx.beginPath();
+  ctx.moveTo(tl.x,tl.y);ctx.lineTo(tr.x,tr.y);ctx.lineTo(br.x,br.y);ctx.lineTo(bl.x,bl.y);
+  ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill()}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke()}
+}
+
+function drawFloorLine(x1,y1,z1,x2,y2,z2,color,dash){
+  const a=proj(x1,y1,z1),b=proj(x2,y2,z2);
+  if(!a||!b) return;
+  ctx.beginPath();
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.strokeStyle=color; ctx.lineWidth=1;
+  ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawFloorCircle(cx,cz,r,color){
+  const segs=24; ctx.beginPath(); let first=true;
+  for(let i=0;i<=segs;i++){
+    const a=(i/segs)*Math.PI*2;
+    const p=proj(cx+Math.cos(a)*r,0.02,cz+Math.sin(a)*r);
+    if(!p) continue;
+    first?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); first=false;
+  }
+  ctx.strokeStyle=color; ctx.lineWidth=1; ctx.stroke();
+}
+
+function drawFloorTxt(wx,wz,txt){
+  const p=proj(wx,0.1,wz); if(!p) return;
+  ctx.fillStyle='rgba(255,255,255,0.1)';
+  ctx.font='8px Courier New'; ctx.textAlign='center';
+  ctx.fillText(txt,p.x,p.y);
+}
+
+// ── Placed Zones ──
+const ZONE_COLORS = {
+  trench:  'rgba(74,158,255,0.35)',
+  bump:    'rgba(255,122,32,0.35)',
+  scoring: 'rgba(0,232,122,0.35)',
+  reset:   'rgba(245,200,0,0.5)',
+  defense: 'rgba(232,64,64,0.35)',
+  custom:  'rgba(200,100,255,0.35)'
+};
+const ZONE_STROKE = {
+  trench:'rgba(74,158,255,0.8)', bump:'rgba(255,122,32,0.8)',
+  scoring:'rgba(0,232,122,0.8)', reset:'rgba(245,200,0,0.9)',
+  defense:'rgba(232,64,64,0.8)', custom:'rgba(200,100,255,0.8)'
+};
+
+function worldFromPercent(nx,nz){
+  return {x:(nx-0.5)*FW, z:(nz-0.5)*FD};
+}
+
+function drawPlacedZones(){
+  placedZones.forEach(z=>{
+    if(z.type==='point'){
+      // Reset point — draw a circle + label
+      const p=proj(z.x,0.05,z.z); if(!p) return;
+      const r=Math.max(5,12-p.d*0.2);
+      ctx.strokeStyle=ZONE_STROKE[z.ztype]||ZONE_STROKE.custom;
+      ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle=(ZONE_STROKE[z.ztype]||ZONE_STROKE.custom);
+      ctx.font=`bold ${Math.max(7,9-p.d*0.05)}px Courier New`;
+      ctx.textAlign='center';
+      ctx.fillText(z.name||z.ztype.toUpperCase(),p.x,p.y-r-3);
+    } else {
+      // Rect zone
+      drawFloorRect(z.x,z.z,z.w,z.d,
+        ZONE_COLORS[z.ztype]||ZONE_COLORS.custom,
+        ZONE_STROKE[z.ztype]||ZONE_STROKE.custom
+      );
+      const cx=z.x+z.w/2, cz=z.z+z.d/2;
+      const p=proj(cx,0.1,cz); if(!p) return;
+      ctx.fillStyle=ZONE_STROKE[z.ztype]||ZONE_STROKE.custom;
+      ctx.font=`bold 8px Courier New`; ctx.textAlign='center';
+      ctx.fillText(z.name||z.ztype.toUpperCase(),p.x,p.y);
+    }
+  });
+}
+
+// ── Heatmap ──
+function drawHeatmap(){
+  if(!heatmapVisible) return;
+  // Draw EPA-driven heatmap blobs at zone locations
+  const zones = {};
+  placedZones.forEach(z=>{ zones[z.ztype]=zones[z.ztype]||[]; zones[z.ztype].push(z); });
+
+  const drawBlob=(wx,wz,size,color,pct)=>{
+    const p=proj(wx,0.1,wz); if(!p) return;
+    const r=Math.max(15,40*(pct/100))*(size||1);
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r);
+    g.addColorStop(0,color.replace(')',`,${pct/100*0.55})`).replace('rgb','rgba'));
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill();
+  };
+
+  if(hmLayers.trench && epaData.trench!=null){
+    const trenchZones = zones.trench||[{x:0,z:-FD/2+2,w:0,d:0,type:'point'}];
+    trenchZones.forEach(z=>{
+      const cx=z.w?z.x+z.w/2:z.x, cz=z.d?z.z+z.d/2:z.z;
+      drawBlob(cx,cz,1.2,'rgba(74,158,255)',epaData.trench||60);
+    });
+    if(!trenchZones.length) drawBlob(0,-FD/2+2.5,1,'rgba(74,158,255)',epaData.trench||60);
+  }
+  if(hmLayers.bump && epaData.bump!=null){
+    const bumpZones = zones.bump||[];
+    bumpZones.forEach(z=>{
+      const cx=z.w?z.x+z.w/2:z.x, cz=z.d?z.z+z.d/2:z.z;
+      drawBlob(cx,cz,1,'rgba(255,122,32)',epaData.bump||40);
+    });
+    if(!bumpZones.length) drawBlob(0,FD/2-2.5,1,'rgba(255,122,32)',epaData.bump||40);
+  }
+  if(hmLayers.score && epaData.scoring!=null){
+    drawBlob(FW/2-2,0,1.4,'rgba(0,232,122)',epaData.scoring||75);
+    drawBlob(-FW/2+2,0,1.4,'rgba(0,232,122)',epaData.scoring||75);
+  }
+  if(hmLayers.defense && epaData.defense!=null){
+    drawBlob(0,0,1.2,'rgba(232,64,64)',epaData.defense||30);
+  }
+}
+
+// ── Trails ──
+function drawTrail(pts,color,dash){
+  if(pts.length<2) return;
+  for(let i=1;i<pts.length;i++){
+    const a=proj(pts[i-1].x,0.06,pts[i-1].z);
+    const b=proj(pts[i].x,0.06,pts[i].z);
+    if(!a||!b) continue;
+    const alpha=i/pts.length;
+    if(dash) ctx.setLineDash([dash,dash]); else ctx.setLineDash([]);
+    ctx.strokeStyle=color.replace('1)',`${alpha*0.75})`); // expects rgba(...,1)
+    ctx.lineWidth=dash?1:2;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+// ── Markers ──
+function drawMarkers(){
+  const now=performance.now();
+  markers.forEach(m=>{
+    const p=proj(m.x,0.1,m.z); if(!p) return;
+    const r=Math.max(7,14-p.d*0.2);
+    const pulse=(now%2000)/2000;
+    ctx.save();
+    ctx.globalAlpha=(1-pulse)*0.4;
+    ctx.strokeStyle=m.color; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,r+pulse*r*2,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle=m.color; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle=m.color;
+    ctx.font=`bold ${Math.max(7,9-p.d*0.05)}px Courier New`;
+    ctx.textAlign='center';
+    ctx.fillText(m.label,p.x,p.y-r-3);
+  });
+}
+
+// ── Optimal arrow ──
+function drawOptArrow(x1,z1,x2,z2){
+  const a=proj(x1,0.1,z1),b=proj(x2,0.1,z2);
+  if(!a||!b) return;
+  ctx.save(); ctx.globalAlpha=0.5;
+  ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=1.5;
+  ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  ctx.setLineDash([]);
+  const ang=Math.atan2(b.y-a.y,b.x-a.x);
+  ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(b.x,b.y);
+  ctx.lineTo(b.x-9*Math.cos(ang-.4),b.y-9*Math.sin(ang-.4));
+  ctx.lineTo(b.x-9*Math.cos(ang+.4),b.y-9*Math.sin(ang+.4));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+// ── Robot ──
+function drawBot(wx,wz,ghost){
+  const base=proj(wx,0.01,wz),top=proj(wx,0.55,wz);
+  if(!base) return;
+  const sz=Math.max(8,Math.min(26,900/base.d));
+
+  if(ghost){
+    ctx.save(); ctx.globalAlpha=0.3;
+    ctx.strokeStyle='#aaa'; ctx.lineWidth=1.5; ctx.setLineDash([3,3]);
+    ctx.strokeRect(base.x-sz/2,base.y-sz*.75,sz,sz*.75);
+    ctx.setLineDash([]);
+    ctx.font=`${sz*.35}px Courier New`;
+    ctx.fillStyle='#aaa'; ctx.textAlign='center';
+    ctx.fillText('OPT',base.x,base.y-sz*.32);
+    ctx.restore(); return;
+  }
+
+  // Shadow
+  ctx.save(); ctx.globalAlpha=.25;
+  ctx.fillStyle='rgba(0,0,0,0.5)';
+  ctx.beginPath(); ctx.ellipse(base.x+sz*.08,base.y+sz*.08,sz*.5,sz*.2,0,0,Math.PI*2);
+  ctx.fill(); ctx.restore();
+
+  // Glow
+  const grad=ctx.createRadialGradient(base.x,base.y,sz*.3,base.x,base.y,sz*2);
+  grad.addColorStop(0,'rgba(245,200,0,0.2)');
+  grad.addColorStop(1,'rgba(245,200,0,0)');
+  ctx.fillStyle=grad; ctx.beginPath();
+  ctx.arc(base.x,base.y,sz*2,0,Math.PI*2); ctx.fill();
+
+  // Body
+  const bx=base.x-sz/2, by=base.y-sz*.75, bw=sz, bh=sz*.75;
+  ctx.fillStyle='rgba(245,200,0,0.1)';
+  ctx.strokeStyle='#f5c800'; ctx.lineWidth=1.5;
+  if(ctx.roundRect) ctx.roundRect(bx,by,bw,bh,2);
+  else ctx.rect(bx,by,bw,bh);
+  ctx.fill(); ctx.stroke();
+
+  // Top face
+  if(top&&top.y<base.y-2){
+    ctx.fillStyle='rgba(245,200,0,0.07)';
+    ctx.strokeStyle='rgba(245,200,0,0.35)'; ctx.lineWidth=.5;
+    ctx.beginPath();
+    ctx.moveTo(base.x-sz/2,by);
+    ctx.lineTo(top.x-sz/2+1,top.y);
+    ctx.lineTo(top.x+sz/2-1,top.y);
+    ctx.lineTo(base.x+sz/2,by);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+  // Label
+  ctx.fillStyle='#f5c800';
+  ctx.font=`bold ${Math.max(6,sz*.38)}px Courier New`;
+  ctx.textAlign='center';
+  ctx.fillText('BOT',base.x,by+bh*.68);
+
+  // Heading triangle
+  ctx.fillStyle='rgba(245,200,0,0.9)';
+  ctx.beginPath();
+  ctx.moveTo(base.x,by-3); ctx.lineTo(base.x-3,by); ctx.lineTo(base.x+3,by);
+  ctx.closePath(); ctx.fill();
+}
+
+// ── Editor drag preview ──
+function drawEditorPreview(){
+  if(!editorActive||!editDragStart||!editDragCurrent) return;
+  const p1=screenToField(editDragStart.sx,editDragStart.sy);
+  const p2=screenToField(editDragCurrent.sx,editDragCurrent.sy);
+  if(!p1||!p2) return;
+  const wx=Math.min(p1.x,p2.x), wz=Math.min(p1.z,p2.z);
+  const ww=Math.abs(p2.x-p1.x), wd=Math.abs(p2.z-p1.z);
+  drawFloorRect(wx,wz,ww,wd,
+    (ZONE_COLORS[activeZoneType]||ZONE_COLORS.custom).replace('.35','.2'),
+    ZONE_STROKE[activeZoneType]||ZONE_STROKE.custom
+  );
+}
+
+// ── Main loop ──
+function loop(ts){
+  ctx.clearRect(0,0,W,H);
+
+  // Camera lerp
+  const lf=.08;
+  cam.x=lerp(cam.x,camTgt.x,lf); cam.y=lerp(cam.y,camTgt.y,lf); cam.z=lerp(cam.z,camTgt.z,lf);
+  cam.tx=lerp(cam.tx,camTgt.tx,lf); cam.ty=lerp(cam.ty,camTgt.ty,lf); cam.tz=lerp(cam.tz,camTgt.tz,lf);
+
+  if(camKf){
+    const elapsed=ts-camKf.t0, t=Math.min(1,elapsed/camKf.dur), e=eio(t);
+    const s=camKf.s, tg=camKf.t;
+    camTgt.x=lerp(s.x,tg.x,e); camTgt.y=lerp(s.y,tg.y,e); camTgt.z=lerp(s.z,tg.z,e);
+    camTgt.tx=lerp(s.tx,tg.tx,e); camTgt.ty=lerp(s.ty,tg.ty,e); camTgt.tz=lerp(s.tz,tg.tz,e);
+    if(t>=1){ if(camKf.cb) camKf.cb(); camKf=null; }
+  }
+
+  // Robot lerp
+  if(ra.t<1){
+    const el=ts-ra.t0; ra.t=Math.min(1,el/ra.dur);
+    const e2=eio(ra.t);
+    ra.cx=lerp(ra.fx,ra.tx,e2); ra.cz=lerp(ra.fz,ra.tz,e2);
+    ra.cgx=lerp(ra.fgx,ra.tgx,e2); ra.cgz=lerp(ra.fgz,ra.tgz,e2);
+  }
+
+  drawFieldBase();
+  drawPlacedZones();
+  drawHeatmap();
+  drawEditorPreview();
+
+  // Ghost trail
+  if(ghostPts.length>1) drawTrail(ghostPts,'rgba(180,180,200,1)',4);
+  // Robot trail
+  if(trailPts.length>1) drawTrail(trailPts,'rgba(245,200,0,1)',null);
+
+  // Optimal arrow
+  if(currentStep>=0&&steps[currentStep]){
+    const s=steps[currentStep];
+    if(Math.abs(ra.cx-ra.cgx)>.3||Math.abs(ra.cz-ra.cgz)>.3)
+      drawOptArrow(ra.cx,ra.cz,ra.cgx,ra.cgz);
+  }
+
+  // Ghost bot
+  if(currentStep>=0&&steps[currentStep]){
+    const s=steps[currentStep];
+    if(Math.abs(ra.cx-ra.cgx)>.3||Math.abs(ra.cz-ra.cgz)>.3)
+      drawBot(ra.cgx,ra.cgz,true);
+  }
+
+  drawMarkers();
+  drawBot(ra.cx,ra.cz,false);
+
+  requestAnimationFrame(loop);
+}
+
+// ── Step system ──
+const DEMO_STEPS = [
+  {
+    title:'AUTO INTAKE',
+    body:'Collected 2 game pieces in 2.1s. Robot facing correct direction — no heading reset wasted time here.',
+    aiNote:'Perfect setup. Heading pre-aligned with scoring zone. This should be the standard starting routine.',
+    efficiency:95,
+    robot:{x:-7.5,z:0}, ghost:{x:-7.5,z:0},
+    cam:{x:-7,y:5,z:7,tx:-7.5,ty:0,tz:0},
+    events:[{x:-7.5,z:0,label:'✓ INTAKE',color:'#00e87a'}]
+  },
+  {
+    title:'TRENCH DECISION',
+    body:'Defense bot parked at bump entrance. Trench (top) was completely open. Bot chose bump anyway — lost ~1.4s on extra distance and one contact.',
+    aiNote:'Trench was clear — this is the path the ghost shows. Better pre-match scouting of defense bot tendencies would catch this. Consider calling trench/bump at start of teleop.',
+    efficiency:54,
+    robot:{x:-1,z:3.2}, ghost:{x:-1,z:-2.8},
+    cam:{x:0,y:9,z:10,tx:-1,ty:0,tz:.5},
+    events:[
+      {x:-1,z:3.2,label:'✗ BUMP',color:'#e84040'},
+      {x:-1,z:-2.8,label:'↑ TRENCH OPEN',color:'#00e87a'},
+      {x:2,z:3.5,label:'DEFENSE HERE',color:'#ff7a20'}
+    ]
+  },
+  {
+    title:'SCORING APPROACH',
+    body:'80° entry angle — too steep. Robot skimmed wall, lost intake control. Optimal: 45° approach from center. Reset heading at midfield.',
+    aiNote:'RESET POINT IDENTIFIED: x=0 (midfield) is the correct heading reset location. 45° approach adds 0.3s but prevents contact. Net gain: +1.2s.',
+    efficiency:52,
+    robot:{x:6.5,z:2.5}, ghost:{x:6.5,z:.5},
+    cam:{x:5,y:4,z:6,tx:7,ty:0,tz:1},
+    events:[
+      {x:6.5,z:2.5,label:'✗ CONTACT',color:'#e84040'},
+      {x:6.5,z:.5,label:'↑ OPTIMAL ANGLE',color:'#00e87a'},
+      {x:0,z:0,label:'⟲ RESET PT',color:'#4a9eff'}
+    ]
+  },
+  {
+    title:'HIGH GOAL MISS',
+    body:'Shot from (7.5, z=2). Miss — axis offset. Recovered to mid goal. Drive to far corner (8.5, z=-1) for 5° error margin vs 22° here.',
+    aiNote:'High goal requires z ≤ 0 approach. Current position puts shooter 22° off-axis. Corner position gives 5° margin. Worth the 0.4s route addition.',
+    efficiency:44,
+    robot:{x:7.5,z:2}, ghost:{x:8,z:-1},
+    cam:{x:6,y:3.5,z:5,tx:8,ty:0,tz:0},
+    events:[
+      {x:7.5,z:2,label:'✗ MISS',color:'#e84040'},
+      {x:8,z:-1,label:'✓ BETTER POS',color:'#00e87a'}
+    ]
+  },
+  {
+    title:'RETURN CYCLE',
+    body:'Direct center return. No traffic at this match phase. Cycle time: 4.2s — optimal.',
+    aiNote:'Best possible return route. Center was clear at T-90s. This decision was correct. Note for future: center can be contested in final 30s.',
+    efficiency:90,
+    robot:{x:-7,z:0}, ghost:{x:-7,z:0},
+    cam:{x:-5,y:7,z:9,tx:-2,ty:0,tz:0},
+    events:[{x:-7,z:0,label:'✓ CYCLE',color:'#00e87a'}]
+  },
+  {
+    title:'ENDGAME CLIMB',
+    body:'Reached climb zone with 12s remaining — 3s early. Level 3 achieved. Robot already facing bar, no reset needed. Excellent.',
+    aiNote:'Gold standard endgame execution. 12s allowed full L3 attempt without rushing. Pre-aligned heading shows driver spatial awareness. Replicate every match.',
+    efficiency:96,
+    robot:{x:0,z:0}, ghost:{x:0,z:0},
+    cam:{x:1,y:5,z:7,tx:0,ty:1,tz:0},
+    events:[{x:0,z:0,label:'✓ LEVEL 3',color:'#f5c800'}]
+  }
+];
+
+steps = [...DEMO_STEPS];
+
+function goToStep(idx){
+  if(idx<0||idx>=steps.length) return;
+  const s=steps[idx]; currentStep=idx;
+  trailPts=steps.slice(0,idx+1).map(st=>({x:st.robot.x,z:st.robot.z}));
+  ghostPts=steps.slice(0,idx+1).map(st=>({x:st.ghost.x,z:st.ghost.z}));
+  markers=(s.events||[]).map(ev=>({x:ev.x,z:ev.z,label:ev.label,color:ev.color}));
+  animBot(s.robot.x,s.robot.z,s.ghost.x,s.ghost.z,900);
+
+  if(cam.cinematic){
+    hideHUD();
+    const prev={x:camTgt.x,y:camTgt.y,z:camTgt.z,tx:camTgt.tx,ty:camTgt.ty,tz:camTgt.tz};
+    animCam({x:0,y:20,z:15,tx:0,ty:0,tz:0},400,()=>{
+      animCam({x:s.cam.x,y:s.cam.y,z:s.cam.z,tx:s.cam.tx,ty:s.cam.ty,tz:s.cam.tz},850,()=>{
+        showHUD(s,idx);
+      });
+    });
+  } else { showHUD(s,idx); }
+
+  updateTimeline(); updateBottomBar(); updateStats();
+  const cf=document.getElementById('coach-for');
+  cf.style.display='block'; cf.textContent=`↳ CORRECTING: ${s.title}`;
+}
+
+function showHUD(s,idx){
+  const hud=document.getElementById('phase-hud');
+  hud.classList.remove('hidden');
+  document.getElementById('hud-phase').textContent=`PHASE ${idx+1} / ${steps.length}`;
+  document.getElementById('hud-title').textContent=s.title;
+  const c=corrections[idx];
+  document.getElementById('hud-body').textContent=s.body;
+  const ai=document.getElementById('hud-ai');
+  const ch=document.getElementById('hud-coach');
+  if(c){
+    ai.style.display='none';
+    ch.style.display='block';
+    ch.textContent='📋 COACH: '+c.text;
+  } else if(s.aiNote){
+    ai.style.display='block'; ai.textContent='⚡ AI: '+s.aiNote;
+    ch.style.display='none';
+  } else { ai.style.display='none'; ch.style.display='none'; }
+
+  const eff=s.efficiency;
+  document.getElementById('eff-val').textContent=eff+'%';
+  document.getElementById('eff-val').className='stat-val '+(eff>=80?'sv-g':eff>=60?'sv-y':'sv-r');
+  document.getElementById('eff-bar').style.width=eff+'%';
+  document.getElementById('eff-bar').style.background=eff>=80?'#00e87a':eff>=60?'#f5c800':'#e84040';
+}
+
+function hideHUD(){ document.getElementById('phase-hud').classList.add('hidden'); }
+
+function updateTimeline(){
+  const tl=document.getElementById('timeline'); tl.innerHTML='';
+  steps.forEach((s,i)=>{
+    const c=corrections[i], eff=s.efficiency;
+    const bc=eff>=80?'bg-g':eff>=60?'bg-y':'bg-r';
+    const bl=eff>=80?'✓':'✗';
+    const card=document.createElement('div');
+    card.className='step-card'+(i===currentStep?' active':'')+(c?' corrected':'');
+    card.innerHTML=`
+      <div class="sc-num">PHASE ${i+1}</div>
+      <div class="sc-title">${s.title}</div>
+      <div class="sc-body">${s.body.substring(0,75)}${s.body.length>75?'...':''}</div>
+      <span class="sc-badge ${bc}">${bl} ${eff}%</span>
+      ${c?`<div class="sc-corr">${c.text}<div class="sc-ai-upd">↑ UPDATED → ${s.efficiency}%</div></div>`:''}`;
+    card.onclick=()=>goToStep(i);
+    tl.appendChild(card);
+  });
+  const cards=tl.querySelectorAll('.step-card');
+  if(cards[currentStep]) cards[currentStep].scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function updateBottomBar(){
+  document.getElementById('prog-lbl').textContent=`PHASE ${currentStep+1} / ${steps.length}`;
+  document.getElementById('prog-fill').style.width=steps.length?((currentStep+1)/steps.length*100)+'%':'0%';
+}
+
+function updateStats(){
+  if(!steps.length) return;
+  const effs=steps.map(s=>s.efficiency);
+  const avg=Math.round(effs.reduce((a,b)=>a+b,0)/effs.length);
+  const tl=+(steps.filter(s=>s.efficiency<70).length*1.4).toFixed(1);
+  const nc=Object.keys(corrections).length;
+  const se=document.getElementById('s-eff');
+  se.textContent=avg+'%';
+  se.className='stat-val '+(avg>=80?'sv-g':avg>=60?'sv-y':'sv-r');
+  document.getElementById('s-time').textContent=tl+'s';
+  document.getElementById('s-cyc').textContent=steps.length;
+  document.getElementById('s-notes').textContent=nc;
+}
+
+// ── Playback ──
+function playPause(){
+  playing=!playing;
+  document.getElementById('play-btn').textContent=playing?'⏸ PAUSE':'▶ PLAY';
+  if(playing){ if(currentStep>=steps.length-1) goToStep(0); else schedNext(); }
+  else clearTimeout(playTimer);
+}
+function schedNext(){
+  if(!playing) return;
+  playTimer=setTimeout(()=>{
+    if(currentStep<steps.length-1){ goToStep(currentStep+1); schedNext(); }
+    else{ playing=false; document.getElementById('play-btn').textContent='▶ PLAY'; }
+  },3500);
+}
+function nextStep(){ clearTimeout(playTimer); playing=false; document.getElementById('play-btn').textContent='▶ PLAY'; if(currentStep<steps.length-1) goToStep(currentStep+1); }
+function prevStep(){ clearTimeout(playTimer); playing=false; document.getElementById('play-btn').textContent='▶ PLAY'; if(currentStep>0) goToStep(currentStep-1); }
+function resetView(){
+  clearTimeout(playTimer); playing=false; document.getElementById('play-btn').textContent='▶ PLAY';
+  trailPts=[]; ghostPts=[]; markers=[]; currentStep=-1;
+  ra.cx=-8; ra.cz=0; ra.cgx=-8; ra.cgz=0; ra.t=1;
+  camTgt.x=0; camTgt.y=18; camTgt.z=14; camTgt.tx=0; camTgt.ty=0; camTgt.tz=0;
+  hideHUD();
+  document.getElementById('prog-lbl').textContent=`PHASE 0 / ${steps.length}`;
+  document.getElementById('prog-fill').style.width='0%';
+  document.getElementById('coach-for').style.display='none';
+  updateTimeline();
+}
+function toggleCam(){
+  cam.cinematic=!cam.cinematic;
+  document.getElementById('cam-btn').textContent=`CAM: ${cam.cinematic?'CIN':'FIX'}`;
+  showToast(cam.cinematic?'CINEMATIC ON':'FIXED CAM');
+}
+
+// ── Coach ──
+function submitCorrection(){
+  const text=document.getElementById('coach-input').value.trim();
+  if(!text||currentStep<0) return;
+  const s=steps[currentStep], lo=text.toLowerCase();
+  let delta=0;
+  if(lo.includes('perfect')||lo.includes('right call')||lo.includes('correct')) delta=18;
+  else if(lo.includes('wrong')||lo.includes('should have')||lo.includes('missed')||lo.includes('bad')) delta=-15;
+  else if(lo.includes('slightly')||lo.includes('could have')||lo.includes('better')) delta=-8;
+  else if(lo.includes('good')||lo.includes('ok')||lo.includes('fine')) delta=10;
+  else delta=5;
+  const pct=text.match(/(\d{1,3})%/);
+  const newEff=pct?Math.min(100,Math.max(0,parseInt(pct[1]))):Math.min(100,Math.max(0,s.efficiency+delta));
+  corrections[currentStep]={text,newEff};
+  steps[currentStep].efficiency=newEff;
+  steps[currentStep].aiNote=`COACH UPDATED: "${text}" → efficiency ${newEff}%`;
+  document.getElementById('coach-input').value='';
+  updateTimeline(); updateStats(); showHUD(steps[currentStep],currentStep);
+  showToast('CORRECTION APPLIED');
+}
+function clearCoach(){ document.getElementById('coach-input').value=''; }
+
+// ── Tabs ──
+let activeTab='walkthrough';
+function switchTab(t){
+  activeTab=t;
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    const ids=['walkthrough','tba','epa'];
+    el.classList.toggle('active',ids[i]===t);
+  });
+  document.getElementById('wt-panel').style.display=t==='walkthrough'?'flex':'none';
+  document.getElementById('wt-panel').style.flexDirection='column';
+  document.getElementById('tba-panel').className=t==='tba'?'visible':'';
+  document.getElementById('epa-panel').className=t==='epa'?'visible':'';
+}
+
+// ── TBA API ──
+async function fetchTBA(){
+  const team=document.getElementById('tba-team').value.trim();
+  const event=document.getElementById('tba-event').value.trim();
+  const apiKey=document.getElementById('tba-key').value.trim();
+  if(!team) { showToast('ENTER TEAM NUMBER'); return; }
+
+  document.getElementById('tba-status').textContent='FETCHING FROM TBA...';
+  document.getElementById('tba-results').innerHTML='';
+
+  const headers={'X-TBA-Auth-Key': apiKey||'KJEmlMlJ7JaURcXSHFMQKjdYFAEFHJF3q7aenZ0ZJJmSKAnIKqPYhN4yU1Sxlzxo'};
+
+  try {
+    // Team info
+    let url=`https://www.thebluealliance.com/api/v3/team/frc${team.replace('frc','')}`;
+    const teamRes=await fetch(url,{headers});
+    const teamData=await teamRes.json();
+
+    let html='';
+
+    if(teamData&&teamData.nickname){
+      html+=`<div class="tba-section"><div class="tba-section-lbl">TEAM INFO</div>`;
+      html+=row('Name',teamData.nickname);
+      html+=row('Number',teamData.team_number);
+      html+=row('Location',`${teamData.city||''}, ${teamData.state_prov||''}`);
+      html+=`</div>`;
+    }
+
+    // Event matches if event key given
+    if(event){
+      const mUrl=`https://www.thebluealliance.com/api/v3/team/frc${team.replace('frc','')}/event/${event}/matches`;
+      const mRes=await fetch(mUrl,{headers});
+      const matches=await mRes.json();
+
+      if(Array.isArray(matches)&&matches.length){
+        const quals=matches.filter(m=>m.comp_level==='qm').sort((a,b)=>a.match_number-b.match_number);
+        const wins=quals.filter(m=>{
+          const isRed=m.alliances.red.team_keys.includes(`frc${team}`);
+          return isRed?m.winning_alliance==='red':m.winning_alliance==='blue';
+        });
+        html+=`<div class="tba-section"><div class="tba-section-lbl">EVENT RECORD</div>`;
+        html+=row('Quals played',quals.length);
+        html+=row('Wins',wins.length);
+        html+=row('Losses',quals.length-wins.length);
+        html+=row('Win rate',quals.length?Math.round(wins.length/quals.length*100)+'%':'--');
+
+        // Pull score stats
+        const scores=quals.map(m=>{
+          const isRed=m.alliances.red.team_keys.includes(`frc${team}`);
+          return isRed?m.alliances.red.score:m.alliances.blue.score;
+        }).filter(s=>s>0);
+        if(scores.length){
+          html+=row('Avg score',Math.round(scores.reduce((a,b)=>a+b,0)/scores.length));
+          html+=row('High score',Math.max(...scores));
+        }
+        html+=`</div>`;
+
+        // Load into walkthrough phases
+        const autoScores=quals.map(m=>{
+          const isRed=m.alliances.red.team_keys.includes(`frc${team}`);
+          const sb=isRed?m.score_breakdown?.red:m.score_breakdown?.blue;
+          return sb?.autoPoints||sb?.auto_points||0;
+        }).filter(s=>s>0);
+
+        if(autoScores.length){
+          html+=`<div class="tba-section"><div class="tba-section-lbl">AUTO ANALYSIS</div>`;
+          html+=row('Avg auto pts',Math.round(autoScores.reduce((a,b)=>a+b,0)/autoScores.length));
+          html+=row('Matches w/ data',autoScores.length);
+          html+=`</div>`;
+        }
+
+        // Generate walkthrough phases from real match data
+        if(quals.length>=1){
+          const newSteps=quals.slice(0,6).map((m,i)=>{
+            const isRed=m.alliances.red.team_keys.includes(`frc${team}`);
+            const alliance=isRed?'red':'blue';
+            const score=isRed?m.alliances.red.score:m.alliances.blue.score;
+            const oppScore=isRed?m.alliances.blue.score:m.alliances.red.score;
+            const won=(isRed&&m.winning_alliance==='red')||(!isRed&&m.winning_alliance==='blue');
+            const sb=isRed?m.score_breakdown?.red:m.score_breakdown?.blue;
+            const autoPoints=sb?.autoPoints||sb?.auto_points||0;
+            const telePoints=sb?.teleopPoints||sb?.teleop_points||0;
+            const eff=Math.min(99,Math.max(20,Math.round((score/(score+oppScore+0.01))*120)));
+            const nx=lerp(-7.5,7.5,i/Math.max(1,5));
+            const nz=(Math.sin(i*1.2)*2.5);
+            return{
+              title:`QUAL ${m.match_number} — ${alliance.toUpperCase()}`,
+              body:`Score: ${score} vs ${oppScore}. ${won?'WIN ✓':'LOSS ✗'}. Auto: ${autoPoints}pts, Teleop: ${telePoints}pts.`,
+              aiNote:`Match ${m.match_number}: ${won?'Strong performance':'Review teleop decisions'}. Auto score ${autoPoints} ${autoPoints>10?'above':'below'} target.`,
+              efficiency:eff,
+              robot:{x:nx,z:nz}, ghost:{x:nx,z:nz+(eff<65?-2:0)},
+              cam:{x:nx*.5,y:7,z:9,tx:nx,ty:0,tz:nz*.3},
+              events:won?[{x:nx,z:nz,label:'✓ WIN',color:'#00e87a'}]:[{x:nx,z:nz,label:'✗ LOSS',color:'#e84040'}]
+            };
+          });
+          steps=[...newSteps];
+          corrections={};
+          updateTimeline(); updateStats(); resetView();
+          showToast(`LOADED ${newSteps.length} REAL MATCHES`);
+          setTimeout(()=>goToStep(0),400);
+        }
+      }
+    }
+
+    document.getElementById('tba-status').textContent='DATA LOADED FROM TBA';
+    document.getElementById('tba-results').innerHTML=html||'<div style="font-size:9px;color:var(--muted)">No data found. Check team/event key.</div>';
+
+  } catch(e){
+    document.getElementById('tba-status').textContent='ERROR — CHECK CONNECTION';
+    document.getElementById('tba-results').innerHTML=`<div style="font-size:9px;color:var(--red)">${e.message}</div>`;
+  }
+}
+
+function row(k,v){ return `<div class="tba-row"><span class="tba-k">${k}</span><span class="tba-v">${v}</span></div>`; }
+
+// ── EPA Data ──
+function loadEPAData(data){
+  // data: {trench:%, bump:%, scoring:%, defense:%, team?}
+  epaData=data;
+  document.getElementById('hm-trench-pct').textContent=(data.trench||0)+'%';
+  document.getElementById('hm-bump-pct').textContent=(data.bump||0)+'%';
+  document.getElementById('hm-score-pct').textContent=(data.scoring||0)+'%';
+  document.getElementById('hm-def-pct').textContent=(data.defense||0)+'%';
+
+  // Render EPA bars
+  const epaTeam=document.getElementById('epa-team-input').value||'TEAM';
+  renderEPABars(data,epaTeam);
+}
+
+function renderEPABars(data, teamLabel){
+  const el=document.getElementById('epa-results'); el.innerHTML='';
+  const zones=[
+    {name:'TRENCH USE',key:'trench',color:'#4a9eff'},
+    {name:'BUMP USE',key:'bump',color:'#ff7a20'},
+    {name:'SCORING FREQ',key:'scoring',color:'#00e87a'},
+    {name:'DEFENSE IMPACT',key:'defense',color:'#e84040'},
+    {name:'AUTO SCORE',key:'auto',color:'#f5c800'},
+    {name:'ENDGAME',key:'endgame',color:'#f5c800'},
+  ];
+  let html=`<div class="epa-zone"><div class="epa-zone-name">${teamLabel||'TEAM'} // EPA BREAKDOWN</div>`;
+  zones.forEach(z=>{
+    const pct=data[z.key]||0;
+    html+=`<div class="epa-bar-row">
+      <div class="epa-bar-lbl">${z.name}</div>
+      <div class="epa-bar-bg"><div class="epa-bar-fill" style="width:${pct}%;background:${z.color}"></div></div>
+      <div class="epa-bar-val">${pct}%</div>
+    </div>`;
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+document.getElementById('epa-team-input').addEventListener('input',function(){
+  const v=this.value.trim();
+  if(!v) return;
+  // Auto-populate with mock data if team entered (replace with real EPA source)
+  const mock={
+    trench:Math.round(45+Math.random()*40),
+    bump:Math.round(20+Math.random()*50),
+    scoring:Math.round(60+Math.random()*35),
+    defense:Math.round(10+Math.random()*40),
+    auto:Math.round(50+Math.random()*45),
+    endgame:Math.round(40+Math.random()*55)
+  };
+  loadEPAData(mock);
+  showToast('EPA DATA LOADED — ENTER REAL % TO OVERRIDE');
+});
+
+// ── Heatmap toggle ──
+function toggleHeatmap(){
+  heatmapVisible=!heatmapVisible;
+  document.getElementById('heatmap-hud').className=heatmapVisible?'visible':'';
+  document.getElementById('hm-toggle-btn').className='tpill'+(heatmapVisible?' active':'');
+  if(heatmapVisible&&!Object.keys(epaData).length){
+    // Load demo data
+    loadEPAData({trench:62,bump:38,scoring:78,defense:25,auto:55,endgame:72});
+  }
+  showToast(heatmapVisible?'HEATMAP ON':'HEATMAP OFF');
+}
+
+function toggleHmLayer(key){
+  hmLayers[key]=!hmLayers[key];
+}
+
+// ── Field Editor ──
+function toggleEditor(){
+  editorActive=!editorActive;
+  document.getElementById('editor-panel').className=editorActive?'visible':'';
+  document.getElementById('edit-toggle-btn').className='tpill'+(editorActive?' active':'');
+  document.getElementById('field-canvas').style.cursor=editorActive?'crosshair':'default';
+  document.getElementById('scan-line').className=editorActive?'active':'';
+  showToast(editorActive?'EDITOR: TAP TO PLACE, DRAG FOR AREA':'EDITOR OFF');
+}
+
+function selectZone(btn,type){
+  activeZoneType=type;
+  document.querySelectorAll('.zone-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const cnr=document.getElementById('custom-name-row');
+  cnr.style.display=type==='custom'?'flex':'none';
+}
+
+// Canvas → world coordinate
+function screenToField(sx,sy){
+  // Raycast against y=0 plane
+  // Camera position: cam.x,cam.y,cam.z
+  // Compute ray direction through pixel
+  const f=(H/2)/Math.tan(cam.fov*Math.PI/360);
+  const ndcX=(sx-W/2)/f, ndcY=-(sy-H/2)/f;
+
+  // Build camera basis (same as proj)
+  const cdx=cam.x-cam.tx, cdy=cam.y-cam.ty, cdz=cam.z-cam.tz;
+  const fl2=Math.sqrt(cdx*cdx+cdy*cdy+cdz*cdz)||1;
+  const fx=-cdx/fl2, fy=-cdy/fl2, fz=-cdz/fl2;
+  let rx=fy*0-fz*1, ry=fz*0-fx*0, rz=fx*1-fy*0;
+  const rl=Math.sqrt(rx*rx+ry*ry+rz*rz)||1;
+  rx/=rl; ry/=rl; rz/=rl;
+  const ux=ry*fz-rz*fy, uy=rz*fx-rx*fz, uz=rx*fy-ry*fx;
+
+  // Ray direction
+  const rdx=fx+ndcX*rx+ndcY*ux;
+  const rdy=fy+ndcX*ry+ndcY*uy;
+  const rdz=fz+ndcX*rz+ndcY*uz;
+
+  // Intersect with y=0 plane: cam.y + t*rdy = 0 → t = -cam.y/rdy
+  if(Math.abs(rdy)<0.001) return null;
+  const t=-cam.y/rdy;
+  if(t<0) return null;
+  return {x:cam.x+t*rdx, z:cam.z+t*rdz};
+}
+
+function updateEditorZonesList(){
+  const el=document.getElementById('ed-zones-list'); el.innerHTML='';
+  placedZones.forEach((z,i)=>{
+    const div=document.createElement('div');
+    div.className='ez-item';
+    const nm=z.name||z.ztype;
+    const coords=z.type==='point'
+      ? `(${z.x.toFixed(1)}, ${z.z.toFixed(1)})`
+      : `(${z.x.toFixed(1)},${z.z.toFixed(1)}) ${z.w.toFixed(1)}×${z.d.toFixed(1)}`;
+    div.innerHTML=`<span style="color:${ZONE_STROKE[z.ztype]||'#aaa'}">${nm}</span><span style="color:var(--muted);font-size:7px">${coords}</span><span class="ez-del" onclick="deleteZone(${i})">✕</span>`;
+    el.appendChild(div);
+  });
+}
+
+function deleteZone(i){ placedZones.splice(i,1); updateEditorZonesList(); }
+function clearLastZone(){ if(placedZones.length){ placedZones.pop(); updateEditorZonesList(); } }
+function clearAllZones(){ if(confirm('Clear all placed zones?')){ placedZones=[]; updateEditorZonesList(); } }
+function exportZones(){
+  const json=JSON.stringify({fieldW:fieldRealW,fieldH:fieldRealH,zones:placedZones},null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='field_zones.json'; a.click();
+  showToast('ZONES EXPORTED');
+}
+
+// Touch/mouse on canvas for editor
+let pointerDown=false;
+canvas.addEventListener('pointerdown',e=>{
+  if(!editorActive) return;
+  e.preventDefault();
+  const r=canvas.getBoundingClientRect();
+  const sx=e.clientX-r.left, sy=e.clientY-r.top;
+  const wp=screenToField(sx,sy);
+  if(!wp) return;
+  pointerDown=true;
+  editDragStart={sx,sy,wx:wp.x,wz:wp.z};
+  editDragCurrent={sx,sy};
+  document.getElementById('ed-coords').textContent=`WORLD: (${wp.x.toFixed(2)}, ${wp.z.toFixed(2)}) m`;
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!editorActive||!pointerDown) return;
+  const r=canvas.getBoundingClientRect();
+  editDragCurrent={sx:e.clientX-r.left, sy:e.clientY-r.top};
+  const wp=screenToField(editDragCurrent.sx,editDragCurrent.sy);
+  if(wp) document.getElementById('ed-coords').textContent=`WORLD: (${wp.x.toFixed(2)}, ${wp.z.toFixed(2)}) m`;
+});
+canvas.addEventListener('pointerup',e=>{
+  if(!editorActive||!editDragStart) return;
+  e.preventDefault(); pointerDown=false;
+  const r=canvas.getBoundingClientRect();
+  const sx=e.clientX-r.left, sy=e.clientY-r.top;
+  const wp=screenToField(sx,sy);
+  if(!wp){ editDragStart=null; editDragCurrent=null; return; }
+
+  const dist=Math.sqrt(Math.pow(sx-editDragStart.sx,2)+Math.pow(sy-editDragStart.sy,2));
+  const name=activeZoneType==='custom'
+    ?(document.getElementById('custom-zone-name').value||'CUSTOM')
+    :activeZoneType.toUpperCase();
+
+  if(dist<12){
+    // Point placement
+    placedZones.push({type:'point',ztype:activeZoneType,name,x:wp.x,z:wp.z});
+  } else {
+    // Area placement
+    const wp2=screenToField(editDragStart.sx,editDragStart.sy)||{x:wp.x,z:wp.z};
+    const wx=Math.min(wp.x,wp2.x), wz=Math.min(wp.z,wp2.z);
+    const ww=Math.abs(wp.x-wp2.x), wd=Math.abs(wp.z-wp2.z);
+    if(ww>0.1&&wd>0.1) placedZones.push({type:'area',ztype:activeZoneType,name,x:wx,z:wz,w:ww,d:wd});
+  }
+  editDragStart=null; editDragCurrent=null;
+  updateEditorZonesList();
+  showToast(`${name} ZONE PLACED`);
+});
+
+// Swipe navigation on field (when editor off)
+let swipeStartX=null;
+canvas.addEventListener('touchstart',e=>{
+  if(editorActive) return;
+  swipeStartX=e.touches[0].clientX;
+},{passive:true});
+canvas.addEventListener('touchend',e=>{
+  if(editorActive||swipeStartX===null) return;
+  const dx=e.changedTouches[0].clientX-swipeStartX;
+  if(Math.abs(dx)>45) dx<0?nextStep():prevStep();
+  swipeStartX=null;
+},{passive:true});
+
+// ── File handling ──
+function fileDragOver(e){ e.preventDefault(); document.getElementById('field-drop').classList.add('drag'); }
+function fileDragLeave(e){ document.getElementById('field-drop').classList.remove('drag'); }
+function fileDrop(e,type){ e.preventDefault(); document.getElementById('field-drop').classList.remove('drag'); handleFile(e.dataTransfer.files[0],type); }
+function fileSelected(e,type){ handleFile(e.target.files[0],type); }
+
+function handleFile(file,type){
+  if(!file) return;
+  document.getElementById('field-file-name').textContent='✓ '+file.name;
+  if(file.type.startsWith('image/')||file.name.match(/\.(png|jpg|jpeg|svg)$/i)){
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{ setFieldImage(img); URL.revokeObjectURL(url); };
+    img.src=url;
+  } else if(file.name.endsWith('.json')){
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const data=JSON.parse(e.target.result);
+        if(data.zones){ placedZones=data.zones; updateEditorZonesList(); showToast('ZONES IMPORTED'); }
+        if(data.fieldW) fieldRealW=data.fieldW;
+        if(data.fieldH) fieldRealH=data.fieldH;
+      }catch(err){ showToast('JSON PARSE ERROR'); }
+    };
+    reader.readAsText(file);
+  } else {
+    showToast('FORMAT: PNG/JPG/SVG/JSON SUPPORTED');
+  }
+}
+
+// ── Modal ──
+function openModal(){ document.getElementById('modal-bg').classList.add('open'); }
+function closeModal(){ document.getElementById('modal-bg').classList.remove('open'); }
+function modalBgClick(e){ if(e.target===document.getElementById('modal-bg')) closeModal(); }
+
+function loadMatch(){
+  const name=document.getElementById('m-id').value.trim()||'MATCH';
+  const alliance=document.getElementById('m-alliance').value;
+  const raw=document.getElementById('m-phases').value.trim();
+  const fw=parseFloat(document.getElementById('m-fw').value)||16.46;
+  const fh=parseFloat(document.getElementById('m-fh').value)||8.23;
+  if(!raw){ closeModal(); return; }
+  fieldRealW=fw; fieldRealH=fh;
+  const lines=raw.split('\n').filter(l=>l.trim());
+  const total=lines.length;
+  const newSteps=lines.map((line,i)=>{
+    const p=line.split('|').map(s=>s.trim());
+    const title=p[0]||`PHASE ${i+1}`;
+    const body=p[1]||'No description.';
+    const eff=Math.min(100,Math.max(0,parseInt(p[2])||70));
+    const aiNote=p[3]||'';
+    const nx=lerp(-7.5,7.5,i/Math.max(1,total-1));
+    const nz=Math.sin(i*1.2)*2.5;
+    const gwz=nz+(eff<70?(nz>0?-2:2):0);
+    return{
+      title,body,efficiency:eff,aiNote,
+      robot:{x:nx,z:nz}, ghost:{x:nx,z:gwz},
+      cam:{x:nx*.5,y:7,z:9,tx:nx,ty:0,tz:nz*.3},
+      events:eff<65?[{x:nx,z:nz,label:'✗ ISSUE',color:'#e84040'}]:
+             eff>=88?[{x:nx,z:nz,label:'✓ GOOD',color:'#00e87a'}]:[]
+    };
+  });
+  steps=newSteps; corrections={};
+  document.getElementById('match-label').textContent=name.toUpperCase();
+  updateTimeline(); updateStats(); resetView(); closeModal();
+  showToast(`LOADED ${total} PHASES`);
+  setTimeout(()=>goToStep(0),300);
+}
+
+// ── Toast ──
+let toastTmr;
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.opacity='1';
+  clearTimeout(toastTmr);
+  toastTmr=setTimeout(()=>el.style.opacity='0',2000);
+}
+
+// ── Init ──
+ra.cx=steps[0].robot.x-2; ra.cz=steps[0].robot.z;
+ra.cgx=steps[0].ghost.x-2; ra.cgz=steps[0].ghost.z; ra.t=1;
+updateTimeline(); updateStats();
+switchTab('walkthrough');
+requestAnimationFrame(loop);
+setTimeout(()=>goToStep(0),600);
+</script>
+</body>
+</html>
