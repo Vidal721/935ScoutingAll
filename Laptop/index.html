@@ -2014,6 +2014,8 @@
     <img id="lightbox-img" src="" alt="Robot photo">
   </div>
 
+  <script src="scoutSummarizer.js"></script>
+
   <script>
     /* ═══════════════════════ CONFIG & STATE ════════════════════════ */
     const CONFIG = { TBA_KEY: 'HCzm8Ri3tcpSxBkhoZLLwhDMCDNfwwP0cNof8xOnJCk1ZnHOGu7upC84W8AanACu' };
@@ -2361,6 +2363,11 @@
     }
 
     /* ════════════════ UTILITIES ════════════════ */
+    let _syncDebounceTimer = null;
+    function debouncedSync(ms = 300) {
+      clearTimeout(_syncDebounceTimer);
+      _syncDebounceTimer = setTimeout(() => syncToPresenter(), ms);
+    }
     function setStatus(m) { document.getElementById('statusMsg').textContent = m; }
 
     /* ════════════════ PRESENTER WINDOW ════════════════ */
@@ -2434,7 +2441,7 @@
           list.appendChild(c);
         });
       });
-      syncToPresenter();
+      debouncedSync();
     }
 
     /* ════════════════ RENDER PRESENTER ════════════════ */
@@ -2562,6 +2569,8 @@
         }
       }
 
+      if (window.ScoutSummarizer) h += window.ScoutSummarizer.renderSummaryHTML(t);
+
       if (t.notes) h += `<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Notes</div><div class="notes-block">${t.notes}</div></div>`;
       if (t.pitData) h += buildRobotImageHTML(t.pitData);
       return h;
@@ -2644,6 +2653,7 @@
     function buildOverviewHTML(t) {
       const ec = t.epaComponents || {}; const bd = ec.breakdown || {}; const get = (k, bk) => ec[k] ?? (bd[bk] != null ? parseFloat(parseFloat(bd[bk]).toFixed(1)) : null);
       let h = '';
+      if (window.ScoutSummarizer) h += window.ScoutSummarizer.renderSummaryHTML(t);
       h += `<div class="stat-grid-4"><div class="stat-card"><div class="stat-card-label">Total EPA</div><div class="stat-card-val gold">${t.epa?.toFixed(1) || '—'}</div></div><div class="stat-card"><div class="stat-card-label">Auto EPA</div><div class="stat-card-val green">${get('auto', 'auto_points') != null ? get('auto', 'auto_points').toFixed(1) : '—'}</div></div><div class="stat-card"><div class="stat-card-label">Teleop EPA</div><div class="stat-card-val blue">${get('teleop', 'teleop_points') != null ? get('teleop', 'teleop_points').toFixed(1) : '—'}</div></div><div class="stat-card"><div class="stat-card-label">Endgame EPA</div><div class="stat-card-val orange">${get('endgame', 'endgame_points') != null ? get('endgame', 'endgame_points').toFixed(1) : '—'}</div></div></div>`;
       h += `<div class="stat-grid-3"><div class="stat-card"><div class="stat-card-label">Rank</div><div class="stat-card-val green">${t.rank || '—'}</div></div><div class="stat-card"><div class="stat-card-label">Record</div><div style="font-size:16px;font-weight:600;font-family:var(--mono);">${t.record || '—'}</div></div><div class="stat-card"><div class="stat-card-label">Status</div><div class="tbl-status tbl-status-${t.status || 'unassigned'}" style="margin-top:4px;">${t.status || 'unassigned'}</div></div></div>`;
       if (t.scoutingData?.length) {
@@ -2901,7 +2911,7 @@
       const summaryParts = []; if (totalMatches) summaryParts.push(`${totalMatches} matches`); if (totalPit) summaryParts.push(`${totalPit} pit entries`); if (totalSkip) summaryParts.push(`${totalSkip} dupes skipped`); if (errors.length) summaryParts.push(`${errors.length} error${errors.length > 1 ? 's' : ''}`);
       setStatus(`Imported ${files.length} file${files.length > 1 ? 's' : ''} · ${summaryParts.join(' · ') || 'nothing new'}`);
       const lines = [...fileResults, ...errors];
-      if (files.length === 1 && !errors.length) alert(`Imported ${summaryParts.join(' and ') || 'no new data'} from ${files[0].name}.`);
+      if (errors.length) setStatus('⚠ Import errors: ' + errors.join(', '));
       else alert(`Import complete (${files.length} files)\n\n${lines.join('\n')}${errors.length ? '\n\nErrors:\n' + errors.join('\n') : ''}`);
     }
     function isNewCompactFormat(item) { return item.tm !== undefined || item.al !== undefined || item.ev !== undefined || item.log !== undefined; }
