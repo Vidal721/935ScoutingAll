@@ -1,7 +1,7 @@
 {
   "event": "",
   "exportedBy": "Team 935 & 757 Strategy Portal",
-  "exportedAt": "2026-03-22T17:30:11.557Z",
+  "exportedAt": "2026-03-26T12:30:24.742Z",
   "teamCount": 41,
   "picklistLength": 2,
   "teams": [
@@ -661,6 +661,18 @@
           "rp_2": -0.2273,
           "rp_3": -0.3359
         }
+      },
+      "pitData": {
+        "driveTrain": "Swerve",
+        "weight": "110",
+        "shooter": "Fixed Shooter",
+        "scoringLocations": "Fixed Locations",
+        "canClimb": true,
+        "climbType": "L2",
+        "robotName": "Robot Name",
+        "scouterName": "Scouter Name",
+        "crossingPref": "Trench",
+        "pitNotes": "Notes"
       }
     },
     {

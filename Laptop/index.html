@@ -607,13 +607,11 @@ function closeLightbox(){document.getElementById('img-lightbox').style.display='
 // Solution: show a panel with an "Open on YouTube" button instead of an iframe
 let _currentVideoKey=null;
 
-window.playVideo=k=>{
-  _currentVideoKey=k;
-  currentVideo=k;
-  const vc=document.getElementById('video-container');
-  vc.style.display='block';
-  const lbl=document.getElementById('video-match-label');
-  if(lbl)lbl.textContent=`Video key: ${k}`;
+window.playVideo = k => {
+  _currentVideoKey = k;
+  currentVideo = k;
+  // Don't show video container on main screen anymore
+  // Just sync to presenter so it plays there
   syncToPresenter();
 };
 
@@ -634,9 +632,15 @@ window.closeVideo=()=>{
 };
 
 function syncVideo(){
-  const vc=document.getElementById('video-container');
-  if(currentVideo){_currentVideoKey=currentVideo;vc.style.display='block';}
-  else{vc.style.display='none';}
+  const vc = document.getElementById('video-container');
+  if(isPresenterMode && currentVideo){
+    _currentVideoKey = currentVideo;
+    vc.style.display = 'block';
+    const lbl = document.getElementById('video-match-label');
+    if(lbl) lbl.textContent = `Video key: ${currentVideo}`;
+  } else {
+    vc.style.display = 'none';
+  }
 }
 
 /* ════════════════ PRESENTER BOOTSTRAP ════════════════ */
@@ -774,9 +778,46 @@ function applySync(d){
   if(d.eventCode)window._syncedEventCode=d.eventCode;
   document.getElementById('presenter-ordering-view').style.display=isOrderingMode?'flex':'none';
   document.getElementById('presenter-view').style.display=isOrderingMode?'none':'flex';
-  const inTeam=d.currentModalTeam||null;const inTab=d.currentModalTab||'overview';
-  if(inTeam){const teamChanged=inTeam!==prevTeam;const tabChanged=inTab!==prevTab;if(teamChanged||tabChanged){if(teamChanged){document.getElementById('modalBody').innerHTML=`<div style="color:var(--txt-3);font-size:13px;text-align:center;padding:20px;">Loading…</div>`;document.getElementById('match-nav-bar').innerHTML='';}currentModalTeam=inTeam;currentModalTab=inTab;openTeamModal(inTeam,inTab);}}
-  else if(prevTeam){currentModalTeam=null;currentModalTab='overview';closeModal();}
+
+  const inTeam=d.currentModalTeam||null;
+
+  if(isPresenterMode){
+    // Presenter handles team display via overlay, not modal
+    let overlay=document.getElementById('presenter-team-overlay');
+    if(!overlay){
+      overlay=document.createElement('div');
+      overlay.id='presenter-team-overlay';
+      overlay.style.cssText='position:fixed;inset:0;background:var(--ink-1);z-index:500;overflow-y:auto;padding:24px;';
+      document.body.appendChild(overlay);
+    }
+    if(inTeam){
+      const t=teams.find(x=>x.number===inTeam);
+      if(t){
+        currentModalTeam=inTeam;
+        overlay.style.display='block';
+        overlay.innerHTML=buildSidebarHTML(t);
+      }
+    }else{
+      overlay.style.display='none';
+      currentModalTeam=null;
+    }
+  }else{
+    // Main screen handles modal as normal
+    if(inTeam){
+      const teamChanged=inTeam!==prevTeam;const tabChanged=(d.currentModalTab||'overview')!==prevTab;
+      if(teamChanged||tabChanged){
+        if(teamChanged){
+          document.getElementById('modalBody').innerHTML=`<div style="color:var(--txt-3);font-size:13px;text-align:center;padding:20px;">Loading…</div>`;
+          document.getElementById('match-nav-bar').innerHTML='';
+        }
+        currentModalTeam=inTeam;currentModalTab=d.currentModalTab||'overview';
+        openTeamModal(inTeam,currentModalTab);
+      }
+    }else if(prevTeam){
+      currentModalTeam=null;currentModalTab='overview';closeModal();
+    }
+  }
+
   renderPresenterOrdering();renderPresenter();renderNotesBanner(true);syncVideo();
 }
 
@@ -898,17 +939,101 @@ function renderPresenter(){
     list.innerHTML='';count.textContent=rows.length;
     rows.forEach(t=>{const c=document.createElement('div');c.className='team-card';if(currentViewingTeam===t.number)c.classList.add('highlighted');c.innerHTML=`<div class="card-top"><span class="team-num">${t.number}</span><span class="epa-badge">${t.epa.toFixed(1)}</span></div><div class="team-name">${t.name}</div>`;list.appendChild(c);});
   });
+
+  // Full screen overlay for team details
+  let overlay=document.getElementById('presenter-team-overlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='presenter-team-overlay';
+    overlay.style.cssText='position:fixed;inset:0;background:var(--ink-1);z-index:500;overflow-y:auto;padding:24px;display:none;';
+    document.body.appendChild(overlay);
+  }
+
+  if(currentViewingTeam){
+    const t=teams.find(x=>x.number===currentViewingTeam);
+    if(t){
+      overlay.style.display='block';
+      overlay.innerHTML=buildSidebarHTML(t);
+    }else{
+      overlay.style.display='none';
+    }
+  }else{
+    overlay.style.display='none';
+  }
+
+  // Hide old sidebar
   const sb=document.getElementById('team-sidebar');
-  if(currentViewingTeam){const t=teams.find(x=>x.number===currentViewingTeam);if(t){sb.style.display='block';document.getElementById('team-sidebar-content').innerHTML=buildSidebarHTML(t);}else sb.style.display='none';}
-  else sb.style.display='none';
+  if(sb)sb.style.display='none';
 }
 
 function buildSidebarHTML(t){
-  let h=`<div style="margin-bottom:16px;"><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:6px;">Viewing</div><div style="font-size:26px;font-weight:700;color:var(--gold);">Team ${t.number}</div><div style="font-size:13px;color:var(--txt-3);margin-top:3px;">${t.name}</div></div>`;
-  h+=`<div class="stat-grid-2" style="margin-bottom:10px;"><div class="stat-card"><div class="stat-card-label">EPA</div><div class="stat-card-val gold">${t.epa.toFixed(1)}</div></div><div class="stat-card"><div class="stat-card-label">Rank</div><div class="stat-card-val green">${t.rank||'—'}</div></div></div>`;
-  if(t.scoutingData?.length){const agg=aggregateCrossings(t.scoutingData);const{caps}=inferCapabilities(t.scoutingData);if(caps.length)h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Robot Capabilities</div>${buildCapabilitiesHTML(caps)}</div>`;if(agg.total>0)h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Crossing Summary</div>${buildCrossingBreakdown(agg.counts,t.scoutingData.length)}</div>`;}
-  if(t.pitData){const pd=t.pitData;h+=`<div class="pit-strip" style="margin-bottom:10px;">`;if(pd.weight&&pd.weight!=='N/A')h+=`<div><div class="pit-item-label">Weight</div><div class="pit-item-val">${pd.weight} lbs</div></div>`;if(pd.driveTrain&&pd.driveTrain!=='N/A')h+=`<div><div class="pit-item-label">Drive Train</div><div class="pit-item-val">${pd.driveTrain}</div></div>`;if(pd.dimensions&&pd.dimensions!=='N/A')h+=`<div><div class="pit-item-label">Dimensions</div><div class="pit-item-val" style="font-size:12px;">${pd.dimensions}</div></div>`;h+=`</div>`;if(pd.capabilities&&pd.capabilities!=='N/A')h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Capabilities</div><div style="font-size:12px;color:var(--txt-2);line-height:1.7;">${pd.capabilities.split(' • ').map(c=>`<span style="display:inline-block;background:var(--ink-4);border:1px solid var(--ink-5);border-radius:5px;padding:2px 8px;margin:2px 4px 2px 0;font-size:11px;">${c}</span>`).join('')}</div></div>`;}
-  if(t.notes)h+=`<div class="section-block"><div class="section-label">Notes</div><div class="notes-block">${t.notes}</div></div>`;
+  let h=`<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">`;
+  h+=`<div><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:6px;">Viewing</div><div style="font-size:32px;font-weight:700;color:var(--gold);letter-spacing:-1px;">Team ${t.number}</div><div style="font-size:15px;color:var(--txt-3);margin-top:3px;">${t.name}</div></div>`;
+  h+=`<div class="stat-grid-2" style="margin-bottom:0;min-width:180px;"><div class="stat-card"><div class="stat-card-label">EPA</div><div class="stat-card-val gold">${t.epa.toFixed(1)}</div></div><div class="stat-card"><div class="stat-card-label">Rank</div><div class="stat-card-val green">${t.rank||'—'}</div></div></div>`;
+  h+=`</div>`;
+
+  // Pit data strip
+  if(t.pitData){
+    const pd=t.pitData;
+    h+=`<div class="pit-strip" style="margin-bottom:12px;">`;
+    if(pd.robotName&&pd.robotName!=='N/A')h+=`<div><div class="pit-item-label">Robot Name</div><div class="pit-item-val">${pd.robotName}</div></div>`;
+    if(pd.weight&&pd.weight!=='N/A')h+=`<div><div class="pit-item-label">Weight</div><div class="pit-item-val">${pd.weight} lbs</div></div>`;
+    if(pd.driveTrain&&pd.driveTrain!=='N/A')h+=`<div><div class="pit-item-label">Drive Train</div><div class="pit-item-val">${pd.driveTrain}</div></div>`;
+    if(pd.dimensions&&pd.dimensions!=='N/A')h+=`<div><div class="pit-item-label">Dimensions</div><div class="pit-item-val" style="font-size:12px;">${pd.dimensions}</div></div>`;
+    if(pd.shooter&&pd.shooter!=='N/A')h+=`<div><div class="pit-item-label">Shooter</div><div class="pit-item-val">${pd.shooter}</div></div>`;
+    if(pd.scoringLocations&&pd.scoringLocations!=='N/A')h+=`<div><div class="pit-item-label">Scoring</div><div class="pit-item-val">${pd.scoringLocations}</div></div>`;
+    if(pd.crossingPref&&pd.crossingPref!=='N/A')h+=`<div><div class="pit-item-label">Crossing</div><div class="pit-item-val">${pd.crossingPref}</div></div>`;
+    h+=`<div><div class="pit-item-label">Can Climb</div><div class="pit-item-val">${pd.canClimb?'✅ Yes':'❌ No'}</div></div>`;
+    if(pd.climbType&&pd.climbType!=='N/A')h+=`<div><div class="pit-item-label">Climb Type</div><div class="pit-item-val">${pd.climbType}</div></div>`;
+    if(pd.scouterName&&pd.scouterName!=='N/A')h+=`<div><div class="pit-item-label">Pit Scouter</div><div class="pit-item-val">${pd.scouterName}</div></div>`;
+    h+=`</div>`;
+    if(pd.capabilities&&pd.capabilities!=='N/A')h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Capabilities</div><div style="font-size:12px;color:var(--txt-2);line-height:1.7;">${pd.capabilities.split(' • ').map(c=>`<span style="display:inline-block;background:var(--ink-4);border:1px solid var(--ink-5);border-radius:5px;padding:2px 8px;margin:2px 4px 2px 0;font-size:11px;">${c}</span>`).join('')}</div></div>`;
+    if(pd.pitNotes&&pd.pitNotes!=='N/A')h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Pit Notes</div><div class="notes-block">${pd.pitNotes}</div></div>`;
+  }
+
+  // Scouting stats
+  if(t.scoutingData?.length){
+    const sd=t.scoutingData;
+    const climbCnt=sd.filter(s=>s.cl&&s.cl!=='—'&&s.cl!=='None'&&s.cl!=='none').length;
+    const ptsArr=sd.filter(s=>s.pts).map(s=>parseFloat(s.pts)||0);
+    const avgPts=ptsArr.length?(ptsArr.reduce((a,b)=>a+b,0)/ptsArr.length).toFixed(0):'—';
+    const totCycles=sd.reduce((a,s)=>a+(parseInt(s.cy)||0),0);
+    h+=`<div class="stat-grid-4" style="margin-bottom:10px;">`;
+    h+=`<div class="stat-card"><div class="stat-card-label">Avg Pts</div><div class="stat-card-val gold">${avgPts}</div></div>`;
+    h+=`<div class="stat-card"><div class="stat-card-label">Matches</div><div class="stat-card-val green">${sd.length}</div></div>`;
+    h+=`<div class="stat-card"><div class="stat-card-label">Climbs</div><div class="stat-card-val blue">${climbCnt}</div></div>`;
+    h+=`<div class="stat-card"><div class="stat-card-label">Tot Cycles</div><div class="stat-card-val orange">${totCycles}</div></div>`;
+    h+=`</div>`;
+
+    // Drive team intel
+    const{caps}=inferCapabilities(sd);
+    if(caps.length)h+=`<div class="section-block" style="margin-bottom:10px;border-color:rgba(245,197,24,0.2);background:rgba(245,197,24,0.03);"><div class="section-label" style="color:var(--gold);">⚡ Drive Team Intel</div>${buildCapabilitiesHTML(caps)}</div>`;
+
+    // Crossing map
+    const agg=aggregateCrossings(sd);
+    if(agg.total>0)h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Crossing Pattern · All Matches</div>${buildCrossingBreakdown(agg.counts,sd.length)}</div>`;
+
+    // Match history buttons
+    const matchKeys=getMatchKeys(t);
+    if(matchKeys.length){
+      h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label" style="margin-bottom:10px;">Match History</div><div style="display:flex;flex-wrap:wrap;gap:6px;">`;
+      matchKeys.forEach(mn=>{
+        const entries=getMatchEntries(t,mn);
+        const al=(entries[0]?.al||'').toUpperCase();
+        const isBlue=al.startsWith('B');
+        const alColor=isBlue?'#60a5fa':'#f87171';
+        const hasClimb=entries[0]?.cl&&entries[0]?.cl!=='—'&&entries[0]?.cl!=='None'&&entries[0]?.cl!=='none';
+        h+=`<div style="background:var(--ink-4);border:1px solid var(--ink-5);border-radius:8px;padding:6px 12px;font-size:12px;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:1px;min-width:56px;">`;
+        h+=`<span style="font-weight:700;">M${mn}</span>`;
+        h+=`<span style="font-size:9px;color:${al?alColor:'var(--txt-3)'};">${al||'·'}${hasClimb?' ⛰':''}</span>`;
+        if(entries.length>1)h+=`<span style="font-size:8px;color:var(--pick);">${entries.length} reports</span>`;
+        h+=`</div>`;
+      });
+      h+=`</div></div>`;
+    }
+  }
+
+  if(t.notes)h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Notes</div><div class="notes-block">${t.notes}</div></div>`;
   if(t.pitData)h+=buildRobotImageHTML(t.pitData);
   return h;
 }
@@ -920,12 +1045,32 @@ function getMatchEntries(t,mn){if(!t?.scoutingData)return[];return t.scoutingDat
 
 async function openTeamModal(num,tab){
   const t=teams.find(x=>x.number===num);if(!t)return;
-  if(currentModalTeam!==num){document.getElementById('modalBody').innerHTML=`<div style="color:var(--txt-3);font-size:13px;text-align:center;padding:20px;">Loading…</div>`;document.getElementById('match-nav-bar').innerHTML='';}
   currentViewingTeam=num;currentModalTeam=num;currentModalTab=tab||'overview';
   syncToPresenter();
-  document.getElementById('modalTeamLabel').textContent=`Team ${num}`;document.getElementById('modalTeamName').textContent=t.name;
+
+  if(isPresenterMode){
+    // Presenter gets full screen overlay instead of modal
+    let overlay=document.getElementById('presenter-team-overlay');
+    if(!overlay){
+      overlay=document.createElement('div');
+      overlay.id='presenter-team-overlay';
+      overlay.style.cssText='position:fixed;inset:0;background:var(--ink-1);z-index:500;overflow-y:auto;padding:24px;';
+      document.body.appendChild(overlay);
+    }
+    overlay.innerHTML=buildSidebarHTML(t);
+    return;
+  }
+
+  // Main screen gets normal modal
+  if(currentModalTeam!==num){
+    document.getElementById('modalBody').innerHTML=`<div style="color:var(--txt-3);font-size:13px;text-align:center;padding:20px;">Loading…</div>`;
+    document.getElementById('match-nav-bar').innerHTML='';
+  }
+  document.getElementById('modalTeamLabel').textContent=`Team ${num}`;
+  document.getElementById('modalTeamName').textContent=t.name;
   document.getElementById('modalOverlay').style.display='flex';
-  renderModalNav(t);await renderModalTab(t,currentModalTab);
+  renderModalNav(t);
+  await renderModalTab(t,currentModalTab);
 }
 
 function renderModalNav(t){
@@ -979,7 +1124,26 @@ function buildOverviewHTML(t){
     const agg=aggregateCrossings(sd);if(agg.total>0)h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Crossing Pattern · All Matches</div>${buildCrossingBreakdown(agg.counts,sd.length)}</div>`;
     const matchKeys=getMatchKeys(t);if(matchKeys.length){h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label" style="margin-bottom:10px;">Scouting Reports · Click to open</div><div style="display:flex;flex-wrap:wrap;gap:6px;">`;matchKeys.forEach(mn=>{const entries=getMatchEntries(t,mn);const al=(entries[0]?.al||'').toUpperCase();const isBlue=al.startsWith('B');const alColor=isBlue?'#60a5fa':'#f87171';const hasClimb=entries[0]?.cl&&entries[0]?.cl!=='—'&&entries[0]?.cl!=='None'&&entries[0]?.cl!=='none';h+=`<button onclick="switchTab(teams.find(x=>x.number===${t.number}),'m${mn}')" style="background:var(--ink-4);border:1px solid var(--ink-5);color:var(--txt-2);height:44px;padding:0 12px;border-radius:8px;font-size:12px;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:56px;cursor:pointer;transition:border-color 0.15s,background 0.15s;" onmouseover="this.style.borderColor='rgba(245,197,24,0.4)';this.style.background='rgba(245,197,24,0.06)'" onmouseout="this.style.borderColor='';this.style.background=''"><span style="font-weight:700;">M${mn}</span><span style="font-size:9px;color:${al?alColor:'var(--txt-3)'};">${al||'·'}${hasClimb?' ⛰':''}</span>${entries.length>1?`<span style="font-size:8px;color:var(--pick);">${entries.length} reports</span>`:''}</button>`;});h+=`</div></div>`;}
   }
-  if(t.pitData){const pd=t.pitData;h+=`<div class="pit-strip">`;if(pd.weight&&pd.weight!=='N/A')h+=`<div><div class="pit-item-label">Weight</div><div class="pit-item-val">${pd.weight} lbs</div></div>`;if(pd.driveTrain&&pd.driveTrain!=='N/A')h+=`<div><div class="pit-item-label">Drive Train</div><div class="pit-item-val">${pd.driveTrain}</div></div>`;if(pd.dimensions&&pd.dimensions!=='N/A')h+=`<div><div class="pit-item-label">Dimensions</div><div class="pit-item-val">${pd.dimensions}</div></div>`;h+=`</div>`;}
+  if(t.pitData){
+    const pd=t.pitData;
+    // Basic specs strip
+    h+=`<div class="pit-strip">`;
+    if(pd.robotName&&pd.robotName!=='N/A')h+=`<div><div class="pit-item-label">Robot Name</div><div class="pit-item-val">${pd.robotName}</div></div>`;
+    if(pd.weight&&pd.weight!=='N/A')h+=`<div><div class="pit-item-label">Weight</div><div class="pit-item-val">${pd.weight} lbs</div></div>`;
+    if(pd.driveTrain&&pd.driveTrain!=='N/A')h+=`<div><div class="pit-item-label">Drive Train</div><div class="pit-item-val">${pd.driveTrain}</div></div>`;
+    if(pd.dimensions&&pd.dimensions!=='N/A')h+=`<div><div class="pit-item-label">Dimensions</div><div class="pit-item-val">${pd.dimensions}</div></div>`;
+    if(pd.shooter&&pd.shooter!=='N/A')h+=`<div><div class="pit-item-label">Shooter</div><div class="pit-item-val">${pd.shooter}</div></div>`;
+    if(pd.scoringLocations&&pd.scoringLocations!=='N/A')h+=`<div><div class="pit-item-label">Scoring</div><div class="pit-item-val">${pd.scoringLocations}</div></div>`;
+    if(pd.crossingPref&&pd.crossingPref!=='N/A')h+=`<div><div class="pit-item-label">Crossing</div><div class="pit-item-val">${pd.crossingPref}</div></div>`;
+    h+=`<div><div class="pit-item-label">Can Climb</div><div class="pit-item-val">${pd.canClimb?'✅ Yes':'❌ No'}</div></div>`;
+    if(pd.climbType&&pd.climbType!=='N/A')h+=`<div><div class="pit-item-label">Climb Type</div><div class="pit-item-val">${pd.climbType}</div></div>`;
+    if(pd.scouterName&&pd.scouterName!=='N/A')h+=`<div><div class="pit-item-label">Pit Scouter</div><div class="pit-item-val">${pd.scouterName}</div></div>`;
+    h+=`</div>`;
+    // Capabilities tags
+    if(pd.capabilities&&pd.capabilities!=='N/A')h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Capabilities</div><div style="font-size:12px;color:var(--txt-2);line-height:1.7;">${pd.capabilities.split(' • ').map(c=>`<span style="display:inline-block;background:var(--ink-4);border:1px solid var(--ink-5);border-radius:5px;padding:2px 8px;margin:2px 4px 2px 0;font-size:11px;">${c}</span>`).join('')}</div></div>`;
+    // Pit notes
+    if(pd.pitNotes&&pd.pitNotes!=='N/A')h+=`<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Pit Notes</div><div class="notes-block">${pd.pitNotes}</div></div>`;
+  }
   if(t.notes)h+=`<div class="section-block"><div class="section-label">Notes</div><div class="notes-block">${t.notes}</div></div>`;
   return h;
 }
@@ -1060,6 +1224,8 @@ async function buildTBAHTML(t){
 
 function closeModal(){
   document.getElementById('modalOverlay').style.display='none';
+  const overlay=document.getElementById('presenter-team-overlay');
+  if(overlay)overlay.style.display='none';
   if(!isPresenterMode){currentModalTeam=null;currentModalTab='overview';syncToPresenter();}
 }
 
@@ -1111,7 +1277,25 @@ function buildPicklistPayload(code){
     const matches=sd.map(e=>{const evStr=e.ev||e.log||e.events||'';const evP=parseEventLog(evStr);const zt=e.zt?(()=>{try{return typeof e.zt==='string'?JSON.parse(e.zt):e.zt;}catch{return null;}})():null;const rec={match:str(e.matchNumber||e.mt||e.M||e.match_number),scouter:str(e.sc||e.scouter||e.S),alliance:str(e.al||e.alliance||e.A),robotStatus:str(e.rs),points:f1(e.pts),cycles:i0(e.cy),climbLevel:str(e.cl),climbTiming:str(e.ct),foulsCommitted:i0(e.fc),foulsReceived:i0(e.fr),autoScore:evP.autoScore||null,teleopScore:evP.teleopScore||null,grabCount:evP.grabCount||null,climbFromLog:str(evP.climbLevel),crossings:Object.keys(evP.crossingCounts).length?{total:Object.values(evP.crossingCounts).reduce((a,b)=>a+b,0),bySide:{red:Object.keys(evP.redCrossings).length?evP.redCrossings:null,blue:Object.keys(evP.blueCrossings).length?evP.blueCrossings:null},byZone:evP.crossingCounts}:null,zoneTime:zt?{red:zt.Red||0,neutral:zt.Neu||0,blue:zt.Blu||0,total:(zt.Red||0)+(zt.Neu||0)+(zt.Blu||0)}:null,notes:[e.pm&&`[pre] ${e.pm.trim()}`,e.dn&&`[defense] ${e.dn.trim()}`,e.en&&`[endgame] ${e.en.trim()}`,e.sp&&`[general] ${e.sp.trim()}`,e.autoNotes&&`[auto] ${e.autoNotes.trim()}`,e.teleopNotes&&`[teleop] ${e.teleopNotes.trim()}`,e.intake&&`[intake] ${e.intake.trim()}`].filter(Boolean).join(' | ')||null,eventLog:str(evStr),recordedAt:str(e.time)};Object.keys(rec).forEach(k=>{if(rec[k]===null||rec[k]===undefined)delete rec[k];});return rec;}).filter(m=>m.match);
     let scoutingAgg=null;
     if(sd.length){const agg=aggregateCrossings(sd);const ptsArr=sd.filter(s=>s.pts).map(s=>parseFloat(s.pts)||0);const cyArr=sd.filter(s=>s.cy).map(s=>parseInt(s.cy)||0);const climbEntries=sd.filter(s=>s.cl&&s.cl!=='—'&&s.cl!=='None'&&s.cl!=='none');const climbLevels={};climbEntries.forEach(s=>{climbLevels[s.cl]=(climbLevels[s.cl]||0)+1;});const autoArr=sd.map(s=>parseEventLog(s.ev||s.log||'').autoScore).filter(v=>v>0);const telArr=sd.map(s=>parseEventLog(s.ev||s.log||'').teleopScore).filter(v=>v>0);const robotStatuses={};sd.filter(s=>s.rs).forEach(s=>{robotStatuses[s.rs]=(robotStatuses[s.rs]||0)+1;});const ztList=sd.map(s=>{try{return s.zt?typeof s.zt==='string'?JSON.parse(s.zt):s.zt:null;}catch{return null;}}).filter(Boolean);const avgZt=ztList.length?{red:f1(ztList.reduce((a,z)=>a+(z.Red||0),0)/ztList.length),neutral:f1(ztList.reduce((a,z)=>a+(z.Neu||0),0)/ztList.length),blue:f1(ztList.reduce((a,z)=>a+(z.Blu||0),0)/ztList.length)}:null;const totalFoulsGiven=sd.reduce((a,s)=>a+(i0(s.fc)||0),0);const totalFoulsRcvd=sd.reduce((a,s)=>a+(i0(s.fr)||0),0);scoutingAgg={matchesScouted:sd.length,avgPoints:ptsArr.length?f1(ptsArr.reduce((a,b)=>a+b,0)/ptsArr.length):null,avgCycles:cyArr.length?f1(cyArr.reduce((a,b)=>a+b,0)/cyArr.length):null,totalCycles:cyArr.reduce((a,b)=>a+b,0)||null,avgAutoScore:autoArr.length?f1(autoArr.reduce((a,b)=>a+b,0)/autoArr.length):null,avgTeleopScore:telArr.length?f1(telArr.reduce((a,b)=>a+b,0)/telArr.length):null,climbCount:climbEntries.length||null,climbRate:sd.length?f1(climbEntries.length/sd.length*100):null,climbLevels:Object.keys(climbLevels).length?climbLevels:null,foulsCommitted:totalFoulsGiven||null,foulsReceived:totalFoulsRcvd||null,robotStatuses:Object.keys(robotStatuses).length?robotStatuses:null,avgZoneTime:avgZt,crossings:{total:agg.total||null,byZone:Object.keys(agg.counts).length?agg.counts:null,pctByZone:Object.keys(agg.pcts).length?agg.pcts:null,bySide:agg.total?{red:Object.entries(agg.counts).filter(([z])=>FIELD_ZONES[z]?.side==='red').reduce((o,[z,n])=>{o[z]=n;return o;},{}),blue:Object.entries(agg.counts).filter(([z])=>FIELD_ZONES[z]?.side==='blue').reduce((o,[z,n])=>{o[z]=n;return o;},{}),redTotal:Object.entries(agg.counts).filter(([z])=>FIELD_ZONES[z]?.side==='red').reduce((s,[,n])=>s+n,0)||null,blueTotal:Object.entries(agg.counts).filter(([z])=>FIELD_ZONES[z]?.side==='blue').reduce((s,[,n])=>s+n,0)||null}:null}};Object.keys(scoutingAgg).forEach(k=>{if(scoutingAgg[k]===null)delete scoutingAgg[k];});}
-    let pitObj=null;if(t.pitData){const pd=t.pitData;pitObj={};if(str(pd.driveTrain))pitObj.driveTrain=pd.driveTrain;if(str(pd.weight))pitObj.weight=pd.weight;if(str(pd.dimensions))pitObj.dimensions=pd.dimensions;if(str(pd.motors))pitObj.motors=pd.motors;if(str(pd.capabilities)&&pd.capabilities!=='N/A')pitObj.capabilities=pd.capabilities;if(!Object.keys(pitObj).length)pitObj=null;}
+    let pitObj=null;
+    if(t.pitData){
+      const pd=t.pitData;
+      pitObj={};
+      if(str(pd.driveTrain))        pitObj.driveTrain        = pd.driveTrain;
+      if(str(pd.weight))            pitObj.weight            = pd.weight;
+      if(str(pd.dimensions))        pitObj.dimensions        = pd.dimensions;
+      if(str(pd.motors))            pitObj.motors            = pd.motors;
+      if(str(pd.capabilities))      pitObj.capabilities      = pd.capabilities;
+      if(str(pd.shooter))           pitObj.shooter           = pd.shooter;
+      if(str(pd.scoringLocations))  pitObj.scoringLocations  = pd.scoringLocations;
+      if(pd.canClimb!==undefined)   pitObj.canClimb          = pd.canClimb;
+      if(str(pd.climbType))         pitObj.climbType         = pd.climbType;
+      if(str(pd.robotName))         pitObj.robotName         = pd.robotName;
+      if(str(pd.scouterName))       pitObj.scouterName       = pd.scouterName;
+      if(str(pd.crossingPref))      pitObj.crossingPref      = pd.crossingPref;
+      if(str(pd.pitNotes))          pitObj.pitNotes          = pd.pitNotes;
+      if(!Object.keys(pitObj).length)pitObj=null;
+    }
     const res={number:t.number,name:t.name,rank:t.rank||0,record:t.record||'0-0-0',wins:w||0,losses:l||0,ties:ti||0,picklistStatus:t.status||'unassigned',...(oi>=0?{picklistRank:oi+1}:{}),epa:epaObj,...(scoutingAgg?{scoutingSummary:scoutingAgg}:{}),...(matches.length?{matches}:{}),...(pitObj?{pitData:pitObj}:{}),...(str(t.notes)?{notes:t.notes}:{}),...(sd.length?{capabilities:inferCapabilities(sd).caps.map(c=>({label:c.label,detail:c.detail}))}:{})};
     return res;
   });
@@ -1144,12 +1328,42 @@ async function exportToPicklistJSON(){
 
 /* ════════════════ IMPORT ════════════════ */
 async function triggerImport(){
-  if(isElectron){const files=await window.electronAPI.importFiles([{name:'Data Files',extensions:['json','csv']}]);if(files.length)processImportedFiles(files);}
-  else{const inp=document.createElement('input');inp.type='file';inp.accept='.csv,.json';inp.multiple=true;inp.onchange=async e=>{const files=await Promise.all(Array.from(e.target.files).map(f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res({name:f.name,content:r.result});r.onerror=rej;r.readAsText(f);})));processImportedFiles(files);};inp.click();}
+  if(isElectron){
+    const files = await window.electronAPI.importFiles([{
+      name:'Data Files',extensions:['json','csv']
+    }]);
+    if(files.length)processImportedFiles(files);}
+  else{
+    const inp=document.createElement('input');
+    inp.type='file';
+    inp.accept='.csv,.json';
+    inp.multiple=true;
+    inp.onchange=async e=>{
+      const files=await Promise.all(Array.from(e.target.files).map(f=>new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=()=>res({name:f.name,content:r.result});
+        r.onerror=rej;
+        r.readAsText(f);
+      })));
+      processImportedFiles(files);};inp.click();}
 }
 function processImportedFiles(files){
   let totalMatches=0,totalPit=0,totalSkip=0,errors=[];const fileResults=[];
-  files.forEach(({name,content})=>{try{const rows=parseFileContent(content,name);const{matchCnt,pitCnt,skipCnt}=ingestRows(rows);totalMatches+=matchCnt;totalPit+=pitCnt;totalSkip+=skipCnt;const parts=[];if(matchCnt)parts.push(`${matchCnt} matches`);if(pitCnt)parts.push(`${pitCnt} pit`);if(skipCnt)parts.push(`${skipCnt} dupes`);fileResults.push(`✓ ${name}: ${parts.join(', ')||'no new data'}`);}catch(err){errors.push(`✗ ${name}: ${err.message}`);}});
+  files.forEach(({name,content})=>{
+    try{
+      const rows=parseFileContent(content,name);
+      const{matchCnt,pitCnt,skipCnt}=ingestRows(rows);
+      totalMatches+=matchCnt;
+      totalPit+=pitCnt;
+      totalSkip+=skipCnt;
+      const parts=[];
+      if(matchCnt)parts.push(`${matchCnt} matches`);
+      if(pitCnt)parts.push(`${pitCnt} pit`);
+      if(skipCnt)parts.push(`${skipCnt} dupes`);
+      fileResults.push(`✓ ${name}: ${parts.join(', ')||'no new data'}`);
+    }catch(err){
+      errors.push(`✗ ${name}: ${err.message}`);
+    }});
   renderAll();saveSession();
   const summaryParts=[];if(totalMatches)summaryParts.push(`${totalMatches} matches`);if(totalPit)summaryParts.push(`${totalPit} pit entries`);if(totalSkip)summaryParts.push(`${totalSkip} dupes skipped`);if(errors.length)summaryParts.push(`${errors.length} error${errors.length>1?'s':''}`);
   setStatus(`Imported ${files.length} file${files.length>1?'s':''} · ${summaryParts.join(' · ')||'nothing new'}`);
@@ -1160,13 +1374,45 @@ function processImportedFiles(files){
 function isNewCompactFormat(item){return item.tm!==undefined||item.al!==undefined||item.ev!==undefined||item.log!==undefined;}
 function scoutEntryKey(entry){const mn=String(entry.matchNumber||entry.mt||entry.M||entry.match_number||'?');const sc=String(entry.sc||entry.scouter||entry.S||'');const al=String(entry.al||entry.alliance||entry.A||'');const tm=String(entry.tm||entry.number||'');return`${mn}|${tm}|${sc}|${al}`;}
 function parseFileContent(content,fileName){
-  if(fileName.endsWith('.json')){const p=JSON.parse(content);if(Array.isArray(p))return p;if(p.teams&&Array.isArray(p.teams)){const rows=[];p.teams.forEach(t=>{if(t.matches&&Array.isArray(t.matches)){t.matches.forEach(m=>{rows.push({tm:t.number,tm_name:t.name,mt:m.match,sc:m.scouter||'',al:m.alliance||'',rs:m.robotStatus||'',pts:m.points??'',cy:m.cycles??'',cl:m.climbLevel||'',ct:m.climbTiming||'',fc:m.foulsCommitted??'',fr:m.foulsReceived??'',zt:m.zoneTime?JSON.stringify({Red:m.zoneTime.red,Neu:m.zoneTime.neutral,Blu:m.zoneTime.blue}):'',ev:m.eventLog||'',sp:(m.notes||'').replace(/\[.*?\]\s*/g,''),time:m.recordedAt||''});});}else{rows.push({number:t.number,name:t.name,epa:t.epa?.total,rank:t.rank,record:t.record,status:t.picklistStatus,notes:t.notes||''});}});return rows;}if(p.data&&Array.isArray(p.data))return p.data;return[p];}
+  if(fileName.endsWith('.json')){
+    const p=JSON.parse(content);
+    if(Array.isArray(p))return p;
+    if(p.teams&&Array.isArray(p.teams)){
+      const rows=[];
+      p.teams.forEach(t=>{
+        if(t.matches&&Array.isArray(t.matches)){
+          t.matches.forEach(m=>{
+            rows.push({tm:t.number,tm_name:t.name,mt:m.match,sc:m.scouter||'',al:m.alliance||'',rs:m.robotStatus||'',pts:m.points??'',cy:m.cycles??'',cl:m.climbLevel||'',ct:m.climbTiming||'',fc:m.foulsCommitted??'',fr:m.foulsReceived??'',zt:m.zoneTime?JSON.stringify({Red:m.zoneTime.red,Neu:m.zoneTime.neutral,Blu:m.zoneTime.blue}):'',ev:m.eventLog||'',sp:(m.notes||'').replace(/\[.*?\]\s*/g,''),time:m.recordedAt||''
+          });
+        });
+      }else{
+        rows.push({number:t.number,name:t.name,epa:t.epa?.total,rank:t.rank,record:t.record,status:t.picklistStatus,notes:t.notes||''
+
+        });
+      }});
+      return rows;
+    }if(p.data&&Array.isArray(p.data))return p.data;return[p];
+  }
   if(fileName.endsWith('.csv')){const lines=content.split('\n').filter(l=>l.trim());if(lines.length<2)throw new Error('CSV needs header + data rows');const csvP=line=>{const res=[];let cur='';let q=false;for(const ch of line){if(ch==='"')q=!q;else if(ch===','&&!q){res.push(cur.trim());cur='';}else cur+=ch;}res.push(cur.trim());return res;};const hdrs=csvP(lines[0]);return lines.slice(1).map(line=>{const vals=csvP(line);const obj={};hdrs.forEach((h,j)=>obj[h]=vals[j]||'');return obj;});}
   throw new Error(`Unsupported file type: ${fileName}`);
 }
 function ingestRows(data){
   let matchCnt=0,pitCnt=0,skipCnt=0;
-  data.forEach(item=>{const useNew=isNewCompactFormat(item);const num=parseInt(useNew?item.tm:(item['Team Number']||item.team_number||item.teamNumber||item.team||item.number||item.Team||item.T));if(!num||isNaN(num))return;let t=teams.find(x=>x.number===num);if(!t){t={id:num.toString(),number:num,name:item.tm_name||`Team ${num}`,epa:0,rank:0,status:'unassigned',record:'0-0-0',scoutingData:[],pitData:null};teams.push(t);}if(item.tm_name&&t.name===`Team ${num}`)t.name=item.tm_name;if(useNew){const mNum=item.mt;if(mNum===undefined||mNum==='')return;if(!t.scoutingData)t.scoutingData=[];const evStr=item.ev||item.log||'';const candidate={matchNumber:mNum,mt:mNum,tm:item.tm,sc:item.sc||'',al:item.al||'',sp:item.sp||'',rs:item.rs||'',pts:item.pts||'',cy:item.cy||'',cl:item.cl||'',ct:item.ct||'',fc:item.fc!==undefined?item.fc:'',fr:item.fr!==undefined?item.fr:'',zt:item.zt||'',ev:evStr,dn:item.dn||'',pm:item.pm||'',en:item.en||'',time:item.time||''};const key=scoutEntryKey(candidate);const isDupe=t.scoutingData.some(s=>scoutEntryKey(s)===key);if(isDupe){skipCnt++;return;}t.scoutingData.push(candidate);matchCnt++;}else{const looksLikePit=!item['Match Number']&&!item.M&&!item.matchNumber&&!item.match&&(item.weight||item['Drive Train Type']||item.drive_train);if(item.isPitData||looksLikePit){pitCnt++;t.pitData={driveTrain:item['Drive Train Type']||item.drive_train||'N/A',weight:item['Robot Weight']||item.weight||'N/A',dimensions:item['Robot Dimensions (L x W x H)']||item.dimensions||'N/A',motors:item['Motor Type']||item.motors||'N/A',capabilities:item.capabilities||'N/A'};}else{const mNum=item['Match Number']||item.match_number||item.matchNumber||item.match||item.M;if(mNum){if(!t.scoutingData)t.scoutingData=[];const evStr=item.ev||item.log||item.events||'';const candidate={matchNumber:mNum,ev:evStr,...item};const key=scoutEntryKey(candidate);const isDupe=t.scoutingData.some(s=>scoutEntryKey(s)===key);if(isDupe){skipCnt++;return;}t.scoutingData.push(candidate);matchCnt++;}else{const srcs={name:['name','team_name','nickname','tm_name'],epa:['epa','EPA'],rank:['rank','Rank'],record:['record','Record'],status:['status','Status'],notes:['notes','Notes']};for(const key of Object.keys(srcs)){for(const f of srcs[key]){if(item[f]!==undefined&&item[f]!==''){if(key==='epa')t.epa=parseFloat(item[f])||0;else if(key==='rank')t.rank=parseInt(item[f])||0;else if(key==='status'){const s=item[f].toLowerCase();if(['yes','maybe','no','unassigned'].includes(s))t.status=s;}else t[key]=item[f];break;}}}}}}});
+  data.forEach(item=>{const useNew=isNewCompactFormat(item);const num=parseInt(useNew?item.tm:(item['Team Number']||item.team_number||item.teamNumber||item.team||item.number||item.Team||item.T));if(!num||isNaN(num))return;let t=teams.find(x=>x.number===num);if(!t){t={id:num.toString(),number:num,name:item.tm_name||`Team ${num}`,epa:0,rank:0,status:'unassigned',record:'0-0-0',scoutingData:[],pitData:null};teams.push(t);}if(item.tm_name&&t.name===`Team ${num}`)t.name=item.tm_name;if(useNew){const mNum=item.mt;if(mNum===undefined||mNum==='')return;if(!t.scoutingData)t.scoutingData=[];const evStr=item.ev||item.log||'';const candidate={matchNumber:mNum,mt:mNum,tm:item.tm,sc:item.sc||'',al:item.al||'',sp:item.sp||'',rs:item.rs||'',pts:item.pts||'',cy:item.cy||'',cl:item.cl||'',ct:item.ct||'',fc:item.fc!==undefined?item.fc:'',fr:item.fr!==undefined?item.fr:'',zt:item.zt||'',ev:evStr,dn:item.dn||'',pm:item.pm||'',en:item.en||'',time:item.time||''};const key=scoutEntryKey(candidate);const isDupe=t.scoutingData.some(s=>scoutEntryKey(s)===key);if(isDupe){skipCnt++;return;}t.scoutingData.push(candidate);matchCnt++;}else{const looksLikePit=!item['Match Number']&&!item.M&&!item.matchNumber&&!item.match&&(item.weight||item['Drive Train Type']||item.drive_train||item.shooter||item.can_climb!==undefined||item.climb_type);if(item.isPitData||looksLikePit){pitCnt++;t.pitData={
+        driveTrain:       item['Drive Train Type'] || item.drive_train          || 'N/A',
+        weight:           item['Robot Weight']     || item.weight               || 'N/A',
+        dimensions:       item['Robot Dimensions (L x W x H)'] || item.dimensions || 'N/A',
+        motors:           item['Motor Type']       || item.motors               || 'N/A',
+        capabilities:     item.capabilities                                     || 'N/A',
+        shooter:          item.shooter             || item.data?.field_5        || 'N/A',
+        scoringLocations: item.scoring_locations   || item.data?.field_7        || 'N/A',
+        canClimb:         item.can_climb           ?? item.data?.field_8        ?? false,
+        climbType:        item.climb_type          || item.data?.field_9        || 'N/A',
+        scouterName:      item.data?.field_1                                    || 'N/A',
+        robotName:        item.data?.field_3       || item.robot_name           || 'N/A',
+        crossingPref:     item.data?.field_6       || item.crossing_pref        || 'N/A',
+        pitNotes:         item.data?.field_10      || item.pit_notes            || 'N/A',
+      };}else{const mNum=item['Match Number']||item.match_number||item.matchNumber||item.match||item.M;if(mNum){if(!t.scoutingData)t.scoutingData=[];const evStr=item.ev||item.log||item.events||'';const candidate={matchNumber:mNum,ev:evStr,...item};const key=scoutEntryKey(candidate);const isDupe=t.scoutingData.some(s=>scoutEntryKey(s)===key);if(isDupe){skipCnt++;return;}t.scoutingData.push(candidate);matchCnt++;}else{const srcs={name:['name','team_name','nickname','tm_name'],epa:['epa','EPA'],rank:['rank','Rank'],record:['record','Record'],status:['status','Status'],notes:['notes','Notes']};for(const key of Object.keys(srcs)){for(const f of srcs[key]){if(item[f]!==undefined&&item[f]!==''){if(key==='epa')t.epa=parseFloat(item[f])||0;else if(key==='rank')t.rank=parseInt(item[f])||0;else if(key==='status'){const s=item[f].toLowerCase();if(['yes','maybe','no','unassigned'].includes(s))t.status=s;}else t[key]=item[f];break;}}}}}}});
   teams.forEach(t=>{if(t.scoutingData?.length>1)t.scoutingData.sort((a,b)=>{const ma=parseInt(a.matchNumber||a.mt||a.M||a.match_number||0)||0;const mb=parseInt(b.matchNumber||b.mt||b.M||b.match_number||0)||0;return ma-mb;});});
   return{matchCnt,pitCnt,skipCnt};
 }
