@@ -1,9 +1,9 @@
 {
   "event": "2026ksla",
   "exportedBy": "Team 935 & 757 Strategy Portal",
-  "exportedAt": "2026-03-27T03:58:42.197Z",
-  "teamCount": 43,
-  "picklistLength": 0,
+  "exportedAt": "2026-03-30T00:51:22.401Z",
+  "teamCount": 41,
+  "picklistLength": 2,
   "teams": [
     {
       "number": 1987,
@@ -13,7 +13,8 @@
       "wins": 10,
       "losses": 0,
       "ties": 0,
-      "picklistStatus": "unassigned",
+      "picklistStatus": "yes",
+      "picklistRank": 1,
       "epa": {
         "total": 180.34,
         "auto": 41.61,
@@ -45,72 +46,7 @@
           "rp_3": -0.3359
         }
       },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 11,
-        "totalCycles": 22,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 1,
-          "neutral": 45.5,
-          "blue": 120.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "54",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 12,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 2,
-            "neutral": 36,
-            "blue": 130,
-            "total": 168
-          },
-          "notes": "[endgame] Good game the got supercharged ranking point stole bales from red | [general] Left",
-          "eventLog": "35",
-          "recordedAt": "09:34 AM"
-        },
-        {
-          "match": "59",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 10,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 55,
-            "blue": 111,
-            "total": 166
-          },
-          "notes": "[endgame] Good robot great intake and turent | [general] Right",
-          "eventLog": "35",
-          "recordedAt": "10:17 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 11.0/match)",
-          "detail": "Max 12"
-        }
-      ]
+      "notes": "These are notes for team 1987"
     },
     {
       "number": 1986,
@@ -120,7 +56,8 @@
       "wins": 9,
       "losses": 1,
       "ties": 0,
-      "picklistStatus": "unassigned",
+      "picklistStatus": "yes",
+      "picklistRank": 2,
       "epa": {
         "total": 125.12,
         "auto": 24.4,
@@ -192,58 +129,7 @@
           "rp_2": -0.2261,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 3,
-        "totalCycles": 3,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 7,
-          "neutral": 72,
-          "blue": 90
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "52",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 7,
-            "neutral": 72,
-            "blue": 90,
-            "total": 169
-          },
-          "notes": "[defense] Non | [endgame] Did good got balls to blue team and scored a lot | [general] Left",
-          "eventLog": "34",
-          "recordedAt": "09:17 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 3.0/match)",
-          "detail": "1 matches"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "Non"
-        }
-      ]
+      }
     },
     {
       "number": 1730,
@@ -284,77 +170,7 @@
           "rp_2": -0.1161,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 5,
-        "totalCycles": 10,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 132,
-          "neutral": 48,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "53",
-          "scouter": "Izak",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 6,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 117,
-            "neutral": 53,
-            "blue": 0,
-            "total": 170
-          },
-          "notes": "[defense] Robot didn't play defense very much. | [endgame] great offensive and support robot, using it's turret to accurately score and provide balls to their alliance; however, they had troubles getting balls into the agitator a few times. | [general] Right",
-          "eventLog": "30",
-          "recordedAt": "09:27 AM"
-        },
-        {
-          "match": "57",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 4,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 147,
-            "neutral": 43,
-            "blue": 0,
-            "total": 190
-          },
-          "notes": "[endgame] They did really well. They caught a lot of fuel and has a fast speed. They kept going to get fuel and they can shoot while they score. When they score they made it multiple times. Most of the time they made it into the score. They were fast and efficient. | [general] Right",
-          "eventLog": "31",
-          "recordedAt": "10:02 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 5.0/match)",
-          "detail": "Max 6"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "Robot didn't play defense very much."
-        }
-      ]
+      }
     },
     {
       "number": 2357,
@@ -395,77 +211,7 @@
           "rp_2": -0.2252,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 5,
-        "totalCycles": 10,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 81.5,
-          "neutral": 66.5,
-          "blue": 19.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "52",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 8,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 120,
-            "neutral": 49,
-            "blue": 0,
-            "total": 169
-          },
-          "notes": "[general] Left",
-          "eventLog": "43",
-          "recordedAt": "09:16 AM"
-        },
-        {
-          "match": "58",
-          "scouter": "Hannah",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 43,
-            "neutral": 84,
-            "blue": 39,
-            "total": 166
-          },
-          "notes": "[pre] Robot is starting under the trench | [defense] Heavy defense, pretty successful in blocking the other team | [endgame] Auto went fine, Had troubles with intake and were unable to intake all of teleop, attempted to push fuel into their alliances side and helped human players | [general] Left",
-          "eventLog": "30",
-          "recordedAt": "10:08 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 5.0/match)",
-          "detail": "Max 8"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "Heavy defense, pretty successful in blocking the other team"
-        }
-      ]
+      }
     },
     {
       "number": 5801,
@@ -506,58 +252,7 @@
           "rp_2": -0.2246,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 5,
-        "totalCycles": 5,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 15,
-          "neutral": 27,
-          "blue": 125
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "52",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 5,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 15,
-            "neutral": 27,
-            "blue": 125,
-            "total": 167
-          },
-          "notes": "[defense] None | [endgame] Good intake, can bring balls back to alliance side. | [general] Left",
-          "eventLog": "41",
-          "recordedAt": "09:16 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 5.0/match)",
-          "detail": "Max 5"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "None"
-        }
-      ]
+      }
     },
     {
       "number": 9410,
@@ -598,58 +293,7 @@
           "rp_2": -0.2256,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 4,
-        "totalCycles": 4,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 67,
-          "blue": 106
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "50",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 4,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 67,
-            "blue": 106,
-            "total": 173
-          },
-          "notes": "[defense] None | [endgame] Accurate consistent shooter and fast intake, can do bump and trench, good auto. | [general] Right",
-          "eventLog": "33",
-          "recordedAt": "08:56 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 4.0/match)",
-          "detail": "Max 4"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "None"
-        }
-      ]
+      }
     },
     {
       "number": 1810,
@@ -690,88 +334,7 @@
           "rp_2": -0.1241,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgPoints": 36,
-        "avgCycles": 6.5,
-        "totalCycles": 13,
-        "climbCount": 1,
-        "climbRate": 50,
-        "climbLevels": {
-          "L2": 1
-        },
-        "foulsCommitted": 2,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 0.5,
-          "neutral": 25,
-          "blue": 86
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "15",
-          "scouter": "Sam",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": 36,
-          "cycles": 4,
-          "climbLevel": "L2",
-          "climbTiming": "Early",
-          "foulsCommitted": 2,
-          "zoneTime": {
-            "red": 1,
-            "neutral": 11,
-            "blue": 46,
-            "total": 58
-          },
-          "notes": "[defense] DefenseTest | [endgame] NotesTest | [general] Left",
-          "eventLog": "36",
-          "recordedAt": "05:29 PM"
-        },
-        {
-          "match": "54",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 9,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 39,
-            "blue": 126,
-            "total": 165
-          },
-          "notes": "[defense] None | [endgame] supercharged ranking point >360, good intake and consistent shooter, almost as good as bronco bots | [general] Left",
-          "eventLog": "30",
-          "recordedAt": "09:34 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Climbs L2",
-          "detail": "Observed in 1/2 matches"
-        },
-        {
-          "label": "High Cycle (avg 6.5/match)",
-          "detail": "Max 9"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "DefenseTest · None"
-        }
-      ]
+      }
     },
     {
       "number": 9551,
@@ -853,73 +416,7 @@
           "rp_2": -0.2278,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 5,
-        "totalCycles": 10,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 62,
-          "neutral": 39.5,
-          "blue": 96.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "53",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 119,
-            "neutral": 45,
-            "blue": 4,
-            "total": 168
-          },
-          "notes": "[endgame] In auto they went to field immediately, they got fuel and went back to score. They tried to do it again but couldn't. When they had control they got really fast, they were fast and efficient. They went out and grab fuel before scoring, they can't move while scoring that's what I couldn't see. They gave alot of fuel to human players and can only shot one ball at a time | [general] Left",
-          "eventLog": "36",
-          "recordedAt": "09:30 AM"
-        },
-        {
-          "match": "58",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 7,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 5,
-            "neutral": 34,
-            "blue": 189,
-            "total": 228
-          },
-          "notes": "[endgame] Good game it was exciting | [general] Left",
-          "eventLog": "26",
-          "recordedAt": "10:07 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 5.0/match)",
-          "detail": "Max 7"
-        }
-      ]
+      }
     },
     {
       "number": 5268,
@@ -960,54 +457,7 @@
           "rp_2": -0.2266,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 2,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 17,
-          "blue": 149
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "58",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 17,
-            "blue": 149,
-            "total": 166
-          },
-          "notes": "[endgame] Got heavily defended by meltdown and scored well for a bit but got stuck on fuel | [general] Left",
-          "eventLog": "18",
-          "recordedAt": "10:07 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 2.0/match)",
-          "detail": "1 matches"
-        }
-      ]
+      }
     },
     {
       "number": 1802,
@@ -1048,54 +498,7 @@
           "rp_2": -0.2275,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 3,
-        "totalCycles": 3,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 101,
-          "blue": 66
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "56",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 101,
-            "blue": 66,
-            "total": 167
-          },
-          "notes": "[endgame] Kept disconnecting | [general] Right",
-          "eventLog": "28",
-          "recordedAt": "09:50 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 3.0/match)",
-          "detail": "1 matches"
-        }
-      ]
+      }
     },
     {
       "number": 5126,
@@ -1136,54 +539,7 @@
           "rp_2": -0.2263,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 7,
-        "totalCycles": 7,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 20,
-          "blue": 145
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "57",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 7,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 20,
-            "blue": 145,
-            "total": 165
-          },
-          "notes": "[endgame] Scored very well but was inaccurate also had a lot of cycles | [general] Left",
-          "eventLog": "27",
-          "recordedAt": "09:59 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 7.0/match)",
-          "detail": "Max 7"
-        }
-      ]
+      }
     },
     {
       "number": 757,
@@ -1265,77 +621,7 @@
           "rp_2": -0.2288,
           "rp_3": -0.3361
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 4.5,
-        "totalCycles": 9,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 22.5,
-          "blue": 144.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "53",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 5,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 20,
-            "blue": 148,
-            "total": 168
-          },
-          "notes": "[defense] None | [endgame] Bad communication/not getting balls when empty | [general] Right",
-          "eventLog": "19",
-          "recordedAt": "09:26 AM"
-        },
-        {
-          "match": "59",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 4,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 25,
-            "blue": 141,
-            "total": 166
-          },
-          "notes": "[defense] None | [endgame] Good shooter can do bump and trench | [general] Right",
-          "eventLog": "20",
-          "recordedAt": "10:18 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 4.5/match)",
-          "detail": "Max 5"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "None · None"
-        }
-      ]
+      }
     },
     {
       "number": 935,
@@ -1377,48 +663,18 @@
           "rp_3": -0.3359
         }
       },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 156,
-          "neutral": 22,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "51",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 156,
-            "neutral": 22,
-            "blue": 0,
-            "total": 178
-          },
-          "notes": "[endgame] Did not deal well with defense | [general] Center",
-          "eventLog": "12",
-          "recordedAt": "09:02 AM"
-        }
-      ],
-      "capabilities": []
+      "pitData": {
+        "driveTrain": "Swerve",
+        "weight": "110",
+        "shooter": "Fixed Shooter",
+        "scoringLocations": "Fixed Locations",
+        "canClimb": true,
+        "climbType": "L2",
+        "robotName": "Robot Name",
+        "scouterName": "Scouter Name",
+        "crossingPref": "Trench",
+        "pitNotes": "Notes"
+      }
     },
     {
       "number": 4809,
@@ -1459,82 +715,7 @@
           "rp_2": -0.2273,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbCount": 1,
-        "climbRate": 50,
-        "climbLevels": {
-          "L1": 1
-        },
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 71.5,
-          "neutral": 24.5,
-          "blue": 72
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "52",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 143,
-            "neutral": 29,
-            "blue": 0,
-            "total": 172
-          },
-          "notes": "[endgame] When they did auto it was acting weird, after auto when they went out to field it was just frozen for alittle. It would like jerk and be frozen for a second and then jerk again, so I'm not sure what was with that. They started to give balls to human players, did not collect once, if ever did collect gave to human players. They didn't try to score anything the only score they did was for auto. I'm not sure if the throwing out balls was broken or not but they didn't try really anything except feed human players | [general] Right",
-          "eventLog": "7",
-          "recordedAt": "09:21 AM"
-        },
-        {
-          "match": "57",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "L1",
-          "climbTiming": "Failed",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 20,
-            "blue": 144,
-            "total": 164
-          },
-          "notes": "[defense] None | [endgame] Has a climber, bad shooter and intake, too slow, gets stuck up on balls",
-          "eventLog": "7",
-          "recordedAt": "09:59 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Climbs L1",
-          "detail": "Observed in 1/2 matches"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "None"
-        }
-      ]
+      }
     },
     {
       "number": 5147,
@@ -1575,49 +756,7 @@
           "rp_2": -0.1267,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 37,
-          "neutral": 81,
-          "blue": 59
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "54",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 37,
-            "neutral": 81,
-            "blue": 59,
-            "total": 177
-          },
-          "notes": "[pre] Glorified potato | [endgame] Glorified potato gets hard carried by bronco and catatronics. The robot has not scored this regional as they don't have an intake unless I'm auto but I don't think so | [general] Center",
-          "eventLog": "12",
-          "recordedAt": "09:35 AM"
-        }
-      ],
-      "capabilities": []
+      }
     },
     {
       "number": 9316,
@@ -1658,73 +797,7 @@
           "rp_2": -0.2274,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 3.5,
-        "totalCycles": 7,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 82,
-          "neutral": 37,
-          "blue": 53.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "55",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 51,
-            "blue": 107,
-            "total": 158
-          },
-          "notes": "[endgame] Scored a few but I think it disconnected | [general] Right",
-          "eventLog": "25",
-          "recordedAt": "09:43 AM"
-        },
-        {
-          "match": "59",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 5,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 164,
-            "neutral": 23,
-            "blue": 0,
-            "total": 187
-          },
-          "notes": "[general] Left",
-          "eventLog": "25",
-          "recordedAt": "10:16 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 3.5/match)",
-          "detail": "2 matches"
-        }
-      ]
+      }
     },
     {
       "number": 1723,
@@ -1765,73 +838,7 @@
           "rp_2": -0.2276,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 3.5,
-        "totalCycles": 7,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 120.5,
-          "neutral": 32.5,
-          "blue": 6.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "54",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 112,
-            "neutral": 26,
-            "blue": 13,
-            "total": 151
-          },
-          "notes": "[endgame] they went fast for auto and went to get fuel. They went to steal blue fuel during match but got pushed out. They can only shoot with one ball at a time but they can move while they shoot. They went to give fuel to human players. | [general] Left",
-          "eventLog": "25",
-          "recordedAt": "09:36 AM"
-        },
-        {
-          "match": "60",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 6,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 129,
-            "neutral": 39,
-            "blue": 0,
-            "total": 168
-          },
-          "notes": "[general] Right",
-          "eventLog": "29",
-          "recordedAt": "10:26 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 3.5/match)",
-          "detail": "2 matches"
-        }
-      ]
+      }
     },
     {
       "number": 1825,
@@ -1872,77 +879,7 @@
           "rp_2": -0.226,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 2,
-        "totalCycles": 4,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 43.5,
-          "neutral": 92.5,
-          "blue": 23
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "50",
-          "scouter": "Hannah",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 61,
-            "neutral": 96,
-            "blue": 0,
-            "total": 157
-          },
-          "notes": "[defense] No defense | [endgame] Intake didn't seem to be working, mostly stayed in the neutral zone but did nothing, looked slightly broken? | [general] Right",
-          "eventLog": "19",
-          "recordedAt": "08:55 AM"
-        },
-        {
-          "match": "57",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 26,
-            "neutral": 89,
-            "blue": 46,
-            "total": 161
-          },
-          "notes": "[endgame] They did ok at defending and getting balls to blue side | [general] Left",
-          "eventLog": "17",
-          "recordedAt": "10:00 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 2.0/match)",
-          "detail": "2 matches"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "No defense"
-        }
-      ]
+      }
     },
     {
       "number": 4418,
@@ -1983,49 +920,7 @@
           "rp_2": -0.2397,
           "rp_3": -0.3383
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 153,
-          "neutral": 17,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "55",
-          "scouter": "Izak",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 153,
-            "neutral": 17,
-            "blue": 0,
-            "total": 170
-          },
-          "notes": "[endgame] Robot disconnect very early and didn't do much before it did. | [general] Left",
-          "eventLog": "8",
-          "recordedAt": "09:42 AM"
-        }
-      ],
-      "capabilities": []
+      }
     },
     {
       "number": 5119,
@@ -2066,73 +961,7 @@
           "rp_2": -0.2272,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 46.5,
-          "neutral": 30,
-          "blue": 12.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "51",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 2,
-            "blue": 4,
-            "total": 6
-          },
-          "notes": "[defense] None | [endgame] Shooter broke halfway through. Bad shooter | [general] Right",
-          "eventLog": "12",
-          "recordedAt": "09:04 AM"
-        },
-        {
-          "match": "58",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 93,
-            "neutral": 58,
-            "blue": 21,
-            "total": 172
-          },
-          "notes": "[defense] They soaked into a!of it robots and pushed on it the blue robots out of their own side | [endgame] they tried to score in shot but the shooter was too low. They tried to score on match but still shooter was too low. Since they couldn't score they gave fuel to their human players and then they were going defense. They were fast and help alot | [general] Right",
-          "eventLog": "22",
-          "recordedAt": "10:09 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "None · They soaked into a!of it robots and pushed on it the blue robots out of their own side"
-        }
-      ]
+      }
     },
     {
       "number": 5098,
@@ -2173,54 +1002,7 @@
           "rp_2": -0.2271,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 2,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 78,
-          "blue": 87
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "55",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 78,
-            "blue": 87,
-            "total": 165
-          },
-          "notes": "[endgame] Spent half the time in neutral zone | [general] Left",
-          "eventLog": "16",
-          "recordedAt": "09:43 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 2.0/match)",
-          "detail": "1 matches"
-        }
-      ]
+      }
     },
     {
       "number": 5189,
@@ -2261,53 +1043,7 @@
           "rp_2": -0.2282,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 0,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 163,
-          "neutral": 13,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "60",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 163,
-            "neutral": 13,
-            "blue": 0,
-            "total": 176
-          },
-          "notes": "[defense] Bad robot, can barely score | [general] Left",
-          "eventLog": "14",
-          "recordedAt": "10:25 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "Bad robot, can barely score"
-        }
-      ]
+      }
     },
     {
       "number": 5141,
@@ -2348,54 +1084,7 @@
           "rp_2": -0.228,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 3,
-        "totalCycles": 3,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 103,
-          "blue": 65
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "56",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 103,
-            "blue": 65,
-            "total": 168
-          },
-          "notes": "[endgame] Did Good at collecting fuel | [general] Left",
-          "eventLog": "12",
-          "recordedAt": "09:50 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 3.0/match)",
-          "detail": "1 matches"
-        }
-      ]
+      }
     },
     {
       "number": 1769,
@@ -2436,54 +1125,7 @@
           "rp_2": -0.2277,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 72,
-          "neutral": 33,
-          "blue": 63
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "55",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 72,
-            "neutral": 33,
-            "blue": 63,
-            "total": 168
-          },
-          "notes": "[defense] Bad defense, couldn't pick one robot to defend so they kept getting past | [endgame] Bad shooter and slow intake, also bad accuracy | [general] Center",
-          "eventLog": "7",
-          "recordedAt": "09:43 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "Bad defense, couldn't pick one robot to defend so they kept getting past"
-        }
-      ]
+      }
     },
     {
       "number": 5013,
@@ -2524,73 +1166,7 @@
           "rp_2": -0.226,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 4.5,
-        "totalCycles": 9,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 37.5,
-          "neutral": 75.5,
-          "blue": 53
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "51",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 5,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 65,
-            "blue": 106,
-            "total": 171
-          },
-          "notes": "[endgame] They now have an auto and they cycle well but they are also pretty inaccurate | [general] Left",
-          "eventLog": "37",
-          "recordedAt": "09:03 AM"
-        },
-        {
-          "match": "57",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 4,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 75,
-            "neutral": 86,
-            "blue": 0,
-            "total": 161
-          },
-          "notes": "[endgame] They did terrible at actual collection, only had one to five fuel at one time. | [general] Left",
-          "eventLog": "24",
-          "recordedAt": "09:59 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "High Cycle (avg 4.5/match)",
-          "detail": "Max 5"
-        }
-      ]
+      }
     },
     {
       "number": 1775,
@@ -2631,77 +1207,7 @@
           "rp_2": -0.2283,
           "rp_3": -0.3361
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 2.5,
-        "totalCycles": 5,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 67,
-          "neutral": 54,
-          "blue": 46
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "50",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 73,
-            "blue": 92,
-            "total": 165
-          },
-          "notes": "[endgame] Played counter defense the whole time as 2410 and 1847 were trying to do defense | [general] Center",
-          "eventLog": "18",
-          "recordedAt": "08:54 AM"
-        },
-        {
-          "match": "57",
-          "scouter": "Izak",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 134,
-            "neutral": 35,
-            "blue": 0,
-            "total": 169
-          },
-          "notes": "[defense] Other than emptying balls from center, robot didn't play defense. | [endgame] Good support robot but bad at collection, they have accurate shooting but their shoot speed is 1 ball per second which is very slow compared to others. | [general] Right",
-          "eventLog": "35",
-          "recordedAt": "10:00 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 2.5/match)",
-          "detail": "2 matches"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "Other than emptying balls from center, robot didn't play defense."
-        }
-      ]
+      }
     },
     {
       "number": 2410,
@@ -2742,73 +1248,7 @@
           "rp_2": -0.2271,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 42.5,
-          "neutral": 60.5,
-          "blue": 61.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "50",
-          "scouter": "Sam",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 35,
-            "neutral": 62,
-            "blue": 64,
-            "total": 161
-          },
-          "notes": "[defense] it was alright, I mean they really didn't do defense well, because one the other team still got way more than them and they just ran right past them | [endgame] Was disconnected for auto. Movements were fast and was trying to defense, at the start but got stuck between 2 blue robots. Scored nothing and didn't pick up anything, and didn't work for 20 seconds | [general] Right",
-          "eventLog": "17",
-          "recordedAt": "08:57 AM"
-        },
-        {
-          "match": "56",
-          "scouter": "Hannah",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 50,
-            "neutral": 59,
-            "blue": 59,
-            "total": 168
-          },
-          "notes": "[defense] Heavy defense, didn't do much | [endgame] No scoring or much intaking | [general] Right",
-          "eventLog": "18",
-          "recordedAt": "09:51 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "it was alright, I mean they really didn't do defense well, because one the other team still got way more than them and they just ran right past them · Heavy defense, didn't do much"
-        }
-      ]
+      }
     },
     {
       "number": 2457,
@@ -2849,49 +1289,7 @@
           "rp_2": -0.2336,
           "rp_3": -0.3376
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 0,
-          "blue": 200
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "60",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 0,
-            "blue": 200,
-            "total": 200
-          },
-          "notes": "[endgame] They have a very ineffective intake and shooter but they both at least work | [general] Right",
-          "eventLog": "5",
-          "recordedAt": "10:26 AM"
-        }
-      ],
-      "capabilities": []
+      }
     },
     {
       "number": 9445,
@@ -2932,73 +1330,7 @@
           "rp_2": -0.228,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 22.5,
-          "neutral": 51,
-          "blue": 100.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "51",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 45,
-            "neutral": 64,
-            "blue": 56,
-            "total": 165
-          },
-          "notes": "[defense] Were defending us | [endgame] Spent most of the game defending | [general] Left",
-          "eventLog": "17",
-          "recordedAt": "09:02 AM"
-        },
-        {
-          "match": "60",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 38,
-            "blue": 145,
-            "total": 183
-          },
-          "notes": "[defense] None | [endgame] Battery was dying or something, motors stopped and slowed down | [general] Left",
-          "eventLog": "10",
-          "recordedAt": "10:26 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "Were defending us · None"
-        }
-      ]
+      }
     },
     {
       "number": 1764,
@@ -3039,77 +1371,7 @@
           "rp_2": -0.227,
           "rp_3": -0.3361
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 2,
-        "totalCycles": 4,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 148,
-          "neutral": 22.5,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "51",
-          "scouter": "Sam",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 154,
-            "neutral": 15,
-            "blue": 0,
-            "total": 169
-          },
-          "notes": "[defense] They didn't do any defense, BUT WE STILL WONNNNN | [endgame] They were kinda skow, they tried to move in auto but they got caught but the rail. They can't shoot while moving they could only shoot on ball at a time. They gave a lot of fuel to human players but kept bumping and get in the way of 935. But movements were smooth and just a Little slow | [general] Left",
-          "eventLog": "19",
-          "recordedAt": "09:05 AM"
-        },
-        {
-          "match": "55",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 142,
-            "neutral": 30,
-            "blue": 0,
-            "total": 172
-          },
-          "notes": "[endgame] Our team did amazjng. At first their shooting was off and they shooter really slow. But they help collected fuel, I didn't see them score but they help our team get unstuck. | [general] Right",
-          "eventLog": "16",
-          "recordedAt": "09:45 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 2.0/match)",
-          "detail": "2 matches"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "They didn't do any defense, BUT WE STILL WONNNNN"
-        }
-      ]
+      }
     },
     {
       "number": 1847,
@@ -3150,73 +1412,7 @@
           "rp_2": -0.2265,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 0,
-        "climbRate": 0,
-        "foulsCommitted": 1,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 1181,
-          "neutral": 17.5,
-          "blue": 22.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "50",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "None",
-          "foulsCommitted": 1,
-          "zoneTime": {
-            "red": 2225,
-            "neutral": 20,
-            "blue": 19,
-            "total": 2264
-          },
-          "notes": "[defense] Blue alliance did not score until after the e stop | [endgame] E stopped | [general] Center",
-          "eventLog": "6",
-          "recordedAt": "08:53 AM"
-        },
-        {
-          "match": "56",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 137,
-            "neutral": 15,
-            "blue": 26,
-            "total": 178
-          },
-          "notes": "[defense] None | [endgame] Got stuck/list connection | [general] Center",
-          "eventLog": "5",
-          "recordedAt": "09:51 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "Blue alliance did not score until after the e stop · None"
-        }
-      ]
+      }
     },
     {
       "number": 8825,
@@ -3257,68 +1453,7 @@
           "rp_2": -0.226,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1.5,
-        "totalCycles": 3,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 57,
-          "neutral": 58.5,
-          "blue": 33.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "52",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 101,
-            "blue": 67,
-            "total": 168
-          },
-          "notes": "[endgame] They could not score every time I have seen them they fuel surf and score nothing and hinder their alliance | [general] Left",
-          "eventLog": "19",
-          "recordedAt": "09:17 AM"
-        },
-        {
-          "match": "55",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 114,
-            "neutral": 16,
-            "blue": 0,
-            "total": 130
-          },
-          "notes": "[endgame] Got stuck on fuel and they were out. | [general] Right",
-          "eventLog": "12",
-          "recordedAt": "09:51 AM"
-        }
-      ],
-      "capabilities": []
+      }
     },
     {
       "number": 1763,
@@ -3359,73 +1494,7 @@
           "rp_2": -0.2279,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 0.5,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 13,
-          "neutral": 111.5,
-          "blue": 41
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "53",
-          "scouter": "Isaac Graber",
-          "alliance": "B2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 127,
-            "blue": 45,
-            "total": 172
-          },
-          "notes": "[endgame] Intake is too high so it does not work at all. It is best described as a confused field hazard | [general] Center",
-          "eventLog": "10",
-          "recordedAt": "09:26 AM"
-        },
-        {
-          "match": "59",
-          "scouter": "Izak",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 26,
-            "neutral": 96,
-            "blue": 37,
-            "total": 159
-          },
-          "notes": "[defense] Robot's defense wasn't very good, didn't block much and when they did they would sometimes draw fouls. | [endgame] Robot may not have had a working intake so they only player defense. | [general] Left",
-          "eventLog": "21",
-          "recordedAt": "10:18 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "Robot's defense wasn't very good, didn't block much and when they did they would sometimes draw fouls."
-        }
-      ]
+      }
     },
     {
       "number": 6843,
@@ -3466,73 +1535,7 @@
           "rp_2": -0.2294,
           "rp_3": -0.3361
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 47,
-          "neutral": 52.5,
-          "blue": 70.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "54",
-          "scouter": "Hannah",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 94,
-            "neutral": 69,
-            "blue": 0,
-            "total": 163
-          },
-          "notes": "[pre] I | [defense] No defense | [endgame] had a lot of trouble with I taking and scoring, moved very slowly and had difficulties going through the trench, shooting was very inconsistent and even shot into the volunteer area | [general] Center",
-          "eventLog": "13",
-          "recordedAt": "09:34 AM"
-        },
-        {
-          "match": "58",
-          "scouter": "Sam",
-          "alliance": "B3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 36,
-            "blue": 141,
-            "total": 177
-          },
-          "notes": "[defense] None | [endgame] Inconsistent shooter, mostly gives to humane player | [general] Center",
-          "eventLog": "16",
-          "recordedAt": "10:07 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "No defense · None"
-        }
-      ]
+      }
     },
     {
       "number": 10453,
@@ -3573,73 +1576,7 @@
           "rp_2": -0.2285,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1.5,
-        "totalCycles": 3,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 76,
-          "neutral": 78.5,
-          "blue": 13.5
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "51",
-          "scouter": "Hannah",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 14,
-            "neutral": 128,
-            "blue": 27,
-            "total": 169
-          },
-          "notes": "[defense] Played heavy defense, pushed other alliances balls out | [endgame] Didn't try scoring or intaking, stayed in the neutral zone and gathered fuel to push onto their alliances side | [general] Right",
-          "eventLog": "30",
-          "recordedAt": "09:03 AM"
-        },
-        {
-          "match": "56",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 138,
-            "neutral": 29,
-            "blue": 0,
-            "total": 167
-          },
-          "notes": "[endgame] All they did was give fuel to the human players before they got stuck. They didn't shoot at all and they couldn't even collect fuel | [general] Center",
-          "eventLog": "5",
-          "recordedAt": "09:52 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "Played heavy defense, pushed other alliances balls out"
-        }
-      ]
+      }
     },
     {
       "number": 10682,
@@ -3680,54 +1617,7 @@
           "rp_2": -0.2279,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 38,
-          "neutral": 129,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "52",
-          "scouter": "Hannah",
-          "alliance": "R1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 38,
-            "neutral": 129,
-            "blue": 0,
-            "total": 167
-          },
-          "notes": "[defense] No defense | [endgame] Attempted to push fuel onto their alliances side but constantly got stuck on it instead. Did not score much or intake much | [general] Left",
-          "eventLog": "11",
-          "recordedAt": "09:17 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "No defense"
-        }
-      ]
+      }
     },
     {
       "number": 937,
@@ -3768,199 +1658,7 @@
           "rp_2": -0.2298,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbCount": 2,
-        "climbRate": 100,
-        "climbLevels": {
-          "L1": 1,
-          "Parked": 1
-        },
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 57.5,
-          "neutral": 82.5,
-          "blue": 0
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "53",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "L1",
-          "climbTiming": "Normal",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 95,
-            "neutral": 74,
-            "blue": 0,
-            "total": 169
-          },
-          "notes": "[endgame] Bad at everything | [general] Center",
-          "eventLog": "20",
-          "recordedAt": "09:27 AM"
-        },
-        {
-          "match": "58",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "Parked",
-          "climbTiming": "Failed",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 20,
-            "neutral": 91,
-            "blue": 0,
-            "total": 111
-          },
-          "notes": "[endgame] Pushed fuel around. | [general] Left",
-          "eventLog": "3",
-          "recordedAt": "10:06 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Climbs L1/Parked",
-          "detail": "Observed in 2/2 matches"
-        }
-      ]
-    },
-    {
-      "number": 1996,
-      "name": "Team 1996",
-      "rank": 0,
-      "record": "0-0-0",
-      "wins": 0,
-      "losses": 0,
-      "ties": 0,
-      "picklistStatus": "unassigned",
-      "epa": {
-        "total": 0
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 3,
-        "totalCycles": 3,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 8,
-          "neutral": 45,
-          "blue": 114
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "50",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 3,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 8,
-            "neutral": 45,
-            "blue": 114,
-            "total": 167
-          },
-          "notes": "[defense] Non | [endgame] Good game got most points | [general] Left",
-          "eventLog": "23",
-          "recordedAt": "08:54 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Moderate Cycle (avg 3.0/match)",
-          "detail": "1 matches"
-        },
-        {
-          "label": "Plays Defense",
-          "detail": "Non"
-        }
-      ]
-    },
-    {
-      "number": 2487,
-      "name": "Team 2487",
-      "rank": 0,
-      "record": "0-0-0",
-      "wins": 0,
-      "losses": 0,
-      "ties": 0,
-      "picklistStatus": "unassigned",
-      "epa": {
-        "total": 0
-      },
-      "scoutingSummary": {
-        "matchesScouted": 1,
-        "avgCycles": 1,
-        "totalCycles": 1,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 1
-        },
-        "avgZoneTime": {
-          "red": 0,
-          "neutral": 7,
-          "blue": 158
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "53",
-          "scouter": "James",
-          "alliance": "B1",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 1,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 0,
-            "neutral": 7,
-            "blue": 158,
-            "total": 165
-          },
-          "notes": "[endgame] The were staying in blue side and did nothing | [general] Left",
-          "eventLog": "5",
-          "recordedAt": "09:26 AM"
-        }
-      ],
-      "capabilities": []
+      }
     },
     {
       "number": 1994,
@@ -4001,73 +1699,7 @@
           "rp_2": -0.2285,
           "rp_3": -0.3359
         }
-      },
-      "scoutingSummary": {
-        "matchesScouted": 2,
-        "avgCycles": 1,
-        "totalCycles": 2,
-        "climbRate": 0,
-        "robotStatuses": {
-          "Operational": 2
-        },
-        "avgZoneTime": {
-          "red": 25.5,
-          "neutral": 117.5,
-          "blue": 33
-        },
-        "crossings": {
-          "total": null,
-          "byZone": null,
-          "pctByZone": null,
-          "bySide": null
-        }
-      },
-      "matches": [
-        {
-          "match": "54",
-          "scouter": "David Tieszen",
-          "alliance": "R2",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 2,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 48,
-            "neutral": 132,
-            "blue": 0,
-            "total": 180
-          },
-          "notes": "[defense] They tried and failed. Big time. | [endgame] They are terrible, wandered around aimlessly | [general] Left",
-          "eventLog": "13",
-          "recordedAt": "09:34 AM"
-        },
-        {
-          "match": "59",
-          "scouter": "Brooklyn",
-          "alliance": "R3",
-          "robotStatus": "Operational",
-          "points": null,
-          "cycles": 0,
-          "climbLevel": "None",
-          "foulsCommitted": 0,
-          "zoneTime": {
-            "red": 3,
-            "neutral": 103,
-            "blue": 66,
-            "total": 172
-          },
-          "notes": "[defense] We tried to power defense against red team but got struck on the ramp. It was fast but got stuck | [general] Right",
-          "eventLog": "5",
-          "recordedAt": "10:17 AM"
-        }
-      ],
-      "capabilities": [
-        {
-          "label": "Plays Defense",
-          "detail": "They tried and failed. Big time. · We tried to power defense against red team but got struck on the ramp. It was fast but got stuck"
-        }
-      ]
+      }
     }
   ]
 }
