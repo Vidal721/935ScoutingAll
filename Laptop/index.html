@@ -2871,6 +2871,10 @@
         const files = await window.electronAPI.importFiles([{
           name: 'Data Files', extensions: ['json', 'csv']
         }]);
+
+        window.focus();
+        document.body.focus();
+
         if (files.length) processImportedFiles(files);
       }
       else {
