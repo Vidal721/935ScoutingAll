@@ -1254,13 +1254,13 @@
       box-shadow: var(--shadow-lg);
     }
 
-    /* ═══ VIDEO — opens in browser instead of embedded iframe ═══ */
+    /* ═══ VIDEO — floating pip player ═══ */
     #video-container {
       display: none;
       position: fixed;
       bottom: 24px;
       right: 24px;
-      width: 360px;
+      width: 480px;
       background: var(--ink-1);
       border: 1px solid var(--ink-5);
       border-radius: var(--r-lg);
@@ -1931,14 +1931,24 @@
     </div>
   </div>
 
-  <!-- VIDEO — shows link to open in browser (avoids YouTube Error 153 in Electron) -->
+  <!-- VIDEO — floating pip player -->
   <div id="video-container">
     <div class="video-titlebar">
       <span class="video-label">▶ Match Replay</span>
-      <button class="video-close" onclick="closeVideo()">✕</button>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="watch-btn" onclick="openVideoExternal()" title="Open in browser" style="height:22px;padding:0 8px;font-size:10px;">↗ Browser</button>
+        <button class="video-close" onclick="closeVideo()">✕</button>
+      </div>
     </div>
-    <div id="video-match-label">Match video available</div>
-    <button id="video-open-btn" onclick="openVideoExternal()">↗ Open on YouTube</button>
+    <div id="video-match-label" style="padding:4px 14px 0;font-size:11px;color:var(--txt-3);"></div>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+      <iframe id="video-iframe"
+        src=""
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
   </div>
 
   <!-- TEAM MODAL -->
@@ -2134,15 +2144,18 @@
     function closeLightbox() { document.getElementById('img-lightbox').style.display = 'none'; }
 
     /* ════════════════ VIDEO — open externally to avoid Error 153 ════════════════ */
-    // YouTube blocks embedding in Electron (file:// protocol) → Error 153
-    // Solution: show a panel with an "Open on YouTube" button instead of an iframe
+    // YouTube embed via youtube-nocookie.com — works in Electron without webSecurity:false
     let _currentVideoKey = null;
 
     window.playVideo = k => {
       _currentVideoKey = k;
       currentVideo = k;
-      // Don't show video container on main screen anymore
-      // Just sync to presenter so it plays there
+      const vc = document.getElementById('video-container');
+      const iframe = document.getElementById('video-iframe');
+      const lbl = document.getElementById('video-match-label');
+      if (iframe) iframe.src = `https://www.youtube-nocookie.com/embed/${k}?autoplay=1&rel=0&modestbranding=1`;
+      if (lbl) lbl.textContent = `Match video`;
+      if (vc) vc.style.display = 'block';
       syncToPresenter();
     };
 
@@ -2158,19 +2171,27 @@
 
     window.closeVideo = () => {
       _currentVideoKey = null; currentVideo = null;
-      document.getElementById('video-container').style.display = 'none';
+      const vc = document.getElementById('video-container');
+      const iframe = document.getElementById('video-iframe');
+      if (iframe) iframe.src = '';
+      if (vc) vc.style.display = 'none';
       syncToPresenter();
     };
 
     function syncVideo() {
       const vc = document.getElementById('video-container');
+      const iframe = document.getElementById('video-iframe');
+      const lbl = document.getElementById('video-match-label');
       if (isPresenterMode && currentVideo) {
         _currentVideoKey = currentVideo;
-        vc.style.display = 'block';
-        const lbl = document.getElementById('video-match-label');
-        if (lbl) lbl.textContent = `Video key: ${currentVideo}`;
+        if (iframe && !iframe.src.includes(currentVideo)) {
+          iframe.src = `https://www.youtube-nocookie.com/embed/${currentVideo}?autoplay=1&rel=0&modestbranding=1`;
+        }
+        if (lbl) lbl.textContent = `Match video`;
+        if (vc) vc.style.display = 'block';
       } else {
-        vc.style.display = 'none';
+        if (iframe) iframe.src = '';
+        if (vc) vc.style.display = 'none';
       }
     }
 
@@ -2445,136 +2466,376 @@
     }
 
     /* ════════════════ RENDER PRESENTER ════════════════ */
-    function renderPresenterOrdering() {
-      if (!isPresenterMode) return;
-      const fl = document.getElementById('pres-list-final'); if (!fl) return;
-      fl.innerHTML = ''; document.getElementById('pres-count-final').textContent = picklistOrder.length;
-      picklistOrder.forEach((id, idx) => {
-        const t = teams.find(x => x.id === id); if (!t) return;
-        const c = document.createElement('div'); c.className = 'pres-card team-card'; c.dataset.id = t.id;
-        if (currentViewingTeam === t.number) c.classList.add('highlighted');
-        c.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--gold-d);">#${idx + 1}</span><span class="p-num" style="color:var(--gold);">${t.number}</span></div><div style="display:flex;align-items:center;gap:6px;"><span class="p-epa">${t.epa.toFixed(1)} EPA</span><span style="font-size:11px;color:var(--txt-3);">R${t.rank || '—'}</span></div></div><div class="p-name">${t.name}</div>`;
-        fl.appendChild(c);
-      });
-      const yl = document.getElementById('pres-list-yes'); if (!yl) return; yl.innerHTML = '';
-      const yTeams = teams.filter(t => t.status === 'yes');
-      document.getElementById('pres-count-yes').textContent = yTeams.length;
-      yTeams.sort((a, b) => b.epa - a.epa).forEach(t => {
-        const c = document.createElement('div'); c.className = 'pres-card team-card'; if (currentViewingTeam === t.number) c.classList.add('highlighted');
-        c.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span class="p-num">${t.number}</span><span class="p-epa">${t.epa.toFixed(1)} EPA</span></div><div class="p-name">${t.name}</div>`;
-        yl.appendChild(c);
-      });
+    function buildPresenterCard(t, idx, showRank) {
+  const ec = t.epaComponents || {};
+  const bd = ec.breakdown || {};
+  const autoEpa  = (ec.auto  ?? bd.auto_points  ?? null);
+  const telEpa   = (ec.teleop ?? bd.teleop_points ?? null);
+  const endEpa   = (ec.endgame ?? bd.endgame_points ?? null);
+  const fmt = v => v != null ? parseFloat(v).toFixed(1) : '—';
+
+  // Crossing stats from scouting data
+  let trenchPct = null, bumpPct = null, climbRate = null, avgPts = null;
+  if (t.scoutingData?.length) {
+    const sd = t.scoutingData;
+    const agg = aggregateCrossings(sd);
+    if (agg.total > 0) {
+      const trenchTotal = Object.entries(agg.counts).filter(([z]) => FIELD_ZONES[z]?.type === 'trench').reduce((s,[,n])=>s+n,0);
+      const bumpTotal   = Object.entries(agg.counts).filter(([z]) => FIELD_ZONES[z]?.type === 'bump').reduce((s,[,n])=>s+n,0);
+      trenchPct = Math.round(trenchTotal / agg.total * 100);
+      bumpPct   = Math.round(bumpTotal   / agg.total * 100);
     }
+    const climbEntries = sd.filter(s => s.cl && s.cl !== '—' && s.cl !== 'None' && s.cl !== 'none');
+    climbRate = Math.round(climbEntries.length / sd.length * 100);
+    const ptsArr = sd.filter(s=>s.pts).map(s=>parseFloat(s.pts)||0);
+    if (ptsArr.length) avgPts = Math.round(ptsArr.reduce((a,b)=>a+b,0)/ptsArr.length);
+  }
+
+  // Pit data
+  const pd = t.pitData || {};
+  const drive  = pd.driveTrain && pd.driveTrain !== 'N/A' ? pd.driveTrain : null;
+  const weight = pd.weight     && pd.weight     !== 'N/A' ? pd.weight     : null;
+
+  // Capabilities (first 3)
+  const { caps } = t.scoutingData?.length ? inferCapabilities(t.scoutingData) : { caps: [] };
+  const capBadges = caps.slice(0,3).map(c =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-left:2px solid ${c.color};border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:${c.color};white-space:nowrap;">${c.icon} ${c.label}</span>`
+  ).join('');
+
+  const rankBadge = showRank && idx != null
+    ? `<span style="font-size:11px;font-weight:700;font-family:var(--mono);color:var(--gold-d);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.2);border-radius:5px;padding:2px 7px;">#${idx+1}</span>`
+    : '';
+
+  const statusColors = { yes:'rgba(48,209,88,0.6)', maybe:'rgba(255,159,10,0.6)', no:'rgba(255,69,58,0.6)', unassigned:'rgba(96,96,96,0.4)' };
+  const leftBorder = statusColors[t.status] || statusColors.unassigned;
+
+  return `
+<div class="pres-rich-card" data-id="${t.id}" style="
+  background:var(--ink-3);
+  border:1px solid var(--ink-5);
+  border-left:3px solid ${leftBorder};
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:border-color 0.15s,background 0.15s,transform 0.1s;
+  animation:card-in 0.18s ease both;
+" onmouseover="this.style.background='var(--ink-4)';this.style.borderColor='rgba(245,197,24,0.4)'"
+   onmouseout="this.style.background='var(--ink-3)';this.style.borderColor=''"
+   onclick="openTeamModal(${t.number},'overview')">
+
+  <!-- Row 1: rank + number + name + EPA -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;">
+    <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+      ${rankBadge}
+      <span style="font-size:20px;font-weight:700;letter-spacing:-0.8px;color:${showRank?'var(--gold)':'var(--txt)'};">${t.number}</span>
+      <span style="font-size:12px;color:var(--txt-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.name}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.2);padding:2px 8px;border-radius:6px;">${fmt(t.epa)} EPA</span>
+      <span style="font-size:11px;color:var(--txt-3);font-family:var(--mono);">R${t.rank||'—'}</span>
+    </div>
+  </div>
+
+  <!-- Row 2: Auto / Teleop / Endgame EPA mini-row -->
+  <div style="display:flex;gap:6px;margin-bottom:8px;">
+    <div style="flex:1;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.15);border-radius:6px;padding:4px 8px;text-align:center;">
+      <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:rgba(48,209,88,0.6);margin-bottom:1px;">Auto</div>
+      <div style="font-size:13px;font-weight:700;font-family:var(--mono);color:#30d158;">${fmt(autoEpa)}</div>
+    </div>
+    <div style="flex:1;background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.15);border-radius:6px;padding:4px 8px;text-align:center;">
+      <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:rgba(90,200,250,0.6);margin-bottom:1px;">Teleop</div>
+      <div style="font-size:13px;font-weight:700;font-family:var(--mono);color:#5ac8fa;">${fmt(telEpa)}</div>
+    </div>
+    <div style="flex:1;background:rgba(255,159,10,0.08);border:1px solid rgba(255,159,10,0.15);border-radius:6px;padding:4px 8px;text-align:center;">
+      <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:rgba(255,159,10,0.6);margin-bottom:1px;">End</div>
+      <div style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--maybe);">${fmt(endEpa)}</div>
+    </div>
+  </div>
+
+  <!-- Row 3: Record + crossing bars + climb rate + avg pts -->
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:${capBadges||drive||weight?'8':'0'}px;">
+    ${t.record ? `<span style="font-size:11px;color:var(--txt-3);font-family:var(--mono);">${t.record}</span>` : ''}
+    ${trenchPct != null ? `
+    <div style="display:flex;align-items:center;gap:4px;">
+      <span style="font-size:9px;color:#a78bfa;font-weight:700;">⬇TRN</span>
+      <div style="width:40px;height:5px;background:var(--ink-5);border-radius:3px;overflow:hidden;">
+        <div style="width:${trenchPct}%;height:100%;background:#8b5cf6;border-radius:3px;"></div>
+      </div>
+      <span style="font-size:9px;color:#a78bfa;font-family:var(--mono);">${trenchPct}%</span>
+    </div>` : ''}
+    ${bumpPct != null ? `
+    <div style="display:flex;align-items:center;gap:4px;">
+      <span style="font-size:9px;color:#fb923c;font-weight:700;">〰BMP</span>
+      <div style="width:40px;height:5px;background:var(--ink-5);border-radius:3px;overflow:hidden;">
+        <div style="width:${bumpPct}%;height:100%;background:#f97316;border-radius:3px;"></div>
+      </div>
+      <span style="font-size:9px;color:#fb923c;font-family:var(--mono);">${bumpPct}%</span>
+    </div>` : ''}
+    ${climbRate != null ? `<span style="font-size:10px;font-weight:600;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.2);padding:1px 6px;border-radius:4px;">⛰ ${climbRate}%</span>` : ''}
+    ${avgPts != null ? `<span style="font-size:10px;color:var(--txt-3);">~<b style="color:var(--txt-2);">${avgPts}</b>pts</span>` : ''}
+  </div>
+
+  <!-- Row 4: Pit info + capability badges -->
+  ${(drive||weight||capBadges) ? `
+  <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
+    ${drive  ? `<span style="font-size:10px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);color:#5ac8fa;padding:2px 7px;border-radius:5px;font-weight:600;">🔧 ${drive}</span>` : ''}
+    ${weight ? `<span style="font-size:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--txt-3);padding:2px 7px;border-radius:5px;">${weight} lbs</span>` : ''}
+    ${capBadges}
+  </div>` : ''}
+</div>`;
+}
+
+function renderPresenterOrdering() {
+  if (!isPresenterMode) return;
+  const fl = document.getElementById('pres-list-final'); if (!fl) return;
+  fl.innerHTML = '';
+  document.getElementById('pres-count-final').textContent = picklistOrder.length;
+  picklistOrder.forEach((id, idx) => {
+    const t = teams.find(x => x.id === id); if (!t) return;
+    const card = document.createElement('div');
+    card.innerHTML = buildPresenterCard(t, idx, true);
+    const inner = card.firstElementChild;
+    if (currentViewingTeam === t.number) {
+      inner.style.borderColor = 'var(--gold)';
+      inner.style.background  = 'rgba(245,197,24,0.07)';
+      inner.style.boxShadow   = '0 0 0 1px rgba(245,197,24,0.18),0 4px 16px rgba(245,197,24,0.15)';
+    }
+    fl.appendChild(inner);
+  });
+
+  const yl = document.getElementById('pres-list-yes'); if (!yl) return;
+  yl.innerHTML = '';
+  const yTeams = teams.filter(t => t.status === 'yes');
+  document.getElementById('pres-count-yes').textContent = yTeams.length;
+  yTeams.sort((a,b) => b.epa - a.epa).forEach(t => {
+    const card = document.createElement('div');
+    card.innerHTML = buildPresenterCard(t, null, false);
+    const inner = card.firstElementChild;
+    if (currentViewingTeam === t.number) {
+      inner.style.borderColor = 'var(--gold)';
+      inner.style.background  = 'rgba(245,197,24,0.07)';
+    }
+    yl.appendChild(inner);
+  });
+}
 
     function renderPresenter() {
-      if (!isPresenterMode) return;
-      ['yes', 'maybe', 'no'].forEach(status => {
-        const list = document.getElementById(`list-pres-${status}`); const count = document.getElementById(`count-pres-${status}`);
-        let rows = teams.filter(t => t.status === status);
-        rows.sort((a, b) => { if (currentViewingTeam) { if (a.number === currentViewingTeam) return -1; if (b.number === currentViewingTeam) return 1; } return b.epa - a.epa; });
-        list.innerHTML = ''; count.textContent = rows.length;
-        rows.forEach(t => { const c = document.createElement('div'); c.className = 'team-card'; if (currentViewingTeam === t.number) c.classList.add('highlighted'); c.innerHTML = `<div class="card-top"><span class="team-num">${t.number}</span><span class="epa-badge">${t.epa.toFixed(1)}</span></div><div class="team-name">${t.name}</div>`; list.appendChild(c); });
-      });
-
-      // Full screen overlay for team details
-      let overlay = document.getElementById('presenter-team-overlay');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'presenter-team-overlay';
-        overlay.style.cssText = 'position:fixed;inset:0;background:var(--ink-1);z-index:500;overflow-y:auto;padding:24px;display:none;';
-        document.body.appendChild(overlay);
-      }
-
+  if (!isPresenterMode) return;
+  ['yes','maybe','no'].forEach(status => {
+    const list  = document.getElementById(`list-pres-${status}`);
+    const count = document.getElementById(`count-pres-${status}`);
+    if (!list) return;
+    let rows = teams.filter(t => t.status === status);
+    rows.sort((a,b) => {
       if (currentViewingTeam) {
-        const t = teams.find(x => x.number === currentViewingTeam);
-        if (t) {
-          overlay.style.display = 'block';
-          overlay.innerHTML = buildSidebarHTML(t);
-        } else {
-          overlay.style.display = 'none';
-        }
-      } else {
-        overlay.style.display = 'none';
+        if (a.number === currentViewingTeam) return -1;
+        if (b.number === currentViewingTeam) return  1;
       }
+      return b.epa - a.epa;
+    });
+    list.innerHTML = ''; count.textContent = rows.length;
+    rows.forEach(t => {
+      const card = document.createElement('div');
+      card.innerHTML = buildPresenterCard(t, null, false);
+      const inner = card.firstElementChild;
+      if (currentViewingTeam === t.number) {
+        inner.style.borderColor = 'var(--gold)';
+        inner.style.background  = 'rgba(245,197,24,0.07)';
+        inner.style.boxShadow   = '0 0 0 1px rgba(245,197,24,0.18)';
+      }
+      list.appendChild(inner);
+    });
+  });
 
-      // Hide old sidebar
-      const sb = document.getElementById('team-sidebar');
-      if (sb) sb.style.display = 'none';
-    }
+  // Full-screen team overlay
+  let overlay = document.getElementById('presenter-team-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'presenter-team-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:var(--ink-1);z-index:500;overflow-y:auto;padding:0;display:none;';
+    document.body.appendChild(overlay);
+  }
+  if (currentViewingTeam) {
+    const t = teams.find(x => x.number === currentViewingTeam);
+    if (t) { overlay.style.display = 'block'; overlay.innerHTML = buildSidebarHTML(t); }
+    else      { overlay.style.display = 'none'; }
+  } else {
+    overlay.style.display = 'none';
+  }
+  const sb = document.getElementById('team-sidebar');
+  if (sb) sb.style.display = 'none';
+}
 
     function buildSidebarHTML(t) {
-      let h = `<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">`;
-      h += `<div><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:6px;">Viewing</div><div style="font-size:32px;font-weight:700;color:var(--gold);letter-spacing:-1px;">Team ${t.number}</div><div style="font-size:15px;color:var(--txt-3);margin-top:3px;">${t.name}</div></div>`;
-      h += `<div class="stat-grid-2" style="margin-bottom:0;min-width:180px;"><div class="stat-card"><div class="stat-card-label">EPA</div><div class="stat-card-val gold">${t.epa.toFixed(1)}</div></div><div class="stat-card"><div class="stat-card-label">Rank</div><div class="stat-card-val green">${t.rank || '—'}</div></div></div>`;
-      h += `</div>`;
+  const ec = t.epaComponents || {};
+  const bd = ec.breakdown || {};
+  const fmt = v => v != null ? parseFloat(v).toFixed(1) : '—';
+  const autoEpa  = fmt(ec.auto  ?? bd.auto_points);
+  const telEpa   = fmt(ec.teleop ?? bd.teleop_points);
+  const endEpa   = fmt(ec.endgame ?? bd.endgame_points);
 
-      // Pit data strip
-      if (t.pitData) {
-        const pd = t.pitData;
-        h += `<div class="pit-strip" style="margin-bottom:12px;">`;
-        if (pd.robotName && pd.robotName !== 'N/A') h += `<div><div class="pit-item-label">Robot Name</div><div class="pit-item-val">${pd.robotName}</div></div>`;
-        if (pd.weight && pd.weight !== 'N/A') h += `<div><div class="pit-item-label">Weight</div><div class="pit-item-val">${pd.weight} lbs</div></div>`;
-        if (pd.driveTrain && pd.driveTrain !== 'N/A') h += `<div><div class="pit-item-label">Drive Train</div><div class="pit-item-val">${pd.driveTrain}</div></div>`;
-        if (pd.dimensions && pd.dimensions !== 'N/A') h += `<div><div class="pit-item-label">Dimensions</div><div class="pit-item-val" style="font-size:12px;">${pd.dimensions}</div></div>`;
-        if (pd.shooter && pd.shooter !== 'N/A') h += `<div><div class="pit-item-label">Shooter</div><div class="pit-item-val">${pd.shooter}</div></div>`;
-        if (pd.scoringLocations && pd.scoringLocations !== 'N/A') h += `<div><div class="pit-item-label">Scoring</div><div class="pit-item-val">${pd.scoringLocations}</div></div>`;
-        if (pd.crossingPref && pd.crossingPref !== 'N/A') h += `<div><div class="pit-item-label">Crossing</div><div class="pit-item-val">${pd.crossingPref}</div></div>`;
-        h += `<div><div class="pit-item-label">Can Climb</div><div class="pit-item-val">${pd.canClimb ? '✅ Yes' : '❌ No'}</div></div>`;
-        if (pd.climbType && pd.climbType !== 'N/A') h += `<div><div class="pit-item-label">Climb Type</div><div class="pit-item-val">${pd.climbType}</div></div>`;
-        if (pd.scouterName && pd.scouterName !== 'N/A') h += `<div><div class="pit-item-label">Pit Scouter</div><div class="pit-item-val">${pd.scouterName}</div></div>`;
-        h += `</div>`;
-        if (pd.capabilities && pd.capabilities !== 'N/A') h += `<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Capabilities</div><div style="font-size:12px;color:var(--txt-2);line-height:1.7;">${pd.capabilities.split(' • ').map(c => `<span style="display:inline-block;background:var(--ink-4);border:1px solid var(--ink-5);border-radius:5px;padding:2px 8px;margin:2px 4px 2px 0;font-size:11px;">${c}</span>`).join('')}</div></div>`;
-        if (pd.pitNotes && pd.pitNotes !== 'N/A') h += `<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Pit Notes</div><div class="notes-block">${pd.pitNotes}</div></div>`;
-      }
-
-      // Scouting stats
-      if (t.scoutingData?.length) {
-        const sd = t.scoutingData;
-        const climbCnt = sd.filter(s => s.cl && s.cl !== '—' && s.cl !== 'None' && s.cl !== 'none').length;
-        const ptsArr = sd.filter(s => s.pts).map(s => parseFloat(s.pts) || 0);
-        const avgPts = ptsArr.length ? (ptsArr.reduce((a, b) => a + b, 0) / ptsArr.length).toFixed(0) : '—';
-        const totCycles = sd.reduce((a, s) => a + (parseInt(s.cy) || 0), 0);
-        h += `<div class="stat-grid-4" style="margin-bottom:10px;">`;
-        h += `<div class="stat-card"><div class="stat-card-label">Avg Pts</div><div class="stat-card-val gold">${avgPts}</div></div>`;
-        h += `<div class="stat-card"><div class="stat-card-label">Matches</div><div class="stat-card-val green">${sd.length}</div></div>`;
-        h += `<div class="stat-card"><div class="stat-card-label">Climbs</div><div class="stat-card-val blue">${climbCnt}</div></div>`;
-        h += `<div class="stat-card"><div class="stat-card-label">Tot Cycles</div><div class="stat-card-val orange">${totCycles}</div></div>`;
-        h += `</div>`;
-
-        // Drive team intel
-        const { caps } = inferCapabilities(sd);
-        if (caps.length) h += `<div class="section-block" style="margin-bottom:10px;border-color:rgba(245,197,24,0.2);background:rgba(245,197,24,0.03);"><div class="section-label" style="color:var(--gold);">⚡ Drive Team Intel</div>${buildCapabilitiesHTML(caps)}</div>`;
-
-        // Crossing map
-        const agg = aggregateCrossings(sd);
-        if (agg.total > 0) h += `<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Crossing Pattern · All Matches</div>${buildCrossingBreakdown(agg.counts, sd.length)}</div>`;
-
-        // Match history buttons
-        const matchKeys = getMatchKeys(t);
-        if (matchKeys.length) {
-          h += `<div class="section-block" style="margin-bottom:10px;"><div class="section-label" style="margin-bottom:10px;">Match History</div><div style="display:flex;flex-wrap:wrap;gap:6px;">`;
-          matchKeys.forEach(mn => {
-            const entries = getMatchEntries(t, mn);
-            const al = (entries[0]?.al || '').toUpperCase();
-            const isBlue = al.startsWith('B');
-            const alColor = isBlue ? '#60a5fa' : '#f87171';
-            const hasClimb = entries[0]?.cl && entries[0]?.cl !== '—' && entries[0]?.cl !== 'None' && entries[0]?.cl !== 'none';
-            h += `<div style="background:var(--ink-4);border:1px solid var(--ink-5);border-radius:8px;padding:6px 12px;font-size:12px;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:1px;min-width:56px;">`;
-            h += `<span style="font-weight:700;">M${mn}</span>`;
-            h += `<span style="font-size:9px;color:${al ? alColor : 'var(--txt-3)'};">${al || '·'}${hasClimb ? ' ⛰' : ''}</span>`;
-            if (entries.length > 1) h += `<span style="font-size:8px;color:var(--pick);">${entries.length} reports</span>`;
-            h += `</div>`;
-          });
-          h += `</div></div>`;
-        }
-      }
-
-      if (window.ScoutSummarizer) h += window.ScoutSummarizer.renderSummaryHTML(t);
-
-      if (t.notes) h += `<div class="section-block" style="margin-bottom:10px;"><div class="section-label">Notes</div><div class="notes-block">${t.notes}</div></div>`;
-      if (t.pitData) h += buildRobotImageHTML(t.pitData);
-      return h;
+  // Scouting aggregates
+  let climbRate = null, avgPts = null, avgCycles = null, climbLevelStr = '—', matchCount = 0, climbCount = 0;
+  let trenchPct = null, bumpPct = null, agg = { counts:{}, total:0 };
+  if (t.scoutingData?.length) {
+    const sd = t.scoutingData;
+    matchCount = sd.length;
+    agg = aggregateCrossings(sd);
+    if (agg.total > 0) {
+      const tT = Object.entries(agg.counts).filter(([z])=>FIELD_ZONES[z]?.type==='trench').reduce((s,[,n])=>s+n,0);
+      const bT = Object.entries(agg.counts).filter(([z])=>FIELD_ZONES[z]?.type==='bump').reduce((s,[,n])=>s+n,0);
+      trenchPct = Math.round(tT/agg.total*100);
+      bumpPct   = Math.round(bT/agg.total*100);
     }
+    const climbEntries = sd.filter(s=>s.cl&&s.cl!=='—'&&s.cl!=='None'&&s.cl!=='none');
+    climbCount = climbEntries.length;
+    climbRate  = Math.round(climbCount/matchCount*100);
+    const levels = [...new Set(climbEntries.map(s=>s.cl))].sort();
+    if (levels.length) climbLevelStr = levels.join('/');
+    const ptsArr = sd.filter(s=>s.pts).map(s=>parseFloat(s.pts)||0);
+    if (ptsArr.length) avgPts = Math.round(ptsArr.reduce((a,b)=>a+b,0)/ptsArr.length);
+    const cyArr = sd.filter(s=>s.cy).map(s=>parseInt(s.cy)||0);
+    if (cyArr.length) avgCycles = (cyArr.reduce((a,b)=>a+b,0)/cyArr.length).toFixed(1);
+  }
+
+  const pd   = t.pitData || {};
+  const drive  = pd.driveTrain && pd.driveTrain !== 'N/A' ? pd.driveTrain : null;
+  const weight = pd.weight     && pd.weight     !== 'N/A' ? `${pd.weight} lbs` : null;
+  const dims   = pd.dimensions && pd.dimensions !== 'N/A' ? pd.dimensions : null;
+  const climbType = pd.climbType && pd.climbType !== 'N/A' ? pd.climbType : null;
+
+  const { caps } = t.scoutingData?.length ? inferCapabilities(t.scoutingData) : { caps: [] };
+
+  const statusLabel = { yes:'YES POOL', maybe:'MAYBE', no:'DNP / NO', unassigned:'UNASSIGNED' }[t.status||'unassigned'];
+  const statusColor = { yes:'var(--yes)', maybe:'var(--maybe)', no:'var(--no)', unassigned:'var(--txt-3)' }[t.status||'unassigned'];
+
+  // Field crossing map (only if data exists)
+  const crossingMapHTML = agg.total > 0
+    ? `<div style="margin-bottom:16px;">${buildFieldMapSVG(agg.counts, matchCount)}</div>
+       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+         ${trenchPct != null ? `<div style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:10px;text-align:center;">
+           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#a78bfa;margin-bottom:4px;">⬇ Trench Runs</div>
+           <div style="font-size:28px;font-weight:700;font-family:var(--mono);color:#a78bfa;">${trenchPct}%</div>
+         </div>` : ''}
+         ${bumpPct != null ? `<div style="background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);border-radius:8px;padding:10px;text-align:center;">
+           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#fb923c;margin-bottom:4px;">〰 Bump Crossings</div>
+           <div style="font-size:28px;font-weight:700;font-family:var(--mono);color:#fb923c;">${bumpPct}%</div>
+         </div>` : ''}
+       </div>`
+    : `<div style="background:var(--ink-3);border:1px solid var(--ink-4);border-radius:10px;padding:20px;text-align:center;color:var(--txt-3);font-size:13px;">No crossing data scouted yet</div>`;
+
+  return `
+<div style="min-height:100vh;background:var(--ink-1);display:flex;flex-direction:column;">
+
+  <!-- TOP HEADER BAR -->
+  <div style="background:rgba(10,10,10,0.98);border-bottom:1px solid var(--ink-4);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-3);margin-bottom:2px;">Now Viewing</div>
+        <div style="font-size:36px;font-weight:800;letter-spacing:-1.5px;color:var(--gold);line-height:1;">Team ${t.number}</div>
+      </div>
+      <div>
+        <div style="font-size:16px;color:var(--txt-2);font-weight:500;margin-bottom:4px;">${t.name}</div>
+        <span style="font-size:12px;font-weight:700;letter-spacing:0.5px;color:${statusColor};background:rgba(255,255,255,0.06);border:1px solid ${statusColor};border-radius:5px;padding:2px 10px;">${statusLabel}</span>
+      </div>
+    </div>
+    <button onclick="closeModal()" style="background:rgba(255,69,58,0.15);border:1px solid rgba(255,69,58,0.35);color:var(--no);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font);">✕</button>
+  </div>
+
+  <!-- TWO-COLUMN BODY -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1;min-height:0;">
+
+    <!-- LEFT: Stats + Pit data + Capabilities -->
+    <div style="padding:20px 20px 20px 24px;border-right:1px solid var(--ink-4);overflow-y:auto;">
+
+      <!-- EPA Big Stats -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:8px;">Expected Points Added (EPA)</div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;">
+          <div style="background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:rgba(245,197,24,0.6);margin-bottom:4px;">Total</div>
+            <div style="font-size:38px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;color:var(--gold);">${fmt(t.epa)}</div>
+          </div>
+          <div style="background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.18);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:rgba(48,209,88,0.6);margin-bottom:4px;">Auto</div>
+            <div style="font-size:26px;font-weight:800;font-family:var(--mono);color:#30d158;">${autoEpa}</div>
+          </div>
+          <div style="background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.18);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:rgba(90,200,250,0.6);margin-bottom:4px;">Teleop</div>
+            <div style="font-size:26px;font-weight:800;font-family:var(--mono);color:#5ac8fa;">${telEpa}</div>
+          </div>
+          <div style="background:rgba(255,159,10,0.08);border:1px solid rgba(255,159,10,0.18);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:rgba(255,159,10,0.6);margin-bottom:4px;">End</div>
+            <div style="font-size:26px;font-weight:800;font-family:var(--mono);color:var(--maybe);">${endEpa}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rank / Record / Scouting Stats row -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">
+        <div style="background:var(--ink-3);border:1px solid var(--ink-4);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--txt-3);margin-bottom:3px;">Rank</div>
+          <div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--yes);">${t.rank||'—'}</div>
+        </div>
+        <div style="background:var(--ink-3);border:1px solid var(--ink-4);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--txt-3);margin-bottom:3px;">Record</div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--mono);color:var(--txt-2);margin-top:4px;">${t.record||'—'}</div>
+        </div>
+        ${avgPts != null ? `<div style="background:var(--ink-3);border:1px solid var(--ink-4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--txt-3);margin-bottom:3px;">Avg Pts</div><div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--gold);">${avgPts}</div></div>` : ''}
+        ${avgCycles != null ? `<div style="background:var(--ink-3);border:1px solid var(--ink-4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--txt-3);margin-bottom:3px;">Avg Cyc</div><div style="font-size:22px;font-weight:700;font-family:var(--mono);color:#5ac8fa;">${avgCycles}</div></div>` : ''}
+        ${climbRate != null ? `<div style="background:rgba(245,197,24,0.06);border:1px solid rgba(245,197,24,0.15);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:rgba(245,197,24,0.6);margin-bottom:3px;">Climb%</div><div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--gold);">${climbRate}%</div><div style="font-size:9px;color:var(--txt-3);">${climbLevelStr}</div></div>` : ''}
+      </div>
+
+      <!-- Pit data -->
+      ${(drive||weight||dims||climbType||pd.pitNotes) ? `
+      <div style="background:rgba(10,132,255,0.06);border:1px solid rgba(10,132,255,0.18);border-radius:10px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#5ac8fa;margin-bottom:10px;">🔧 Robot Specs</div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;">
+          ${drive  ? `<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(90,200,250,0.5);margin-bottom:3px;">Drive Train</div><div style="font-size:15px;font-weight:600;color:var(--txt);">${drive}</div></div>` : ''}
+          ${weight ? `<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(90,200,250,0.5);margin-bottom:3px;">Weight</div><div style="font-size:15px;font-weight:600;color:var(--txt);">${weight}</div></div>` : ''}
+          ${dims   ? `<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(90,200,250,0.5);margin-bottom:3px;">Dimensions</div><div style="font-size:15px;font-weight:600;color:var(--txt);">${dims}</div></div>` : ''}
+          ${climbType ? `<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(90,200,250,0.5);margin-bottom:3px;">Climb Type</div><div style="font-size:15px;font-weight:600;color:var(--txt);">${climbType}</div></div>` : ''}
+          ${pd.canClimb !== undefined ? `<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(90,200,250,0.5);margin-bottom:3px;">Can Climb</div><div style="font-size:15px;font-weight:600;color:${pd.canClimb?'var(--yes)':'var(--no)'};">${pd.canClimb?'✅ Yes':'❌ No'}</div></div>` : ''}
+        </div>
+        ${pd.pitNotes && pd.pitNotes !== 'N/A' ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(10,132,255,0.15);font-size:12px;color:var(--txt-2);line-height:1.6;">${pd.pitNotes}</div>` : ''}
+      </div>` : ''}
+
+      <!-- Drive Team Intel / Capabilities -->
+      ${caps.length ? `
+      <div style="background:rgba(245,197,24,0.04);border:1px solid rgba(245,197,24,0.15);border-radius:10px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gold);margin-bottom:10px;">⚡ Drive Team Intel</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${caps.map(c=>`
+          <div style="display:flex;align-items:center;gap:10px;background:var(--ink-3);border:1px solid var(--ink-4);border-left:3px solid ${c.color};border-radius:8px;padding:9px 12px;">
+            <span style="font-size:18px;flex-shrink:0;">${c.icon}</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:${c.color};">${c.label}</div>
+              <div style="font-size:11px;color:var(--txt-3);margin-top:1px;">${c.detail}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${t.notes ? `<div style="background:var(--ink-3);border:1px solid var(--ink-4);border-radius:10px;padding:14px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:8px;">Notes</div><div style="font-size:13px;color:var(--txt-2);line-height:1.6;white-space:pre-wrap;">${t.notes}</div></div>` : ''}
+    </div>
+
+    <!-- RIGHT: Crossing map + match count -->
+    <div style="padding:20px 24px 20px 20px;overflow-y:auto;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:10px;">
+        Crossing Pattern · ${matchCount > 0 ? `${matchCount} match${matchCount!==1?'es':''} scouted` : 'No scouting data'}
+      </div>
+      ${crossingMapHTML}
+
+      ${t.pitData?.robotImage || t.pitData?.field_2 ? `
+      <div style="margin-top:16px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--txt-3);margin-bottom:8px;">Robot Photo</div>
+        ${buildRobotImageHTML(t.pitData)}
+      </div>` : ''}
+    </div>
+  </div>
+</div>`;
+}
 
     /* ════════════════ MODAL SYSTEM ════════════════ */
     function getMatchKeys(team) { if (!team?.scoutingData?.length) return []; const seen = new Set(); team.scoutingData.forEach(s => { const mn = String(s.matchNumber || s.mt || s.M || s.match_number || '').trim(); if (mn) seen.add(mn); }); return [...seen].sort((a, b) => parseInt(a) - parseInt(b)); }
@@ -2765,7 +3026,8 @@
       document.getElementById('modalOverlay').style.display = 'none';
       const overlay = document.getElementById('presenter-team-overlay');
       if (overlay) overlay.style.display = 'none';
-      if (!isPresenterMode) { currentModalTeam = null; currentModalTab = 'overview'; syncToPresenter(); }
+      currentModalTeam = null; currentModalTab = 'overview'; currentViewingTeam = null;
+      syncToPresenter();
     }
 
     /* ════════════════ API FETCHES ════════════════ */
