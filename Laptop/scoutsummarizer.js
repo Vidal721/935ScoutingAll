@@ -22,7 +22,7 @@ const ScoutSummarizer = (() => {
   // ── CONFIG ──────────────────────────────────────────────────
   const OLLAMA_URL   = 'http://localhost:11434/api/generate';
   const OLLAMA_MODEL = 'phi3:mini';
-  const TIMEOUT_MS   = 20000;
+  const TIMEOUT_MS   = 60000;
 
   // ── CACHE ────────────────────────────────────────────────────
   const _cache = new Map(); // teamNumber → { text, source }
@@ -132,6 +132,7 @@ Use raw scout notes for on-field personality.
 Never cut sentences short.
 Robots cross the bump/trench; cross the bump to get fuel/score. Top robots play strategically and controlling of area.
 avoid specifics and give a general overview of the bot
+DISREGARD ANY DATA ABOUT CLIMBING, DO NOT INCLUDE IN YOUR RESPONSE
 
 DATA:
 ${ctx}

@@ -21,7 +21,7 @@
 }
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
 html,body{
-  height:100%;width:100%;overflow:hidden;
+  height:100%;width:auto;overflow:hidden;
   font-family:var(--font);
   background:var(--bg);color:var(--text);
   -webkit-font-smoothing:antialiased;
@@ -183,7 +183,7 @@ html,body{
   padding:2px 8px;letter-spacing:.5px;min-width:22px;text-align:center;
 }
 #alliance-badge-main{
-  font-size:14px; padding:4px 12px; border-radius:8px; 
+  font-size:14px; padding:4px 12px; border-radius:8px;
   font-weight:900; letter-spacing:2px; vertical-align: middle;
 }
 
@@ -316,6 +316,16 @@ html,body{
   font-family:var(--font);letter-spacing:1.5px;
 }
 .qr-done:active{opacity:.8;}
+
+.qr-json{
+  width:100%;padding:14px;border-radius:10px;
+  background:rgba(232,192,0,.09);color:var(--acc);font-size:15px;
+  font-weight:900;cursor:pointer;text-transform:uppercase;
+  font-family:var(--font);letter-spacing:1.5px;
+  border:1.5px solid rgba(232,192,0,.35);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.qr-json:active{background:var(--acc);color:#0a0a0a;}
 
 /* ── SAVED QR VIEWER ─────────────────────────────────── */
 #sqr-ov{
@@ -521,7 +531,7 @@ html,body{
     <div class="nav-arrow" onclick="navRight()">→</div>
   </div>
   <div class="field-wrap" id="field-wrap">
-    <img id="field-img" class="field-img" src="2026_Field.png" alt="FRC 2026 Field">
+    <img id="field-img" class="field-img" src="../Images/2026_Field.png" alt="FRC 2026 Field">
     <div class="field-ov" id="field-ov"></div>
   </div>
   <div class="def-bar" id="def-bar">
@@ -626,7 +636,8 @@ html,body{
   <div id="qr-canvas"></div>
   <div class="qr-hint">Hold steady — Lead Scout scans</div>
   <div class="qr-actions">
-    <div class="qr-save" id="qr-save-btn" onclick="saveCurrentMatch()">💾 SAVE FOR LATER</div>
+   <div class="qr-save" id="qr-save-btn" onclick="saveCurrentMatch()">💾 SAVE FOR LATER</div>
+    <div class="qr-json" id="qr-json-btn" onclick="downloadMatchJSON()">📄 EXPORT TO JSON</div>
     <div class="qr-done" onclick="resetAndNext()">✓ DONE — NEW MATCH</div>
   </div>
 </div>
@@ -748,7 +759,7 @@ let penalties = [];
 let foulsCaused = 0;
 let climbResult = 'None';
 
-let activeZone = null;
+let activeZone = null; // always stores the LOGICAL zone (alliance color based), never visual
 let zoneEnter = null;
 let zoneTimes = {};
 let zoneTickInterval = null;
@@ -765,558 +776,2214 @@ const SAVE_KEY = '935scout_v2';
 // ════════════════════════════════════════════════════════
 const schedule = {
   "1": {
-    "Sam": "1847",
-    "David": "5189",
-    "Austin": "8825",
-    "Charlotte": "1769",
-    "Dante": "1994",
-    "Aspyn": "5013"
+    "Sam": {
+      "team": "1847",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5189",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "8825",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1769",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1994",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5013",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "2": {
-    "Dante": "757",
-    "Austin": "1986",
-    "Charlotte": "9551",
-    "David": "1810",
-    "Aspyn": "2345",
-    "Sam": "2357"
+    "Dante": {
+      "team": "757",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "1986",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9551",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1810",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2345",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2357",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "3": {
-    "Austin": "5268",
-    "Charlotte": "9126",
-    "Dante": "2410",
-    "Sam": "935",
-    "Aspyn": "1825",
-    "David": "1723"
+    "David": {
+      "team": "5268",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9126",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "2410",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "935",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1825",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1723",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "4": {
-    "Charlotte": "937",
-    "Dante": "4418",
-    "Aspyn": "5141",
-    "Sam": "5801",
-    "David": "1987",
-    "Austin": "9445"
+    "James": {
+      "team": "937",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "4418",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5141",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5801",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1987",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "9445",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "5": {
-    "Dante": "6843",
-    "Aspyn": "1764",
-    "Sam": "2457",
-    "David": "1775",
-    "Austin": "4809",
-    "Charlotte": "1763"
+    "Dante": {
+      "team": "6843",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1764",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2457",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1775",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "4809",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1763",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "6": {
-    "Aspyn": "1802",
-    "Sam": "9410",
-    "David": "5147",
-    "Austin": "1730",
-    "Charlotte": "5119",
-    "Dante": "9316"
+    "Andrew": {
+      "team": "1802",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "9410",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5147",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "1730",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5119",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9316",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "7": {
-    "Sam": "5126",
-    "David": "5098",
-    "Austin": "10682",
-    "Charlotte": "10453",
-    "Dante": "4959",
-    "Aspyn": "1810"
+    "Sam": {
+      "team": "5126",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5098",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "10682",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "10453",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "4959",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1810",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "8": {
-    "David": "935",
-    "Austin": "937",
-    "Charlotte": "5013",
-    "Dante": "9551",
-    "Aspyn": "4418",
-    "Sam": "2357"
+    "Austin": {
+      "team": "935",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "937",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5013",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9551",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "4418",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2357",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "9": {
-    "Austin": "1775",
-    "Charlotte": "9126",
-    "Dante": "2457",
-    "Aspyn": "1994",
-    "Sam": "1987",
-    "David": "757"
+    "David": {
+      "team": "1775",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9126",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "2457",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1994",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1987",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "757",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "10": {
-    "Charlotte": "9410",
-    "Dante": "8825",
-    "Aspyn": "5119",
-    "Sam": "1764",
-    "David": "2410",
-    "Austin": "1763"
+    "James": {
+      "team": "9410",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "8825",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5119",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1764",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2410",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "1763",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "11": {
-    "Dante": "9316",
-    "Aspyn": "4959",
-    "Sam": "4809",
-    "David": "1723",
-    "Austin": "1802",
-    "Charlotte": "1986"
+    "Dante": {
+      "team": "9316",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "4959",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "4809",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1723",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "1802",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1986",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "12": {
-    "Aspyn": "9445",
-    "Sam": "5141",
-    "David": "2345",
-    "Austin": "6843",
-    "Charlotte": "1847",
-    "Dante": "5098"
+    "Andrew": {
+      "team": "9445",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5141",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2345",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "6843",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1847",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5098",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "13": {
-    "Sam": "5126",
-    "David": "10453",
-    "Austin": "5147",
-    "Charlotte": "1769",
-    "Dante": "10682",
-    "Aspyn": "1825"
+    "Sam": {
+      "team": "5126",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "10453",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "5147",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1769",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "10682",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1825",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "14": {
-    "David": "5189",
-    "Austin": "5801",
-    "Charlotte": "757",
-    "Dante": "1730",
-    "Aspyn": "5268",
-    "Sam": "8825"
+    "Austin": {
+      "team": "5189",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "5801",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "757",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1730",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5268",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "8825",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "15": {
-    "Austin": "5119",
-    "Charlotte": "1775",
-    "Dante": "935",
-    "Aspyn": "1764",
-    "Sam": "1810",
-    "David": "9551"
+    "David": {
+      "team": "5119",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1775",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "935",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1764",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1810",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "9551",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "16": {
-    "Charlotte": "4959",
-    "Dante": "2457",
-    "Aspyn": "1986",
-    "Sam": "6843",
-    "David": "9410",
-    "Austin": "5013"
+    "James": {
+      "team": "4959",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "2457",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1986",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "6843",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "9410",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "5013",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "17": {
-    "Dante": "4809",
-    "Aspyn": "5147",
-    "Sam": "2410",
-    "David": "5098",
-    "Austin": "2345",
-    "Charlotte": "4418"
+    "Dante": {
+      "team": "4809",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5147",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2410",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5098",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "2345",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "4418",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "18": {
-    "Aspyn": "5126",
-    "Sam": "9445",
-    "David": "1994",
-    "Austin": "9316",
-    "Charlotte": "5801",
-    "Dante": "5268"
+    "Andrew": {
+      "team": "5126",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "9445",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1994",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "9316",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5801",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5268",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "19": {
-    "Sam": "1763",
-    "David": "5141",
-    "Austin": "1730",
-    "Charlotte": "10682",
-    "Dante": "10453",
-    "Aspyn": "1723"
+    "Sam": {
+      "team": "1763",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5141",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "1730",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "10682",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "10453",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1723",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "20": {
-    "David": "1802",
-    "Austin": "1825",
-    "Charlotte": "1987",
-    "Dante": "2357",
-    "Aspyn": "1847",
-    "Sam": "1769"
+    "Austin": {
+      "team": "1802",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "1825",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1987",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "2357",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1847",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1769",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "21": {
-    "Austin": "5189",
-    "Charlotte": "9126",
-    "Dante": "1986",
-    "Aspyn": "937",
-    "Sam": "8825",
-    "David": "1764"
+    "David": {
+      "team": "5189",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9126",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1986",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "937",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "8825",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1764",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "22": {
-    "Charlotte": "5801",
-    "Dante": "6843",
-    "Aspyn": "5126",
-    "Sam": "5098",
-    "David": "2410",
-    "Austin": "757"
+    "James": {
+      "team": "5801",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "6843",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5126",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5098",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2410",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "757",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "23": {
-    "Dante": "5013",
-    "Aspyn": "1810",
-    "Sam": "1763",
-    "David": "5141",
-    "Austin": "5147",
-    "Charlotte": "5268"
+    "Dante": {
+      "team": "5013",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1810",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1763",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5141",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "5147",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5268",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "24": {
-    "Aspyn": "935",
-    "Sam": "2357",
-    "David": "9316",
-    "Austin": "10453",
-    "Charlotte": "1730",
-    "Dante": "2457"
+    "Andrew": {
+      "team": "935",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2357",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "9316",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "10453",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1730",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "2457",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "25": {
-    "Sam": "1994",
-    "David": "1775",
-    "Austin": "10682",
-    "Charlotte": "9445",
-    "Dante": "1802",
-    "Aspyn": "937"
+    "Sam": {
+      "team": "1994",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1775",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "10682",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9445",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1802",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "937",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "26": {
-    "David": "4809",
-    "Austin": "2345",
-    "Charlotte": "1987",
-    "Dante": "9410",
-    "Aspyn": "5189",
-    "Sam": "1825"
+    "Austin": {
+      "team": "4809",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "2345",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1987",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9410",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5189",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1825",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "27": {
-    "Austin": "4959",
-    "Charlotte": "1769",
-    "Dante": "1723",
-    "Aspyn": "9126",
-    "Sam": "9551",
-    "David": "5119"
+    "David": {
+      "team": "4959",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1769",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1723",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "9126",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "9551",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5119",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "28": {
-    "Charlotte": "1847",
-    "Dante": "1986",
-    "Aspyn": "5126",
-    "Sam": "1763",
-    "David": "4418",
-    "Austin": "935"
+    "James": {
+      "team": "1847",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1986",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5126",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1763",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "4418",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "935",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "29": {
-    "Dante": "8825",
-    "Aspyn": "9445",
-    "Sam": "5098",
-    "David": "5147",
-    "Austin": "2357",
-    "Charlotte": "1730"
+    "Dante": {
+      "team": "8825",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "9445",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5098",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5147",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "2357",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1730",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "30": {
-    "Aspyn": "10682",
-    "Sam": "757",
-    "David": "2345",
-    "Austin": "1764",
-    "Charlotte": "5013",
-    "Dante": "1987"
+    "Andrew": {
+      "team": "10682",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "757",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2345",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "1764",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5013",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1987",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "31": {
-    "Sam": "1825",
-    "David": "2457",
-    "Austin": "5801",
-    "Charlotte": "4959",
-    "Dante": "5119",
-    "Aspyn": "1802"
+    "Sam": {
+      "team": "1825",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2457",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "5801",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "4959",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5119",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1802",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "32": {
-    "David": "10453",
-    "Austin": "5268",
-    "Charlotte": "9410",
-    "Dante": "9126",
-    "Aspyn": "6843",
-    "Sam": "4418"
+    "Austin": {
+      "team": "10453",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "5268",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9410",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9126",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "6843",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "4418",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "33": {
-    "Austin": "2410",
-    "Charlotte": "9551",
-    "Dante": "5141",
-    "Aspyn": "1994",
-    "Sam": "5189",
-    "David": "4809"
+    "David": {
+      "team": "2410",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9551",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5141",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1994",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5189",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "4809",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "34": {
-    "Charlotte": "1769",
-    "Dante": "937",
-    "Aspyn": "1810",
-    "Sam": "1723",
-    "David": "1847",
-    "Austin": "9316"
+    "James": {
+      "team": "1769",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "937",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1810",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1723",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1847",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "9316",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "35": {
-    "Dante": "1775",
-    "Aspyn": "5098",
-    "Sam": "5801",
-    "David": "935",
-    "Austin": "1986",
-    "Charlotte": "5147"
+    "Dante": {
+      "team": "1775",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5098",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5801",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "935",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "1986",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5147",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "36": {
-    "Aspyn": "1763",
-    "Sam": "2345",
-    "David": "1802",
-    "Austin": "1764",
-    "Charlotte": "1825",
-    "Dante": "9445"
+    "Andrew": {
+      "team": "1763",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2345",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1802",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "1764",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1825",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9445",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "37": {
-    "Sam": "1987",
-    "David": "1730",
-    "Austin": "9551",
-    "Charlotte": "4809",
-    "Dante": "6843",
-    "Aspyn": "10453"
+    "Sam": {
+      "team": "1987",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1730",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "9551",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "4809",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "6843",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "10453",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "38": {
-    "David": "5013",
-    "Austin": "5141",
-    "Charlotte": "9126",
-    "Dante": "9316",
-    "Aspyn": "2410",
-    "Sam": "937"
+    "Austin": {
+      "team": "5013",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "5141",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9126",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9316",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2410",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "937",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "39": {
-    "Austin": "1847",
-    "Charlotte": "4959",
-    "Dante": "10682",
-    "Aspyn": "5189",
-    "Sam": "5119",
-    "David": "4418"
+    "David": {
+      "team": "1847",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "4959",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "10682",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5189",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5119",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "4418",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "40": {
-    "Charlotte": "1810",
-    "Dante": "5268",
-    "Aspyn": "1775",
-    "Sam": "2457",
-    "David": "1769",
-    "Austin": "8825"
+    "James": {
+      "team": "1810",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5268",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1775",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2457",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1769",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "8825",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "41": {
-    "Dante": "9410",
-    "Aspyn": "2357",
-    "Sam": "1994",
-    "David": "1723",
-    "Austin": "757",
-    "Charlotte": "5126"
+    "Dante": {
+      "team": "9410",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2357",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1994",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1723",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "757",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5126",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "42": {
-    "Aspyn": "1986",
-    "Sam": "1825",
-    "David": "5013",
-    "Austin": "1987",
-    "Charlotte": "5098",
-    "Dante": "5141"
+    "Andrew": {
+      "team": "1986",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1825",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5013",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "1987",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5098",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5141",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "43": {
-    "Sam": "6843",
-    "David": "9316",
-    "Austin": "1802",
-    "Charlotte": "5189",
-    "Dante": "10682",
-    "Aspyn": "935"
+    "Sam": {
+      "team": "6843",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "9316",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "1802",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5189",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "10682",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "935",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "44": {
-    "David": "5268",
-    "Austin": "1764",
-    "Charlotte": "1847",
-    "Dante": "9551",
-    "Aspyn": "5801",
-    "Sam": "5147"
+    "Austin": {
+      "team": "5268",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "1764",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1847",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9551",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5801",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5147",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "45": {
-    "Austin": "2345",
-    "Charlotte": "1723",
-    "Dante": "9126",
-    "Aspyn": "8825",
-    "Sam": "5126",
-    "David": "1775"
+    "David": {
+      "team": "2345",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1723",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9126",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "8825",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5126",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1775",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "46": {
-    "Charlotte": "4959",
-    "Dante": "9445",
-    "Aspyn": "2357",
-    "Sam": "1810",
-    "David": "2410",
-    "Austin": "9410"
+    "James": {
+      "team": "4959",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9445",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2357",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1810",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2410",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "9410",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "47": {
-    "Dante": "5119",
-    "Aspyn": "1763",
-    "Sam": "10453",
-    "David": "757",
-    "Austin": "4809",
-    "Charlotte": "937"
+    "Dante": {
+      "team": "5119",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1763",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "10453",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "757",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "4809",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "937",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "48": {
-    "Aspyn": "4418",
-    "Sam": "1769",
-    "David": "1730",
-    "Austin": "2457",
-    "Charlotte": "1994",
-    "Dante": "5141"
+    "Andrew": {
+      "team": "4418",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1769",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1730",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "2457",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1994",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5141",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "49": {
-    "Sam": "1802",
-    "David": "5098",
-    "Austin": "5189",
-    "Charlotte": "9551",
-    "Dante": "5126",
-    "Aspyn": "5268"
+    "Sam": {
+      "team": "1802",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5098",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "5189",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "9551",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5126",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5268",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "50": {
-    "David": "1825",
-    "Austin": "1847",
-    "Charlotte": "2410",
-    "Dante": "1986",
-    "Aspyn": "1775",
-    "Sam": "9410"
+    "Austin": {
+      "team": "1825",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "1847",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "2410",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1986",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1775",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "9410",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "51": {
-    "Austin": "10453",
-    "Charlotte": "935",
-    "Dante": "1764",
-    "Aspyn": "9445",
-    "Sam": "5013",
-    "David": "5119"
+    "David": {
+      "team": "10453",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "935",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1764",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "9445",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5013",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5119",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "52": {
-    "Charlotte": "10682",
-    "Dante": "2357",
-    "Aspyn": "4809",
-    "Sam": "9126",
-    "David": "8825",
-    "Austin": "5801"
+    "James": {
+      "team": "10682",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "2357",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "4809",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "9126",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "8825",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "5801",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "53": {
-    "Dante": "1730",
-    "Aspyn": "937",
-    "Sam": "2345",
-    "David": "2457",
-    "Austin": "1763",
-    "Charlotte": "4959"
+    "Dante": {
+      "team": "1730",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "937",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2345",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "2457",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "1763",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "4959",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "54": {
-    "Aspyn": "6843",
-    "Sam": "1994",
-    "David": "1723",
-    "Austin": "1987",
-    "Charlotte": "5147",
-    "Dante": "1810"
+    "Andrew": {
+      "team": "6843",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1994",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1723",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "1987",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5147",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1810",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "55": {
-    "Sam": "4418",
-    "David": "757",
-    "Austin": "1764",
-    "Charlotte": "5098",
-    "Dante": "9316",
-    "Aspyn": "1769"
+    "Sam": {
+      "team": "4418",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "757",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "1764",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5098",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9316",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1769",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "56": {
-    "David": "2410",
-    "Austin": "8825",
-    "Charlotte": "10453",
-    "Dante": "5141",
-    "Aspyn": "1802",
-    "Sam": "1847"
+    "Austin": {
+      "team": "2410",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "8825",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "10453",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "5141",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1802",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1847",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "57": {
-    "Austin": "1775",
-    "Charlotte": "5013",
-    "Dante": "1730",
-    "Aspyn": "1825",
-    "Sam": "5126",
-    "David": "4809"
+    "David": {
+      "team": "1775",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5013",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "1730",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1825",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "5126",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "4809",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "58": {
-    "Charlotte": "2357",
-    "Dante": "937",
-    "Aspyn": "5119",
-    "Sam": "2345",
-    "David": "5268",
-    "Austin": "6843"
+    "James": {
+      "team": "2357",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "937",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5119",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2345",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5268",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "6843",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "59": {
-    "Dante": "1763",
-    "Aspyn": "9316",
-    "Sam": "1994",
-    "David": "1987",
-    "Austin": "935",
-    "Charlotte": "4959"
+    "Dante": {
+      "team": "1763",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "9316",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1994",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1987",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "935",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "4959",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "60": {
-    "Aspyn": "5147",
-    "Sam": "1723",
-    "David": "5189",
-    "Austin": "757",
-    "Charlotte": "2457",
-    "Dante": "9445"
+    "Andrew": {
+      "team": "5147",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1723",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5189",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "757",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "2457",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9445",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "61": {
-    "Sam": "9551",
-    "David": "9410",
-    "Austin": "1769",
-    "Charlotte": "5801",
-    "Dante": "10682",
-    "Aspyn": "1986"
+    "Sam": {
+      "team": "9551",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "9410",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "1769",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5801",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "10682",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1986",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "62": {
-    "David": "4418",
-    "Austin": "1810",
-    "Charlotte": "1847",
-    "Dante": "9126",
-    "Aspyn": "1730",
-    "Sam": "1764"
+    "Austin": {
+      "team": "4418",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "1810",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1847",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9126",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "1730",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1764",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "63": {
-    "Austin": "937",
-    "Charlotte": "1987",
-    "Dante": "6843",
-    "Aspyn": "2410",
-    "Sam": "1802",
-    "David": "5126"
+    "David": {
+      "team": "937",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1987",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "6843",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2410",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1802",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "5126",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "64": {
-    "Charlotte": "5268",
-    "Dante": "935",
-    "Aspyn": "757",
-    "Sam": "2345",
-    "David": "4959",
-    "Austin": "1775"
+    "James": {
+      "team": "5268",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "935",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "757",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Sam": {
+      "team": "2345",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "4959",
+      "alliance": "B2",
+      "sub": null
+    },
+    "David": {
+      "team": "1775",
+      "alliance": "B3",
+      "sub": "Hannah"
+    }
   },
   "65": {
-    "Dante": "5119",
-    "Aspyn": "2457",
-    "Sam": "10682",
-    "David": "1986",
-    "Austin": "1994",
-    "Charlotte": "5098"
+    "Dante": {
+      "team": "5119",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2457",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "10682",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1986",
+      "alliance": "B1",
+      "sub": null
+    },
+    "David": {
+      "team": "1994",
+      "alliance": "B2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5098",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "66": {
-    "Aspyn": "1769",
-    "Sam": "4809",
-    "David": "9126",
-    "Austin": "5147",
-    "Charlotte": "1763",
-    "Dante": "9445"
+    "Andrew": {
+      "team": "1769",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "4809",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "9126",
+      "alliance": "R3",
+      "sub": null
+    },
+    "David": {
+      "team": "5147",
+      "alliance": "B1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1763",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9445",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "67": {
-    "Sam": "5801",
-    "David": "1723",
-    "Austin": "1810",
-    "Charlotte": "5013",
-    "Dante": "10453",
-    "Aspyn": "5189"
+    "Sam": {
+      "team": "5801",
+      "alliance": "R1",
+      "sub": null
+    },
+    "Austin": {
+      "team": "1723",
+      "alliance": "R2",
+      "sub": null
+    },
+    "David": {
+      "team": "1810",
+      "alliance": "R3",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "5013",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Dante": {
+      "team": "10453",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "5189",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "68": {
-    "David": "8825",
-    "Austin": "9551",
-    "Charlotte": "1825",
-    "Dante": "9410",
-    "Aspyn": "4418",
-    "Sam": "9316"
+    "Austin": {
+      "team": "8825",
+      "alliance": "R1",
+      "sub": null
+    },
+    "David": {
+      "team": "9551",
+      "alliance": "R2",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1825",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Dante": {
+      "team": "9410",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "4418",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Sam": {
+      "team": "9316",
+      "alliance": "B3",
+      "sub": null
+    }
   },
   "69": {
-    "Austin": "5141",
-    "Charlotte": "1764",
-    "Dante": "4959",
-    "Aspyn": "2357",
-    "Sam": "1775",
-    "David": "6843"
+    "David": {
+      "team": "5141",
+      "alliance": "R1",
+      "sub": "Hannah"
+    },
+    "James": {
+      "team": "1764",
+      "alliance": "R2",
+      "sub": null
+    },
+    "Dante": {
+      "team": "4959",
+      "alliance": "R3",
+      "sub": null
+    },
+    "Andrew": {
+      "team": "2357",
+      "alliance": "B1",
+      "sub": null
+    },
+    "Sam": {
+      "team": "1775",
+      "alliance": "B2",
+      "sub": null
+    },
+    "Austin": {
+      "team": "6843",
+      "alliance": "B3",
+      "sub": null
+    }
   }
-}
+};
 
 function saveScoutName() {
   localStorage.setItem('scoutName', $('scout-name').value.trim());
@@ -1327,38 +2994,38 @@ function tryAutoFill() {
   const mnRaw = ($('match-num').value || '').trim();
   if (!sn || !mnRaw) return;
 
-  // 1. Find the match (handle strings, numbers, and "M" prefixes)
-  const mn = mnRaw.replace(/\D/g, ''); 
+  const mn = mnRaw.replace(/\D/g, '');
   const matchData = schedule[mn] || schedule[mnRaw] || schedule[String(parseInt(mn))];
+  if (!matchData) return;
 
-  if (!matchData) {
-    console.log('No schedule data found for match:', mnRaw);
+  // First try: typed name matches a primary key directly
+  const entries = Object.entries(matchData);
+  const directIdx = entries.findIndex(([name]) => name.trim().toLowerCase() === sn);
+
+  if (directIdx !== -1) {
+    // Primary found — assign as normal
+    const [, slotData] = entries[directIdx];
+    const team = slotData.team ?? slotData; // support old flat format too
+    const aCode = slotData.alliance ?? null;
+    if (team) $('team-num').value = team;
+    if (aCode) pickAlliance(aCode, false);
     return;
   }
-  
-  // 2. Search for the scout in this match (case-insensitive)
-  const entries = Object.entries(matchData); 
-  const foundIdx = entries.findIndex(([name]) => name.trim().toLowerCase() === sn);
-  
-  if (foundIdx !== -1) {
-    const [realName, teamNum] = entries[foundIdx];
-    
-    // 3. Auto-fill Team #
-    if (teamNum) {
-      console.log("MATCHED TEAM:", teamNum);
-      $('team-num').value = teamNum;
-    }
-    
-    // 4. Map index to Alliance Position (0-2: Red, 3-5: Blue)
-    const posMap = ['R1', 'R2', 'R3', 'B1', 'B2', 'B3'];
-    const assignedAlliance = posMap[foundIdx];
-    
-    if (assignedAlliance) {
-      console.log("ASSIGNED ALLIANCE:", assignedAlliance);
-      pickAlliance(assignedAlliance, false);
-    }
-  } else {
-    console.log("Scout name not found in this match's list:", sn);
+
+  // Second try: typed name matches a sub value in any slot
+  const subIdx = entries.findIndex(([, slotData]) => {
+    const sub = slotData.sub ?? null;
+    return sub && sub.trim().toLowerCase() === sn;
+  });
+
+  if (subIdx !== -1) {
+    // Sub found — use the primary's slot data, but keep the sub's name in the scout field
+    const [, slotData] = entries[subIdx];
+    const team = slotData.team ?? slotData;
+    const aCode = slotData.alliance ?? null;
+    if (team) $('team-num').value = team;
+    if (aCode) pickAlliance(aCode, false);
+    // Don't overwrite scout name — they typed their own name, keep it
   }
 }
 
@@ -1390,6 +3057,35 @@ function refreshSavedCount() {
 }
 
 // ════════════════════════════════════════════════════════
+//  FLIP HELPERS
+//
+//  The key rule:
+//    activeZone.id  = always the LOGICAL zone id (e.g. 'zred' for Red alliance)
+//    visualZoneId() = what zone id is visually on screen for a given logical id
+//    logicalZoneId()= reverse: what logical id does a visual zone id map to
+//
+//  When NOT flipped: visual == logical (zred is on the left, where Red actually is)
+//  When flipped:     visual != logical (zred appears on the right because image is mirrored)
+// ════════════════════════════════════════════════════════
+function mirrorZone(zid) {
+  if (zid === 'zred') return 'zblu';
+  if (zid === 'zblu') return 'zred';
+  return zid; // zneu stays zneu
+}
+
+// Given a logical zone id, what visual/DOM position does it occupy?
+function visualZoneId(logicalId) {
+  return fieldFlipped ? mirrorZone(logicalId) : logicalId;
+}
+
+// Given a visual/DOM zone id (what was tapped), what is the logical zone?
+function logicalFromVisual(visualId) {
+  return fieldFlipped ? mirrorZone(visualId) : visualId;
+}
+
+function flipX(x) { return FW - x; }
+
+// ════════════════════════════════════════════════════════
 //  ORIENTATION / FLIP
 // ════════════════════════════════════════════════════════
 function setOrientation(flipped) {
@@ -1405,15 +3101,16 @@ function setOrientation(flipped) {
   const img = $('field-img');
   if (img) img.classList.toggle('flipped', flipped);
   if (curScreen === 'auto' || curScreen === 'tele') {
-    renderZones(); renderButtons();
+    renderZones();
+    renderButtons();
+    updateDefBar();
   }
 }
+
 function toggleFlip() {
   setOrientation(!fieldFlipped);
   toast(fieldFlipped ? '⇄ Field flipped' : '⇄ Field normal');
 }
-
-function flipX(x) { return FW - x; }
 
 // ════════════════════════════════════════════════════════
 //  NAVIGATION
@@ -1428,12 +3125,14 @@ function goTo(screen) {
   if (screen === 'auto' || screen === 'tele') {
     curPeriod = screen;
     $('period-label').textContent = screen === 'auto' ? 'AUTO' : 'TELEOP';
-    // Init active zone to alliance zone if unset
+
+    // Init active zone to alliance's logical zone if unset
     if (!activeZone && alliance) {
       const zid = alliance.startsWith('R') ? 'zred' : 'zblu';
       activeZone = ZONES.find(z => z.id === zid);
       zoneEnter = Date.now();
     }
+
     setOrientation(fieldFlipped);
     startZoneTimer();
     renderZones();
@@ -1466,10 +3165,7 @@ function goToAlliance() { screenIdx = 0; goTo('alliance'); }
 function pickAlliance(a, nav = true) {
   alliance = a;
   localStorage.setItem('alliance', a);
-  
   const isRed = a.startsWith('R');
-  
-  // Update badges on both screens
   const badges = [$('setup-badge'), $('alliance-badge-main')];
   badges.forEach(b => {
     if (b) {
@@ -1478,7 +3174,6 @@ function pickAlliance(a, nav = true) {
       b.style.display = 'inline-block';
     }
   });
-
   if (nav) {
     screenIdx = 1;
     goTo('setup');
@@ -1551,7 +3246,7 @@ function stopZoneTimer() { clearInterval(zoneTickInterval); }
 
 function finalizeZoneTime() {
   if (activeZone && zoneEnter) {
-    const key = activeZone.id;
+    const key = activeZone.id; // always logical
     zoneTimes[key] = (zoneTimes[key] || 0) + (Date.now() - zoneEnter) / 1000;
     zoneEnter = null;
   }
@@ -1563,11 +3258,9 @@ function finalizeZoneTime() {
 function getFieldRect() {
   const wrap = $('field-wrap');
   const cw = wrap.offsetWidth, ch = wrap.offsetHeight;
-  const iw = FW, ih = FH;
-  const ratio = Math.min(cw / iw, ch / ih);
-  const nw = iw * ratio, nh = ih * ratio;
-  const nx = (cw - nw) / 2, ny = (ch - nh) / 2;
-  return { x: nx, y: ny, w: nw, h: nh, s: ratio };
+  const ratio = Math.min(cw / FW, ch / FH);
+  const nw = FW * ratio, nh = FH * ratio;
+  return { x: (cw - nw) / 2, y: (ch - nh) / 2, w: nw, h: nh, s: ratio };
 }
 
 function renderZones() {
@@ -1576,17 +3269,21 @@ function renderZones() {
   const rect = getFieldRect();
 
   ZONES.forEach(z => {
-    const ez = fieldFlipped ? { ...z, x: FW - z.x - z.w } : z;
+    // Flip the visual position of each zone when flipped, but keep id = logical id
+    const vx = fieldFlipped ? (FW - z.x - z.w) : z.x;
+
     const el = document.createElement('div');
     el.className = 'zone';
-    el.id = z.id;
+    el.id = z.id; // DOM id = logical zone id always
     el.style.cssText = `
-      left:${rect.x + ez.x * rect.s}px; top:${rect.y + ez.y * rect.s}px;
-      width:${ez.w * rect.s}px; height:${ez.h * rect.s}px;
+      left:${rect.x + vx * rect.s}px; top:${rect.y + z.y * rect.s}px;
+      width:${z.w * rect.s}px; height:${z.h * rect.s}px;
     `;
     const [r,g,b] = hexToRgb(z.color);
     el.style.background = `rgba(${r},${g},${b},${z.opacity})`;
     el.style.borderColor = z.color;
+
+    // Highlight whichever zone is currently active (logical match)
     if (activeZone && activeZone.id === z.id) el.classList.add('active');
 
     const lbl = document.createElement('div');
@@ -1594,6 +3291,7 @@ function renderZones() {
     lbl.textContent = z.name;
     el.appendChild(lbl);
 
+    // When tapped, z is the logical zone object — activateZone stores it logically
     el.addEventListener('click', ev => {
       if (ev.target === el || ev.target === lbl) activateZone(z);
     });
@@ -1609,15 +3307,20 @@ function renderButtons() {
   BTNS.forEach(b => {
     if (b.period !== curPeriod) return;
 
-    // Resolve x for flip
+    // Visual x position — flip horizontally when needed
     const rx = fieldFlipped ? flipX(b.x) : b.x;
-    // For movement buttons, flip arrow direction
+
+    // Arrow direction flips visually when field is flipped
     const dispText = (fieldFlipped && b.cat === 'movement')
       ? (b.text === '←' ? '→' : '←')
       : b.text;
-    // Resolve zone for flip
-    const bZone = fieldFlipped ? mirrorZone(b.zone) : b.zone;
-    const bTarget = fieldFlipped ? mirrorZone(b.target) : b.target;
+
+    // b.zone and b.target are always LOGICAL zone ids (defined in BTNS array).
+    // When flipped, a button that was visually in zred is now visually in zblu,
+    // but its logical zone stays the same — we DON'T mirrorZone here.
+    // Instead we compare against activeZone.id directly (also logical).
+    const bZone   = b.zone;   // logical
+    const bTarget = b.target; // logical
 
     const el = document.createElement('div');
     const catClass = {movement:'mv',grabbing:'gr',climb:'cl',scoring:'sc'}[b.cat] || 'mv';
@@ -1643,7 +3346,7 @@ function renderButtons() {
       el.appendChild(sub);
     }
 
-    // Enable only if in correct zone
+    // Enable button only if scout is in the correct logical zone
     const enabled = !bZone || (activeZone && activeZone.id === bZone);
     if (!enabled) el.classList.add('off');
 
@@ -1656,23 +3359,21 @@ function renderButtons() {
   });
 }
 
-function mirrorZone(zid) {
-  if (zid === 'zred') return 'zblu';
-  if (zid === 'zblu') return 'zred';
-  return zid;
-}
-
 function hexToRgb(hex) {
   const h = hex.replace('#','');
   return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
 }
 
+// activateZone receives the logical zone object (z from ZONES array)
 function activateZone(z) {
   finalizeZoneTime();
-  activeZone = z;
+  activeZone = z; // store logical zone
   zoneEnter = Date.now();
+
+  // Highlight the correct DOM element (DOM ids match logical ids)
   document.querySelectorAll('.zone').forEach(el => el.classList.remove('active'));
   $(z.id)?.classList.add('active');
+
   setStatus(z.name);
   renderButtons();
   updateDefBar();
@@ -1680,11 +3381,16 @@ function activateZone(z) {
 }
 
 function updateDefBar() {
-  // Defense bar shows when in opponent zone
-  const isRed = alliance?.startsWith('R');
-  const defZoneId = isRed ? 'zblu' : 'zred';
-  const inDef = activeZone && activeZone.id === defZoneId;
-  $('def-bar').classList.toggle('on', inDef);
+  if (!alliance || !activeZone) {
+    $('def-bar').classList.remove('on');
+    return;
+  }
+  // Defense bar shows when scout's logical active zone is the OPPONENT's zone
+  const isRed = alliance.startsWith('R');
+  const opponentZoneId = isRed ? 'zblu' : 'zred';
+  // activeZone.id is always logical, so this comparison is always correct
+  const inDefense = activeZone.id === opponentZoneId;
+  $('def-bar').classList.toggle('on', inDefense);
 }
 
 function setStatus(txt) {
@@ -1699,6 +3405,7 @@ function handleBtn(b, bZone, bTarget, dispText) {
   switch(b.cat) {
     case 'movement':
       if (bTarget) {
+        // bTarget is logical — find the logical zone object
         const tz = ZONES.find(z => z.id === bTarget);
         if (tz) {
           logEvent('MV:' + (activeZone?.name||'?') + '→[' + b.sub + ']→' + tz.name);
@@ -1787,7 +3494,6 @@ function calcCycles() {
 }
 
 function renderStats() {
-  // Zone times
   const ztg = $('zt-grid');
   if (ztg) {
     ztg.innerHTML = '';
@@ -1800,7 +3506,6 @@ function renderStats() {
       </div>`;
     });
   }
-  // Cycle stats
   const cyg = $('cy-grid');
   if (cyg) {
     const cs = calcCycles();
@@ -1913,13 +3618,11 @@ function resetAndNext() {
   $('qr-ov').classList.remove('on');
 
   const prevMatch = $('match-num').value;
-  // Reset state
   events = []; penalties = []; foulsCaused = 0;
   activeZone = null; zoneEnter = null; zoneTimes = {};
   climbResult = 'None'; isPractice = false;
   currentPayload = null;
 
-  // Reset UI
   $('practice-toggle').classList.remove('on');
   $('ev-count').textContent = '0 ev';
   $('pen-disp').textContent = '';
@@ -1933,7 +3636,6 @@ function resetAndNext() {
   ['def-notes','end-notes','prematch-notes'].forEach(id => { const e = $(id); if(e) e.value=''; });
   $('robot-status').value = 'Operational';
 
-  // Increment match number
   $('match-num').value = incMatch(prevMatch);
   localStorage.setItem('lastMatch', prevMatch);
   curPeriod = 'auto';
@@ -1953,7 +3655,7 @@ function incMatch(s) {
 // ════════════════════════════════════════════════════════
 function openSaved() {
   renderSavedList();
-  screenIdx = 5; // pseudo-index
+  screenIdx = 5;
   goTo('saved');
 }
 function closeSaved() { screenIdx = 0; goTo('alliance'); }
@@ -2021,7 +3723,18 @@ function openSavedQR(id) {
     const txt = (idx+1) + '/' + chunks.length + '|' + chunks[idx];
     $('sqr-part-lbl').textContent = 'PART ' + (idx+1) + ' OF ' + chunks.length;
     try {
-      new QRCode(div, { text:txt, width:270, height:270, correctLevel:QRCode.CorrectLevel.L });
+      // Updated code for form.html
+const qrContainer = document.getElementById("qr-canvas");
+qrContainer.innerHTML = ""; // Clear any existing QR code first
+
+    new QRCode(qrContainer, {
+        text: currentPayload,
+        width: 256,
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.L // Fix: Set to Low to handle more data
+    });
     } catch(e) {
       div.innerHTML = '<p style="color:var(--acc);padding:20px;">QR error</p>';
     }
@@ -2066,15 +3779,12 @@ window.addEventListener('resize', () => {
 window.addEventListener('load', () => {
   refreshSavedCount();
 
-  // Restore scout name
   const savedScout = localStorage.getItem('scoutName');
   if (savedScout) $('scout-name').value = savedScout;
 
-  // Restore field orientation
   const savedFlip = localStorage.getItem('fieldFlipped');
   setOrientation(savedFlip === '1');
 
-  // Restore alliance selection highlight (don't navigate away)
   const savedAlliance = localStorage.getItem('alliance');
   if (savedAlliance) {
     alliance = savedAlliance;
@@ -2093,13 +3803,55 @@ window.addEventListener('load', () => {
     }
   }
 
-  // Pre-fill next match number
   const lastMatch = localStorage.getItem('lastMatch');
   if (lastMatch) $('match-num').value = incMatch(lastMatch);
 
-  // Always start on alliance screen
   goTo('alliance');
 });
+
+function downloadMatchJSON() {
+  if (!currentPayload) { toast('No match to export!'); return; }
+  const p = parsePayload(currentPayload);
+  const evStr = p.log || '';
+  const evArr = evStr ? evStr.split(';').filter(Boolean) : [];
+  const entry = {
+    time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+    source: 'direct_export',
+    scouter: p.sc || '',
+    matchNumber: p.mt || '',
+    teamNumber: parseInt(p.tm) || p.tm || '',
+    alliance: p.al || '',
+    startPos: p.sp || '',
+    robotStatus: p.rs || '',
+    fieldOrientation: p.fo === 'F' ? 'flipped' : 'normal',
+    climbResult: p.cl || 'None',
+    climbTiming: p.ct || '',
+    foulsCaused: parseInt(p.fc) || 0,
+    teleop_cycles: parseInt(p.cy) || 0,
+    cycle_avg_sec: parseInt(p.cavg) || 0,
+    cycle_best_sec: parseInt(p.cmin) || 0,
+    cycle_worst_sec: parseInt(p.cmax) || 0,
+    zoneTimes: (() => { try { return JSON.parse(p.zt || '{}'); } catch { return {}; } })(),
+    eventCount: parseInt(p.ev) || 0,
+    events: evArr,
+    prematchNotes: p.pm || '',
+    defenseNotes: p.dn || '',
+    endNotes: p.en || '',
+    raw: currentPayload
+  };
+  const mn = p.mt || 'unknown';
+  const tn = p.tm || 'unknown';
+  const blob = new Blob([JSON.stringify([entry], null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'match_' + mn + '_team' + tn + '_' + Date.now() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('📄 JSON exported!');
+}
 </script>
 </body>
 </html>

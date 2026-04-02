@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FRC Data Center</string>
+    <string name="title_activity_main">FRC Data Center</string>
+    <string name="package_name">com.frc935.datacenter</string>
+    <string name="custom_url_scheme">com.frc935.datacenter</string>
+</resources>

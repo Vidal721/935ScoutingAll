@@ -3,88 +3,243 @@
 <head>
   <title>TBA Match Schedule - City of Fountains 2026</title>
   <style>
-    body{
-      background-color: rgb(37, 37, 37);
-      color: white;
+    :root {
+      --bg: rgb(37, 37, 37);
+      --s1: #222;
+      --s2: #2a2a2a;
+      --border: #3a3a3a;
+      --text: #f0ede6;
+      --dim: #888;
+      --acc: #e8c000;
+      --red: #c0392b;
+      --blue: #2563a8;
+      --green: #27864a;
     }
-    textarea {
-        width: 100%; 
-        height: 150px;
-        padding: 12px 20px; 
-        margin: 8px 0; 
-        box-sizing: border-box; 
-        border: 2px solid #ccc; 
-        border-radius: 4px; 
-        background-color: #f8f8f8; 
-        font-size: 16px; 
-        font-family: sans-serif; 
-        resize: none;
-        background-color: #ccc;
-    }
-    button{
-      /* General Styling */
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #ffffff; /* White text for contrast */
-      background-color: rgba(255, 255, 255, 0.1); /* Transparent white background */
-      border: none;
-      border-radius: 12px; /* Rounded corners */
-      cursor: pointer;
-      backdrop-filter: blur(10px); /* Frosted glass effect */
-      -webkit-backdrop-filter: blur(10px); /* Safari support */
-      
-      /* Subtle Shadow for Depth */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
-      /* Transition for smooth effects */
-      transition: background-color 0.3s ease, transform 0.1s ease
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 16px 20px;
     }
+
+    h2 { color: var(--acc); margin-bottom: 4px; }
+    h3 { color: #ccc; margin: 18px 0 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    h4 { color: var(--dim); margin: 10px 0 4px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      box-sizing: border-box;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background-color: var(--s2);
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+      transition: border-color .15s;
+    }
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--acc);
+    }
+
+    button {
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      background-color: rgba(255,255,255,.08);
+      border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      letter-spacing: .5px;
+      transition: background-color .2s, transform .08s;
+      margin: 2px 4px 2px 0;
+    }
+    button:hover  { background-color: rgba(255,255,255,.14); }
+    button:active { transform: scale(.96); }
+    button.primary {
+      background: var(--acc);
+      border-color: var(--acc);
+      color: #111;
+    }
+    button.primary:hover { background: #d4af00; }
+
+    .home-btn {
+      background: var(--s2);
+      border-color: var(--border);
+      color: var(--dim);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    /* ── PARSED SCOUTERS PREVIEW ── */
+    .scouter-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+      min-height: 28px;
+    }
+    .sp-chip {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .sp-primary {
+      background: rgba(232,192,0,.15);
+      border-color: rgba(232,192,0,.4);
+      color: var(--acc);
+      padding: 3px 10px;
+    }
+    .sp-chip .sp-sub {
+      background: rgba(255,255,255,.07);
+      color: var(--dim);
+      padding: 3px 10px;
+      border-left: 1px solid var(--border);
+    }
+    .sp-chip .sp-arrow {
+      background: rgba(232,192,0,.08);
+      color: rgba(232,192,0,.5);
+      padding: 3px 5px;
+      font-size: 10px;
+    }
+    .sp-count {
+      font-size: 12px;
+      color: var(--dim);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sp-count .warn { color: #e05c4a; }
+    .sp-count .ok   { color: var(--green); }
+
+    /* ── STATUS ── */
+    #status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--dim);
+      min-height: 18px;
+    }
+
+    /* ── TWO-COL LAYOUT FOR OUTPUTS ── */
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 700px) { .output-grid { grid-template-columns: 1fr; } }
+
+    .output-col h4 { margin-top: 0; }
+
+    /* ── COPY BUTTON ── */
+    .copy-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .copy-btn {
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--dim);
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: all .15s;
+    }
+    .copy-btn:hover { border-color: var(--acc); color: var(--acc); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
   </style>
 </head>
 <body>
-  <button onclick="window.location.href='index.html'">Home</button>
-  <h2>FRC City of Fountains Regional (2026KSLA)</h2>
+
+  <button class="home-btn" onclick="window.location.href='index.html'">← Home</button>
+  <h2>I Hate This Generator</h2>
 
   <hr>
-  <h3>The Blue Alliance API (thebluealliance.com)</h3>
-  <button onclick="fetchTBA()">Fetch Match Schedule</button>
 
-  <h4>Match Schedule</h4>
-  <textarea id="tba-matches" rows="15" cols="100" placeholder="TBA matches JSON will appear here..."></textarea>
+  <!-- ── TBA FETCH ── -->
+  <h3>The Blue Alliance API</h3>
+  <button onclick="fetchTBA()">Fetch</button>
+
+  <h4>Match Schedule JSON</h4>
+  <textarea id="tba-matches" rows="8" placeholder="TBA matches JSON will appear here..."></textarea>
 
   <hr>
+
+  <!-- ── SCOUTING SCHEDULE GENERATOR ── -->
   <h3>Scouting Schedule Generator</h3>
-
-  <label>Scouters (one per line):<br>
-    <textarea id="scouters-input" rows="6" cols="30" placeholder="Sam&#10;David&#10;Austin&#10;Charlotte&#10;Dante&#10;Aspyn"></textarea>
+  
+  <label style="font-size:13px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;">
+    Scouters:
   </label>
+  <textarea id="scouters-input" rows="7" style="margin-top:6px;"
+    placeholder="Sam&#10;Austin&#10;David, Hanna&#10;James&#10;Charlotte&#10;Dante"
+    oninput="updateScouterPreview()"></textarea>
+
+  <div class="scouter-preview" id="scouter-preview"></div>
+  <div class="sp-count" id="scouter-count"></div>
+
+  <br>
+
+  <label style="font-size:13px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;">
+    Priority teams:
+  </label><br>
+  <input type="text" id="priority-teams" style="margin-top:6px;" placeholder="935, 757">
+
   <br><br>
+  <button class="primary" onclick="generateSchedule()">Generate</button>
 
-  <label>Priority teams (comma-separated — every scouter will scout these at least once):<br>
-    <input type="text" id="priority-teams" style="width:300px" placeholder="935, 757">
-  </label>
-  <br><br>
+  <br>
 
-  <button onclick="generateSchedule()">Generate Scouting Schedule</button>
+  <!-- ── OUTPUTS ── -->
+  <div class="output-grid" style="margin-top:18px;">
+    <div class="output-col">
+      <div class="copy-row">
+        <h4 style="margin:0;">Readable Schedule</h4>
+        <span class="copy-btn" onclick="copyTA('scouting-output', this)">COPY</span>
+      </div>
+      <textarea id="scouting-output" rows="30" placeholder="Scouting schedule will appear here..."></textarea>
+    </div>
+    <div class="output-col">
+      <div class="copy-row">
+        <h4 style="margin:0;">JSON Output</h4>
+        <span class="copy-btn" onclick="copyTA('json-output', this)">COPY</span>
+      </div>
+      <textarea id="json-output" rows="30" placeholder="JSON will appear here..."></textarea>
+    </div>
+  </div>
 
-  <h4>Scouting Schedule</h4>
-  <textarea id="scouting-output" rows="30" cols="100" placeholder="Scouting schedule will appear here..."></textarea>
-
-  <h4>JSON Output</h4>
-  <textarea id="json-output" rows="30" cols="100" placeholder="JSON will appear here..."></textarea>
-
-  <hr>
   <div id="status"></div>
 
   <script>
-    const TBA_EVENT_KEY = "2026mose";
+    // ══════════════════════════════════════
+    //  CONFIG
+    // ══════════════════════════════════════
+    const TBA_EVENT_KEY = "2026ksla";
     let fetchedMatches = [];
 
-    function log(msg) {
-      document.getElementById("status").innerText = msg;
-    }
+    function log(msg) { document.getElementById("status").innerText = msg; }
 
+    // ══════════════════════════════════════
+    //  TBA FETCH
+    // ══════════════════════════════════════
     async function fetchTBA() {
       const key = "HCzm8Ri3tcpSxBkhoZLLwhDMCDNfwwP0cNof8xOnJCk1ZnHOGu7upC84W8AanACu";
       const headers = { "X-TBA-Auth-Key": key };
@@ -95,7 +250,7 @@
         const matchData = await matchRes.json();
         document.getElementById("tba-matches").value = JSON.stringify(matchData, null, 2);
         fetchedMatches = matchData;
-        log("TBA fetch complete.");
+        log("TBA fetch complete. " + matchData.length + " matches loaded.");
       } catch (err) {
         log("TBA error: " + err.message);
       }
@@ -103,80 +258,129 @@
 
     function parseMatches() {
       if (fetchedMatches.length > 0) return fetchedMatches;
-      try {
-        return JSON.parse(document.getElementById("tba-matches").value);
-      } catch (e) {
-        return [];
-      }
+      try { return JSON.parse(document.getElementById("tba-matches").value); }
+      catch (e) { return []; }
     }
 
-    function generateSchedule() {
-      const scouters = document.getElementById("scouters-input").value
-        .split("\n").map(s => s.trim()).filter(s => s.length > 0);
+    // ══════════════════════════════════════
+    //  SCOUTER PARSING
+    //  Returns array of { primary, sub|null }
+    // ══════════════════════════════════════
+    function parseScouters(raw) {
+      return raw
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => {
+          const parts = line.split(",").map(p => p.trim()).filter(p => p.length > 0);
+          return {
+            primary: parts[0] || "",
+            sub: parts[1] || null
+          };
+        });
+    }
 
-      if (scouters.length === 0) { log("Error: No scouters entered."); return; }
-      if (scouters.length !== 6) { log("Error: Need exactly 6 scouters (one per robot per match)."); return; }
+    function updateScouterPreview() {
+      const raw = document.getElementById("scouters-input").value;
+      const scouters = parseScouters(raw);
+      const preview = document.getElementById("scouter-preview");
+      const countEl = document.getElementById("scouter-count");
+
+      preview.innerHTML = scouters.map(s => {
+        if (s.sub) {
+          return `<div class="sp-chip">
+            <span class="sp-primary">${s.primary}</span>
+            <span class="sp-arrow">→</span>
+            <span class="sp-sub">${s.sub}</span>
+          </div>`;
+        }
+        return `<div class="sp-chip"><span class="sp-primary">${s.primary}</span></div>`;
+      }).join("");
+
+      const n = scouters.length;
+      const subsCount = scouters.filter(s => s.sub).length;
+      const cls = n === 6 ? 'ok' : 'warn';
+      const icon = n === 6 ? '✓' : '⚠';
+      countEl.innerHTML = `<span class="${cls}">${icon} ${n}/6 primary scouters</span>`
+        + (subsCount > 0 ? `<span>· ${subsCount} sub${subsCount > 1 ? 's' : ''} registered</span>` : '');
+    }
+
+    // ══════════════════════════════════════
+    //  SCHEDULE GENERATOR
+    // ══════════════════════════════════════
+    function generateSchedule() {
+      const raw = document.getElementById("scouters-input").value;
+      const scouterPairs = parseScouters(raw);
+      const primaries = scouterPairs.map(s => s.primary);
+
+      if (primaries.length === 0)    { log("Error: No scouters entered."); return; }
+      if (primaries.length !== 6)    { log("Error: Need exactly 6 primary scouters (one per robot per match)."); return; }
 
       const priorityInput = document.getElementById("priority-teams").value;
       const priorityTeams = priorityInput.split(",").map(t => t.trim()).filter(t => t.length > 0);
 
       const allMatches = parseMatches();
-      if (allMatches.length === 0) { log("Error: No match data. Fetch TBA data first or paste JSON into the textarea."); return; }
+      if (allMatches.length === 0) { log("Error: No match data. Fetch TBA or paste JSON first."); return; }
 
       const matches = allMatches
         .filter(m => m.comp_level === "qm")
         .sort((a, b) => a.match_number - b.match_number);
 
-      if (matches.length === 0) { log("Error: No qualification matches found in the data."); return; }
+      if (matches.length === 0) { log("Error: No qualification matches found."); return; }
 
+      // Build raw schedule using primary names
       const schedule = [];
-
       matches.forEach((m, matchIdx) => {
-        const red = (m.alliances?.red?.team_keys || []).map(t => t.replace("frc", ""));
+        const red  = (m.alliances?.red?.team_keys  || []).map(t => t.replace("frc", ""));
         const blue = (m.alliances?.blue?.team_keys || []).map(t => t.replace("frc", ""));
         const slots = [
-          { alliance: "red",  position: 1, team: red[0] || "?" },
-          { alliance: "red",  position: 2, team: red[1] || "?" },
-          { alliance: "red",  position: 3, team: red[2] || "?" },
+          { alliance: "red",  position: 1, team: red[0]  || "?" },
+          { alliance: "red",  position: 2, team: red[1]  || "?" },
+          { alliance: "red",  position: 3, team: red[2]  || "?" },
           { alliance: "blue", position: 1, team: blue[0] || "?" },
           { alliance: "blue", position: 2, team: blue[1] || "?" },
           { alliance: "blue", position: 3, team: blue[2] || "?" },
         ];
-
-        const offset = matchIdx % scouters.length;
+        const offset = matchIdx % primaries.length;
         slots.forEach((slot, slotIdx) => {
-          const scouterIdx = (slotIdx + offset) % scouters.length;
+          const pIdx = (slotIdx + offset) % primaries.length;
           schedule.push({
-            matchNum: m.match_number,
-            scouter: scouters[scouterIdx],
-            team: slot.team,
-            alliance: slot.alliance,
-            position: slot.position
+            matchNum:  m.match_number,
+            primary:   primaries[pIdx],
+            pairIdx:   pIdx,           // index into scouterPairs
+            team:      slot.team,
+            alliance:  slot.alliance,
+            position:  slot.position
           });
         });
       });
 
+      // Priority team swaps (same logic as before, using primary names)
       priorityTeams.forEach(pt => {
         const ptEntries = schedule.filter(e => e.team === pt);
         if (ptEntries.length === 0) return;
 
-        scouters.forEach(scouter => {
-          const alreadyHas = ptEntries.some(e => e.scouter === scouter);
+        primaries.forEach((scouter, pIdx) => {
+          const alreadyHas = ptEntries.some(e => e.pairIdx === pIdx);
           if (alreadyHas) return;
 
           for (const ptEntry of ptEntries) {
             const matchEntries = schedule.filter(e => e.matchNum === ptEntry.matchNum);
-            const scouterInMatch = matchEntries.find(e => e.scouter === scouter);
+            const scouterInMatch = matchEntries.find(e => e.pairIdx === pIdx);
             if (!scouterInMatch) continue;
-            const tempScouter = ptEntry.scouter;
-            ptEntry.scouter = scouter;
-            scouterInMatch.scouter = tempScouter;
+            // Swap primaries + pairIdx
+            const tempPrimary = ptEntry.primary;
+            const tempPairIdx = ptEntry.pairIdx;
+            ptEntry.primary  = scouterInMatch.primary;
+            ptEntry.pairIdx  = scouterInMatch.pairIdx;
+            scouterInMatch.primary  = tempPrimary;
+            scouterInMatch.pairIdx  = tempPairIdx;
             break;
           }
         });
       });
 
-      // Readable schedule output
+      // ── READABLE OUTPUT ──
       let output = "=== SCOUTING SCHEDULE ===\n\n";
       const matchNums = [...new Set(schedule.map(e => e.matchNum))].sort((a, b) => a - b);
 
@@ -189,7 +393,9 @@
         });
         matchEntries.forEach(e => {
           const label = e.alliance.charAt(0).toUpperCase() + e.alliance.slice(1);
-          output += `  ${label} ${e.position}  |  Team ${e.team}  |  ${e.scouter}\n`;
+          const pair  = scouterPairs[e.pairIdx];
+          const subStr = pair.sub ? ` (sub: ${pair.sub})` : "";
+          output += `  ${label} ${e.position}  |  Team ${e.team}  |  ${e.primary}${subStr}\n`;
         });
         output += "\n";
       });
@@ -198,12 +404,13 @@
         output += "=== PRIORITY TEAM COVERAGE ===\n";
         priorityTeams.forEach(pt => {
           output += `Team ${pt}:\n`;
-          scouters.forEach(s => {
-            const entry = schedule.find(e => e.scouter === s && e.team === pt);
+          scouterPairs.forEach(pair => {
+            const entry = schedule.find(e => e.primary === pair.primary && e.team === pt);
             if (entry) {
-              output += `  ${s}: Match ${entry.matchNum} (${entry.alliance} ${entry.position})\n`;
+              const subNote = pair.sub ? ` (or sub: ${pair.sub})` : "";
+              output += `  ${pair.primary}${subNote}: Match ${entry.matchNum} (${entry.alliance} ${entry.position})\n`;
             } else {
-              output += `  ${s}: NOT COVERED (team may not appear enough times)\n`;
+              output += `  ${pair.primary}: NOT COVERED\n`;
             }
           });
         });
@@ -211,19 +418,47 @@
 
       document.getElementById("scouting-output").value = output;
 
-      // JSON output: { "matchNum": { "ScouterName": "teamNumber", ... }, ... }
+      // ── JSON OUTPUT ──
+      // Format per slot:
+      //   "PrimaryName": { "team": "1234", "alliance": "R2", "sub": "SubName" | null }
+      // This lets form.html look up by primary OR sub name.
       const jsonOutput = {};
       matchNums.forEach(mn => {
         jsonOutput[String(mn)] = {};
         schedule.filter(e => e.matchNum === mn).forEach(e => {
-          jsonOutput[String(mn)][e.scouter] = e.team;
+          const pair     = scouterPairs[e.pairIdx];
+          const aCode    = e.alliance === "red"
+            ? "R" + e.position
+            : "B" + e.position;
+
+          jsonOutput[String(mn)][e.primary] = {
+            team:     e.team,
+            alliance: aCode,
+            sub:      pair.sub || null
+          };
         });
       });
 
-      document.getElementById("json-output").value = JSON.stringify(jsonOutput, null, 2);
-
-      log("Scouting schedule generated.");
+      const jsonStr = JSON.stringify(jsonOutput, null, 2);
+      document.getElementById("json-output").value = `const schedule = ${jsonStr};\n`;
+      log(`Schedule generated. ${matchNums.length} qualification matches, ${scouterPairs.filter(s=>s.sub).length} sub pair(s) registered.`);
     }
+
+    // ══════════════════════════════════════
+    //  COPY HELPER
+    // ══════════════════════════════════════
+    function copyTA(id, btn) {
+      const val = document.getElementById(id).value;
+      if (!val) return;
+      navigator.clipboard.writeText(val).then(() => {
+        btn.textContent = "COPIED!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "COPY"; btn.classList.remove("copied"); }, 1800);
+      });
+    }
+
+    // Init preview
+    updateScouterPreview();
   </script>
 </body>
 </html>

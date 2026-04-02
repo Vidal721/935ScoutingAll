@@ -1,0 +1,8 @@
+{
+  "appId": "com.frc935.datacenter",
+  "appName": "FRC Data Center",
+  "webDir": "www",
+  "server": {
+    "cleartext": true
+  }
+}
